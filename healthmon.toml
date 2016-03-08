@@ -1,0 +1,12 @@
+#	If response time is slower than this, send alert (in seconds)
+LagThreshold = 10
+
+#	How often to ping (in seconds)
+PingInterval = 60
+
+#	A text file of URLs to ping seperated by new lines.
+#	can be a relative our absolute reference
+URLsFile = "urls.txt"
+
+#	URL of OWTF server
+URL = "http://localhost:8009/"
