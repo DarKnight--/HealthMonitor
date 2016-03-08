@@ -12,13 +12,13 @@ import (
 )
 
 
-// The functio is used to send ping request.
+// The function is used to send ping request.
 func ping(ip string)(bool){
 	command := exec.Command("/bin/sh", "-c", "sudo ping " + ip + " -c 1 -W " + strconv.Itoa(config.Params.LagThreshold))
 	var waitStatus syscall.WaitStatus
 	
 	if err := command.Run(); err != nil {
-		utils.Perror(err)
+		utils.Perror(err.Error())
 		// Did the command fail because of an unsuccessful exit code
 		if exitError, ok := err.(*exec.ExitError); ok {
 		  waitStatus = exitError.Sys().(syscall.WaitStatus)
@@ -35,6 +35,8 @@ func ping(ip string)(bool){
 	}
 }
 
+//Function is used to check internet connectivity of the machine.
+// It will check the connectivity after the fixed time specified in configuration
 func CheckConnection(output chan string) {
 	var ip = "8.8.8.8"
 	for {
@@ -48,6 +50,7 @@ func CheckConnection(output chan string) {
 	}
 }
 
+//Function is used to check connectivity to the targets of OWTF
 func CheckTarget(targets []string, output chan string) {
 	for {
 		time.Sleep(time.Duration(config.Params.PingInterval) * time.Second)
@@ -57,6 +60,7 @@ func CheckTarget(targets []string, output chan string) {
 	}
 }
 
+//Function is used to check connectivity to the specified target
 func pingTarget(ip string)(string){
 	out := ping(ip)
 	if out {

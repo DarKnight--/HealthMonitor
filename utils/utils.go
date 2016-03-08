@@ -1,11 +1,11 @@
+// Package contains various utility function used in the HealthMonitor
 package utils
 
 import (
 	"log"
 )
 
-func Perror(err error) {
-	if err != nil {
-		log.Println("[!] Error: " + err.Error())
-	}
+//It is used to print the erros.
+func Perror(out string) {
+	log.Println("[!] Error: " + out)
 }
