@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-//It is used to print the erros.
+/* It is used to print the errors.*/
 func Perror(out string) {
 	log.Println("[!] Error: " + out)
 }
