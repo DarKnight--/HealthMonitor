@@ -22,3 +22,9 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+# linux temperory file
+*~
+
+# ide files
+*.idea*
