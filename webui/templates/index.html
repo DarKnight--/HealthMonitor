@@ -7,9 +7,9 @@
 
     <title>OWASP OWTF - Health Monitor</title>
 
-    <link href="static/css/bootstrap.min.css" rel="stylesheet">
-    <link href="static/css/bootstrap-theme.min.css" rel="stylesheet">
-    <link href="static/css/mystyles.css" rel="stylesheet">
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../static/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../static/css/mystyles.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -41,21 +41,133 @@
     </nav>
     <div class="container">
         <div class="row">
-            <div class="col col-sm-3">
-                <p>1</p>
+            <div class="col-xs-12 col-sm-6 col-lg-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading col-sm-12">
+                        <h4 class="col-sm-8">Network Connectivity</h4>
+                        <div class="onoffswitch col-sm-4 pull-right">
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch1" checked>
+                            <label class="onoffswitch-label" for="myonoffswitch1">
+                                <span class="onoffswitch-inner"></span>
+                                <span class="onoffswitch-switch"></span>
+                            </label>
+                        </div>
+                  </div>
+                  <div class="panel-body" style="background: lightgrey"></div>
+                </div>
             </div>
-            <div class="col col-sm-3">
-                <p>1</p>
+            <div class="col-xs-12 col-sm-6 col-lg-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading col-sm-12">
+                        <h4 class="col-sm-8">Target Connectivity</h4>
+                        <div class="onoffswitch col-sm-4 pull-right">
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch2" checked>
+                            <label class="onoffswitch-label" for="myonoffswitch2">
+                                <span class="onoffswitch-inner"></span>
+                                <span class="onoffswitch-switch"></span>
+                            </label>
+                        </div>
+                  </div>
+                  <div class="panel-body">Monitor module result overview and status with color for quick view</div>
+                </div>
             </div>
-            <div class="col col-sm-3">
-                <p>1</p>
+            <div class="col-xs-12 col-sm-6 col-lg-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading col-sm-12">
+                        <h4 class="col-sm-8">Disk space</h4>
+                        <div class="onoffswitch col-sm-4 pull-right">
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch3" checked>
+                            <label class="onoffswitch-label" for="myonoffswitch3">
+                                <span class="onoffswitch-inner"></span>
+                                <span class="onoffswitch-switch"></span>
+                            </label>
+                        </div>
+                  </div>
+                  <div class="panel-body">Monitor module result overview and status with color for quick view</div>
+                </div>
             </div>
+            <div class="col-xs-12 col-sm-6 col-lg-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading col-sm-12">
+                        <h4 class="col-sm-8">Inode usage</h4>
+                        <div class="onoffswitch col-sm-4 pull-right">
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch4" checked>
+                            <label class="onoffswitch-label" for="myonoffswitch4">
+                                <span class="onoffswitch-inner"></span>
+                                <span class="onoffswitch-switch"></span>
+                            </label>
+                        </div>
+                  </div>
+                  <div class="panel-body">Monitor module result overview and status with color for quick view</div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-lg-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading col-sm-12">
+                        <h4 class="col-sm-8">Ram Usage</h4>
+                        <div class="onoffswitch col-sm-4 pull-right">
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch5" checked>
+                            <label class="onoffswitch-label" for="myonoffswitch5">
+                                <span class="onoffswitch-inner"></span>
+                                <span class="onoffswitch-switch"></span>
+                            </label>
+                        </div>
+                  </div>
+                    <div class="panel-body" style="background: lightgrey"></div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-lg-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading col-sm-12">
+                        <h4 class="col-sm-8">CPU usage</h4>
+                        <div class="onoffswitch col-sm-4 pull-right">
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch6" checked>
+                            <label class="onoffswitch-label" for="myonoffswitch6">
+                                <span class="onoffswitch-inner"></span>
+                                <span class="onoffswitch-switch"></span>
+                            </label>
+                        </div>
+                  </div>
+                    <div class="panel-body" style="background: lightgrey"></div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-lg-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading col-sm-12">
+                        <h4 class="col-sm-8">Banwidth Usage</h4>
+                        <div class="onoffswitch col-sm-4 pull-right">
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch7" checked>
+                            <label class="onoffswitch-label" for="myonoffswitch7">
+                                <span class="onoffswitch-inner"></span>
+                                <span class="onoffswitch-switch"></span>
+                            </label>
+                        </div>
+                  </div>
+                  <div class="panel-body">Monitor module result overview and status with color for quick view</div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-lg-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading col-sm-12">
+                        <h4 class="col-sm-8">Database metrics</h4>
+                        <div class="onoffswitch col-sm-4 pull-right">
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch8" checked>
+                            <label class="onoffswitch-label" for="myonoffswitch8">
+                                <span class="onoffswitch-inner"></span>
+                                <span class="onoffswitch-switch"></span>
+                            </label>
+                        </div>
+                  </div>
+                  <div class="panel-body">Monitor module result overview and status with color for quick view</div>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="static/js/bootstrap.min.js"></script>
+    <script src="../static/js/bootstrap.min.js"></script>
 </body>
 </html>
