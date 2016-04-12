@@ -26,5 +26,8 @@ _testmain.go
 # linux temperory file
 *~
 
+# configuration file
+*.toml
+
 # ide files
 *.idea*

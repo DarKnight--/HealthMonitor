@@ -1,19 +1,18 @@
 package config
 
 import (
-	"os"
 	"path"
+	"os"
 )
-var (
+var(
 	Logs struct{
 		HealthMonitorLog string
 	}
-	testLog bool =  loadLogParams()
+	testLogs bool = loadLogs()
 )
 
-func loadLogParams() bool {
-	Logs.HealthMonitorLog = path.Join(os.Getenv("HOME"), ".owtfMonitor",
-									"monitor.log")
+// loadLogs function will initialise the logs variable
+func loadLogs() bool {
+	Logs.HealthMonitorLog = path.Join(os.Getenv("HOME"), "monitor.log")
 	return true
 }
-									

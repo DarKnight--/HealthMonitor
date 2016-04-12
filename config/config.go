@@ -1,14 +1,15 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"path"
-	"log"
 )
 
 var (
-	HomeDir string = os.Getenv("HOME")
-	DB struct{
+	HomeDir string = os.Getenv("HOME") //home directory path
+	
+	DB struct{	//structure containing database related data
 		DBConfigFile string 
 	}
 	
@@ -17,12 +18,12 @@ var (
 						to setup the OWTF Health Monitor.`
 )
 
+// This function will iniailise all the configuration variable defined
 func loadConfig() bool{
-	DB.DBConfigFile = path.Join(os.Getenv("HOME"), ".owtfMonitor", ".config" ,
+	DB.DBConfigFile = path.Join(os.Getenv("HOME"), ".owtfMonitor", "config" ,
 									"db_config.json")
 	if _, err := os.Stat(DB.DBConfigFile); os.IsNotExist(err){
-		log.SetOutput(os.Stdout)
-		log.Println(errorMsg)
+		fmt.Println(errorMsg)
 		os.Exit(1)
 	}
 	return true
