@@ -14,11 +14,13 @@ type (
 	}
 )
 
-func getTarget() ([]Target, error){
+func GetTarget() ([]Target, error){
 	var targets[] Target
 	var objmap map[string]*json.RawMessage
+	var err error
 	//get json data from OWTF target endnode
-	response, err := http.Get("http://127.0.0.1:8009/" + "api/targets/search/")
+	var response *http.Response
+	response, err = http.Get("http://127.0.0.1:8009/" + "api/targets/search/")
 	if err != nil {
 		log.Println(err)
 		return nil , err
@@ -26,13 +28,14 @@ func getTarget() ([]Target, error){
 	defer response.Body.Close()
 	
 	// Converting data recieved from http request to byte format
-	data1, err := ioutil.ReadAll(response.Body)
+	var dataByte []byte
+	dataByte, err = ioutil.ReadAll(response.Body)
 	if err != nil {
 		log.Println(err)
 		return nil , err
 	}
 	
-	err = json.Unmarshal(data1, &objmap)
+	err = json.Unmarshal(dataByte, &objmap)
 	
 	// Converting json byte to targets data structure
 	err = json.Unmarshal(* objmap["data"], &targets)
