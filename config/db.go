@@ -1,12 +1,10 @@
 package config
 
 import (
-	"fmt"
-	"encoding/json"
-	"io/ioutil"
 	"log"
 	"os"
 	
+	"github.com/BurntSushi/toml"
 	"gopkg.in/pg.v4"
 	
 	"HealthMonitor/utils"
@@ -15,20 +13,18 @@ import (
 var (
 	dbParameters struct{
 		User		string
-		Password		string
+		Password	string
 		Database	string
 		Address		string
 		Port		string	
 	}
 	
-	DBInstance *pg.DB //database instance for use in program
+	DBInstance *pg.DB //database instance for use in other modules
 )
 
 func loadDBParams(){
-	file, err := ioutil.ReadFile(DB.DBConfigFile)
-	utils.PDBFileError(err)
-	err = json.Unmarshal(file, &dbParameters)
-	utils.PDBFileError(err)
+	_, err := toml.DecodeFile(DB.DBConfigFile, &dbParameters)
+	utils.PDBFileError(err) // TODO if this function is not used elsewhere remove it from utils
 }
 
 func init() {
@@ -44,9 +40,4 @@ func init() {
 		Database: 	dbParameters.Database,
 		Addr:		dbParameters.Address + ":" + dbParameters.Port,	
 	})
-	fmt.Println(dbParameters.User)
-	fmt.Println(dbParameters.Password)
-	fmt.Println(dbParameters.Database)
-	fmt.Println(dbParameters.Address)
-	fmt.Println(dbParameters.Port)
 }

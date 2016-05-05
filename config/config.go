@@ -21,7 +21,7 @@ var (
 // This function will iniailise all the configuration variable defined
 func loadConfig() bool{
 	DB.DBConfigFile = path.Join(os.Getenv("HOME"), ".owtfMonitor", "config" ,
-									"db_config.json")
+									"db_config.toml")
 	if _, err := os.Stat(DB.DBConfigFile); os.IsNotExist(err){
 		fmt.Println(errorMsg)
 		os.Exit(1)

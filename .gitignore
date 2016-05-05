@@ -31,3 +31,5 @@ _testmain.go
 
 # ide files
 *.idea*
+*sublime*
+.vscode/*

@@ -7,14 +7,15 @@ import (
 	"strconv"
 	"time"
 	
-	"github.com/DarKnight--/HealthMonitor/config"
-	"github.com/DarKnight--/HealthMonitor/utils"
+	"HealthMonitor/config"
+	"HealthMonitor/utils"
 )
 
 
 /* The function is used to send ping request.*/
 func ping(ip string)(bool){
-	command := exec.Command("/bin/sh", "-c", "sudo ping " + ip + " -c 1 -W " + strconv.Itoa(config.Params.LagThreshold))
+	command := exec.Command("/bin/sh", "-c", "sudo ping " + ip + " -c 1 -W " + 
+							strconv.Itoa(config.Live.LagThreshold))
 	var waitStatus syscall.WaitStatus
 	
 	if err := command.Run(); err != nil {
@@ -46,14 +47,14 @@ func CheckConnection(output chan string) {
 		} else{
 			output <-"check your connection"
 		}
-		time.Sleep(time.Duration(config.Params.PingInterval) * time.Second)
+		time.Sleep(time.Duration(config.Live.PingInterval) * time.Second)
 	}
 }
 
 /*Function is used to check connectivity to the targets of OWTF*/
 func CheckTarget(targets []string, output chan string) {
 	for {
-		time.Sleep(time.Duration(config.Params.PingInterval) * time.Second)
+		time.Sleep(time.Duration(config.Live.PingInterval) * time.Second)
 		for _, target := range targets{
 			output <-pingTarget(target)
 		}

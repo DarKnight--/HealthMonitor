@@ -24,8 +24,8 @@ func PLogError(err error){
 func PDBFileError(err error){
 	if err != nil{
 		fmt.Println("File error: %v\n", err)
-		fmt.Println(`Configuration file is corrupt. Please run the setup script
-					to correct the error. OWTF Health Monitor will now exit.`)
+		fmt.Println("Configuration file is corrupt. Please run the setup script"+
+					"to correct the error. OWTF Health Monitor will now exit.")
 		os.Exit(1)
 	}
 }
