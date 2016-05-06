@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/BurntSushi/toml"
-	"gopkg.in/pg.v4"
 
 	"health_monitor/utils"
 )

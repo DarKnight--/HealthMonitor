@@ -1,11 +1,12 @@
 package config
 
 import (
-	"path"
 	"os"
+	"path"
 )
-var(
-	Logs struct{
+
+var (
+	Logs struct {
 		HealthMonitorLog string
 	}
 	testLogs bool = loadLogs()

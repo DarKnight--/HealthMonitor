@@ -1,16 +1,16 @@
 // The package implements the web interface for the OWTF monitor module
 package webui
 
-import(
+import (
 	"io"
 	"net/http"
 )
 
-func home(w http.ResponseWriter, r *http.Request){
+func home(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "OWTF Monitor")
 }
 
-func RunServer(port string){
+func RunServer(port string) {
 	http.HandleFunc("/", home)
-	http.ListenAndServe(":" + port, nil)	
+	http.ListenAndServe(":"+port, nil)
 }

@@ -7,9 +7,11 @@ import (
 )
 
 var (
-	HomeDir string = os.Getenv("HOME") //home directory path
+	//home directory path
+	HomeDir string = os.Getenv("HOME")
 
-	DB struct { //structure containing database related data
+	//structure containing database related data
+	DB struct {
 		DBConfigFile string
 	}
 
