@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"HealthMonitor/utils"
+	"health_monitor/utils"
 )
 
 var (
