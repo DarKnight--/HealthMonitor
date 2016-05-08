@@ -1,19 +1,18 @@
 package config
 
 import (
-	"os"
 	"path"
 )
 
 var (
+	// Logs will hold all the log files names used by health_monitor
 	Logs struct {
 		HealthMonitorLog string
 	}
-	testLogs bool = loadLogs()
 )
 
 // loadLogs function will initialise the logs variable
-func loadLogs() bool {
-	Logs.HealthMonitorLog = path.Join(os.Getenv("HOME"), ".owtfMonitor", "monitor.log")
+func logsInit() bool {
+	Logs.HealthMonitorLog = path.Join(ConfigVars.HomeDir, "monitor.log")
 	return true
 }

@@ -4,29 +4,32 @@ import (
 	"fmt"
 	"os"
 	"path"
+
+	"github.com/BurntSushi/toml"
 )
 
 var (
-	//home directory path
-	HomeDir string = os.Getenv("HOME")
-
-	//structure containing database related data
-	DB struct {
-		DBConfigFile string
+	// ConfigVars will hold necessary variables loaded from config file
+	ConfigVars struct {
+		HomeDir string
+		DBFile  string
 	}
-
-	testConfig bool   = loadConfig()
-	errorMsg   string = "The config file is missing. Please run the setup script" +
-		"to setup the OWTF Health Monitor."
 )
 
-// This function will iniailise all the configuration variable defined
-func loadConfig() bool {
-	DB.DBConfigFile = path.Join(os.Getenv("HOME"), ".owtfMonitor", "config",
-		"db_config.toml")
-	if _, err := os.Stat(DB.DBConfigFile); os.IsNotExist(err) {
-		fmt.Println(errorMsg)
-		os.Exit(1)
+func init() {
+	var configFile = path.Join(os.Getenv("HOME"), ".owtfMonitor", "config",
+		"config.toml") // The necessary config file required by health_monitor
+
+	if _, err := os.Stat(configFile); os.IsNotExist(err) {
+		fmt.Println("The config file is missing. Creating one with default settings")
+		os.Exit(1) // TODO remove it with a function for creating a config file
 	}
-	return true
+
+	_, err := toml.DecodeFile(configFile, &ConfigVars) // Read the config file
+	if err != nil {
+		fmt.Println("The config file is corupt. Do you want a remove all files" +
+			"and setup health_monitor again (y/N)?")
+		os.Exit(1) // TODO remove it with appropriate function
+
+	}
 }

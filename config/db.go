@@ -4,22 +4,21 @@ import (
 	"database/sql"
 	"log"
 	"os"
-	"path"
 
 	"github.com/mattn/go-sqlite3"
 
 	"health_monitor/utils"
 )
 
-func db_init() {
-	var DB_DRIVER string
+func dbInit() {
+	var DBDriver string
 	file, err := os.OpenFile(Logs.HealthMonitorLog, os.O_RDWR|os.O_CREATE|
 		os.O_APPEND, 0666)
 	utils.PLogError(err)
 	defer file.Close()
 	log.SetOutput(file)
-	sql.Register(DB_DRIVER, &sqlite3.SQLiteDriver{})
-	database, err := sql.Open(DB_DRIVER, path.Join(ConfigDir, "monitor.db"))
+	sql.Register(DBDriver, &sqlite3.SQLiteDriver{})
+	database, err := sql.Open(DBDriver, ConfigVars.DBFile)
 	if err != nil {
 		log.Println("Failed to create the handle")
 	}
