@@ -7,58 +7,44 @@ import (
 	"os/exec"
 	"strconv"
 	"syscall"
-	"time"
 
 	"health_monitor/utils"
 )
 
-var (
-	DAFAULT = 0 // 0-> GET, 1-> HEAD, 2-> Ping test
-)
-
-type live struct {
+// Config holds all the necessary parameters required by the module
+type Config struct {
 	headURL          string
-	recheckThreshold int
-	pingThreshold    int
-	headThreshold    int
+	recheckThreshold int // time in milliseconds
+	pingThreshold    int // time in milliseconds
+	headThreshold    int // time in milliseconds
 	pingProtocol     string
 	pingAddress      string
 	connection       http.Client
 }
 
-// TODO add concurrency and return parameters accordingly
-
-func Live() *live {
-	l := new(live)
-	l.headURL = "https://google.com"
-	l.headThreshold = 4
-	l.connection = http.Client{
-		Timeout: time.Duration(l.headThreshold) * time.Second,
-	}
-	// setup the parameters
-	return l
-}
-
-func (l live) checkByHEAD() {
+func (l Config) checkByHEAD() bool {
 	resp, err := l.connection.Head(l.headURL)
 	if err != nil {
-		log.Panic(err)
+		return false
 	}
 	defer resp.Body.Close()
 	log.Println(resp.StatusCode)
+	return true
 }
 
 // TODO check for dnslookup time, if fooled by local dns server
-func (l live) checkByDNS() {
+func (l Config) checkByDNS() bool {
 	ipList, err := net.LookupHost("google.com")
 	if err != nil {
 		log.Fatal(err)
+		return false
 	}
 	log.Println(ipList)
+	return true
 }
 
 /* The function is used to send ping request.*/
-func (l live) ping() bool {
+func (l Config) ping() bool {
 	command := exec.Command("/bin/sh", "-c", "sudo ping "+l.pingAddress+
 		" -c 1 -W "+strconv.Itoa(l.pingThreshold))
 	var waitStatus syscall.WaitStatus
@@ -76,15 +62,6 @@ func (l live) ping() bool {
 
 	if waitStatus.ExitStatus() == 0 {
 		return true
-	} else {
-		return false
 	}
+	return false
 }
-
-/*
-func main() {
-	var l *live = Live()
-	l.checkByHEAD()
-	l.checkByDNS()
-}
-*/

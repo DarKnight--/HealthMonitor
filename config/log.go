@@ -11,7 +11,6 @@ var (
 	}
 )
 
-// loadLogs function will initialise the logs variable
 func logsInit() bool {
 	Logs.HealthMonitorLog = path.Join(ConfigVars.HomeDir, "monitor.log")
 	return true

@@ -11,8 +11,9 @@ import (
 var (
 	// ConfigVars will hold necessary variables loaded from config file
 	ConfigVars struct {
-		HomeDir string
-		DBFile  string
+		HomeDir     string
+		DBFile      string
+		OWTFAddress string
 	}
 )
 
@@ -27,9 +28,9 @@ func init() {
 
 	_, err := toml.DecodeFile(configFile, &ConfigVars) // Read the config file
 	if err != nil {
+		fmt.Println(err)
 		fmt.Println("The config file is corupt. Do you want a remove all files" +
 			"and setup health_monitor again (y/N)?")
 		os.Exit(1) // TODO remove it with appropriate function
-
 	}
 }
