@@ -1,11 +1,13 @@
 package config
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"path"
 
 	"github.com/BurntSushi/toml"
+
+	"health_monitor/utils"
 )
 
 var (
@@ -15,22 +17,40 @@ var (
 		DBFile      string
 		OWTFAddress string
 	}
+	// HealthMonitorLog holds the path to main log file
+	HealthMonitorLog string
+	logFile          *os.File
 )
 
 func init() {
-	var configFile = path.Join(os.Getenv("HOME"), ".owtfMonitor", "config",
-		"config.toml") // The necessary config file required by health_monitor
-
-	if _, err := os.Stat(configFile); os.IsNotExist(err) {
-		fmt.Println("The config file is missing. Creating one with default settings")
-		os.Exit(1) // TODO remove it with a function for creating a config file
+	var err error
+	var basePath = path.Join(os.Getenv("HOME"), ".owtfMonitor")
+	// The necessary config file required by health_monitor
+	var configFile = path.Join(basePath, "config", "config.toml")
+	HealthMonitorLog = path.Join(basePath, "monitor.log")
+	logFile, err = os.OpenFile(HealthMonitorLog, os.O_RDWR|os.O_CREATE|
+		os.O_APPEND, 0666)
+	utils.PLogError(err)
+	defer logFile.Close()
+	log.SetOutput(logFile)
+	if _, err = os.Stat(configFile); os.IsNotExist(err) {
+		log.Println("The config file is missing. Creating one with default settings")
+		setupConfig()
+		return
 	}
 
-	_, err := toml.DecodeFile(configFile, &ConfigVars) // Read the config file
+	_, err = toml.DecodeFile(configFile, &ConfigVars) // Read the config file
 	if err != nil {
-		fmt.Println(err)
-		fmt.Println("The config file is corupt. Do you want a remove all files" +
-			"and setup health_monitor again (y/N)?")
-		os.Exit(1) // TODO remove it with appropriate function
+		log.Println(err)
+		log.Println("The config file is corrupt, creating one with default values")
+		setupConfig()
+		return
 	}
+
+	// Update the values if relative path is used
+	ConfigVars.HomeDir = utils.GetPath(ConfigVars.HomeDir)
+	ConfigVars.DBFile = utils.GetPath(ConfigVars.DBFile)
+
+	dbInit()
+	logFile.Close()
 }

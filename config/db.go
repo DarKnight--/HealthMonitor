@@ -2,28 +2,26 @@ package config
 
 import (
 	"database/sql"
-	"log"
-	"os"
 
 	"github.com/mattn/go-sqlite3"
 
 	"health_monitor/utils"
 )
 
+// Database holds the active sqlite connection
+var Database *sql.DB
+
 func dbInit() {
 	var DBDriver string
-	file, err := os.OpenFile(Logs.HealthMonitorLog, os.O_RDWR|os.O_CREATE|
-		os.O_APPEND, 0666)
-	utils.PLogError(err)
-	defer file.Close()
-	log.SetOutput(file)
+	var err error
 	sql.Register(DBDriver, &sqlite3.SQLiteDriver{})
-	database, err := sql.Open(DBDriver, ConfigVars.DBFile)
+	Database, err = sql.Open(DBDriver, ConfigVars.DBFile)
 	if err != nil {
-		log.Println("Failed to create the handle")
+		utils.Perror("Failed to create the handle")
+		utils.Perror(err.Error())
 	}
-	if err2 := database.Ping(); err2 != nil {
-		log.Println("Failed to keep connection alive")
+	if err = Database.Ping(); err != nil {
+		utils.Perror("Failed to keep connection alive")
+		utils.Perror(err.Error())
 	}
-
 }
