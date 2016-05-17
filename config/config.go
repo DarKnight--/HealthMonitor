@@ -28,6 +28,7 @@ func init() {
 	// The necessary config file required by health_monitor
 	var configFile = path.Join(basePath, "config", "config.toml")
 	HealthMonitorLog = path.Join(basePath, "monitor.log")
+	os.Mkdir(basePath, 0777)
 	logFile, err = os.OpenFile(HealthMonitorLog, os.O_RDWR|os.O_CREATE|
 		os.O_APPEND, 0666)
 	utils.PLogError(err)

@@ -2,6 +2,7 @@ package config
 
 import (
 	"database/sql"
+	"os"
 
 	"github.com/mattn/go-sqlite3"
 
@@ -23,5 +24,9 @@ func dbInit() {
 	if err = Database.Ping(); err != nil {
 		utils.Perror("Failed to keep connection alive")
 		utils.Perror(err.Error())
+	}
+
+	if stats, _ := os.Stat(ConfigVars.DBFile); stats.Size() == 0 {
+		setupDB()
 	}
 }
