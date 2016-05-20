@@ -16,6 +16,7 @@ var (
 		HomeDir     string
 		DBFile      string
 		OWTFAddress string
+		Profile     string
 	}
 	// HealthMonitorLog holds the path to main log file
 	HealthMonitorLog string
