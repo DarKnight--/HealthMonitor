@@ -3,13 +3,19 @@ package live
 import (
 	"log"
 	"os"
+	"sync"
 	"time"
 
 	"health_monitor/config"
 	"health_monitor/utils"
 )
 
-var liveStatus utils.ModuleStatus
+// Status holds the status of the internet connectivity after the scan
+type Status struct {
+	Normal bool
+}
+
+var liveStatus Status
 
 func loadData() *Config {
 	var l Config
@@ -23,7 +29,8 @@ func loadData() *Config {
 }
 
 // Live is the driver function of this module for monitor
-func Live(status chan utils.Status) {
+func Live(status chan utils.Status, wg *sync.WaitGroup) {
+	defer wg.Done()
 	var live *Config
 	live = loadData()
 	log.SetOutput(os.Stdout)
@@ -65,6 +72,8 @@ func internetCheck(defaultCheck func() bool, live *Config) {
 	liveStatus.Normal = false
 }
 
-func GetLiveStatus() bool {
-	return liveStatus.Normal
+// GetLiveStatus function is getter funtion for the liveStatus to send status
+// of internet connectivity monitor.
+func GetLiveStatus() Status {
+	return liveStatus
 }
