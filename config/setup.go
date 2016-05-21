@@ -64,14 +64,16 @@ func setupLive() {
 
 func setupDisk() {
 	Database.Exec(`CREATE TABLE IF NOT EXISTS Disk(
-		profile			CHAR(50) PRIMARY KEY NOT NULL,
-		space_w_limit	INT NOT NULL,
-		space_d_limit	INT NOT NULL,
-		inode_w_limit	INT NOT NULL,
-		inode_d_limit	INT NOT NULL
+		profile				CHAR(50) PRIMARY KEY NOT NULL,
+		space_w_limit		INT NOT NULL,
+		space_d_limit		INT NOT NULL,
+		inode_w_limit		INT NOT NULL,
+		inode_d_limit		INT NOT NULL,
+		recheck_threshold 	INT NOT NULL,
+		disk				CHAR(500) NOT NULL
 		);`)
-
-	Database.Exec(`INSERT INTO Disk VALUES ("default", 2000, 1000, 2000, 1000);`)
+	Database.Exec(`INSERT INTO Disk VALUES ("default", 2000, 1000, 2000, 1000, 30000,
+			"/,` + os.Getenv("HOME") + `");`)
 }
 
 func setupDB() {
