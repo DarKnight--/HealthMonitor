@@ -1,8 +1,9 @@
 package live
 
 import (
-	"log"
 	"os"
+	"path"
+	"runtime"
 	"sync"
 	"time"
 
@@ -15,7 +16,10 @@ type Status struct {
 	Normal bool
 }
 
-var liveStatus Status
+var (
+	liveStatus Status
+	logFile    *os.File
+)
 
 func loadData() *Config {
 	var l Config
@@ -31,18 +35,36 @@ func loadData() *Config {
 // Live is the driver function of this module for monitor
 func Live(status chan utils.Status, wg *sync.WaitGroup) {
 	defer wg.Done()
-	var live *Config
+	var (
+		logFileName = path.Join(config.ConfigVars.HomeDir, "live.log")
+		err         error
+		live        *Config
+	)
+
+	logFile, err = os.OpenFile(logFileName, os.O_RDWR|os.O_CREATE|os.O_APPEND,
+		0666)
+	if err != nil {
+		utils.PLogError(err)
+	}
+	defer logFile.Close()
+
 	live = loadData()
-	log.SetOutput(os.Stdout)
+	utils.ModuleLogs(logFile, "Loaded "+live.profile+" profile successfully")
 	liveStatus.Normal = true
 	Default := live.checkByHEAD
+
+	utils.ModuleLogs(logFile, "Default scan mode set to checkByHead")
 	if live.checkByDNS() {
+		utils.ModuleLogs(logFile, "checkByDNS successful, setting it to default.")
 		Default = live.checkByDNS
 	}
 	if live.ping() {
+		utils.ModuleLogs(logFile, "Ping scan successful, setting it to default.")
 		Default = live.ping
 	}
 	Default()
+	printStatusLog()
+
 	for {
 		select {
 		case signal := <-status:
@@ -52,8 +74,16 @@ func Live(status chan utils.Status, wg *sync.WaitGroup) {
 
 		case <-time.After(time.Millisecond * time.Duration(live.recheckThreshold)):
 			internetCheck(Default, live)
+			printStatusLog()
+			runtime.Gosched()
 		}
 	}
+}
+
+// GetLiveStatus function is getter funtion for the liveStatus to send status
+// of internet connectivity monitor.
+func GetLiveStatus() Status {
+	return liveStatus
 }
 
 func internetCheck(defaultCheck func() bool, live *Config) {
@@ -72,8 +102,10 @@ func internetCheck(defaultCheck func() bool, live *Config) {
 	liveStatus.Normal = false
 }
 
-// GetLiveStatus function is getter funtion for the liveStatus to send status
-// of internet connectivity monitor.
-func GetLiveStatus() Status {
-	return liveStatus
+func printStatusLog() {
+	if liveStatus.Normal {
+		utils.ModuleLogs(logFile, "Scan successful, Status : Up")
+	} else {
+		utils.ModuleLogs(logFile, "Scan successful, Status : Down")
+	}
 }

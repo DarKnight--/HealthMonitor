@@ -6,7 +6,10 @@ import (
 	"os"
 	"path"
 	"strings"
+	"sync"
 )
+
+var mutex sync.Mutex
 
 // Status struct is used by monitor to send different modules signal to abort
 type Status struct {
@@ -43,4 +46,19 @@ func GetPath(paths string) string {
 		return paths
 	}
 	return path.Join(os.Getenv("HOME"), paths)
+}
+
+func ModuleLogs(filename *os.File, status string) {
+	mutex.Lock()
+	log.SetOutput(filename)
+	log.Println(status)
+	mutex.Unlock()
+}
+
+func ModuleError(filename *os.File, err string, description string) {
+	mutex.Lock()
+	log.SetOutput(filename)
+	log.Println("[!] Error occured : " + err)
+	log.Print(description)
+	mutex.Unlock()
 }
