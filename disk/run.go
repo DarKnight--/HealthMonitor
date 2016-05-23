@@ -1,8 +1,10 @@
 package disk
 
 import (
-	"log"
+	"fmt"
 	"os"
+	"path"
+	"runtime"
 	"sync"
 	"time"
 
@@ -11,16 +13,24 @@ import (
 )
 
 // Status holds the status of the disk after the scan
-type Status struct {
-	SpaceNormal  bool
-	SpaceWarning bool
-	InodeNormal  bool
-	InodeWarning bool
-}
+type (
+	PartitionStatus struct {
+		SpaceNormal  bool
+		SpaceWarning bool
+		InodeNormal  bool
+		InodeWarning bool
+	}
+	PartitionInfo struct {
+		Status PartitionStatus
+		Stats  PartitionStats
+		Const  PartitionConst
+	}
+)
 
 var (
-	diskStatus map[string]Status
-	partition  []string
+	diskInfo  map[string]PartitionInfo
+	partition []string
+	logFile   *os.File
 )
 
 func loadData() *Config {
@@ -38,10 +48,25 @@ func loadData() *Config {
 // Disk is driver funcion for the health_monitor to monitor disk
 func Disk(status chan utils.Status, wg *sync.WaitGroup) {
 	defer wg.Done()
-	var conf *Config
+	var (
+		logFileName = path.Join(config.ConfigVars.HomeDir, "disk.log")
+		err         error
+		conf        *Config
+	)
+
+	logFile, err = os.OpenFile(logFileName, os.O_RDWR|os.O_CREATE|os.O_APPEND,
+		0666)
+	if err != nil {
+		utils.PLogError(err)
+	}
+	defer logFile.Close()
+
 	conf = loadData()
-	log.SetOutput(os.Stdout)
-	partition = conf.getDisk()
+	utils.ModuleLogs(logFile, "Loaded "+conf.profile+" profile successfully")
+	partition = conf.GetDisk()
+	diskInfo = make(map[string]PartitionInfo)
+	loadPartitionConst()
+
 	for {
 		select {
 		case signal := <-status:
@@ -51,21 +76,36 @@ func Disk(status chan utils.Status, wg *sync.WaitGroup) {
 
 		case <-time.After(time.Millisecond * time.Duration(conf.recheckThreshold)):
 			checkDisk(conf)
+			runtime.Gosched()
 		}
 	}
 }
 
 func checkDisk(conf *Config) {
-	for _, path := range partition {
-		var tempData Status
-		tempData.InodeNormal, tempData.InodeWarning = conf.inodesInfo(path)
-		tempData.SpaceNormal, tempData.SpaceWarning = conf.diskInfo(path)
-		diskStatus["path"] = tempData
+	for _, directory := range partition {
+		var tempStatus PartitionStatus
+		var tempStat PartitionStats
+		tempStatus.InodeNormal, tempStatus.InodeWarning = conf.InodesInfo(directory, &tempStat)
+		tempStatus.SpaceNormal, tempStatus.SpaceWarning = conf.DiskInfo(directory, &tempStat)
+		diskInfo[directory] = PartitionInfo{tempStatus, tempStat, diskInfo[directory].Const}
+		//printStatusLog(directory, *conf)
+		utils.ModuleLogs(logFile, "Stats for mount "+directory+" :")
+		utils.ModuleLogs(logFile, fmt.Sprintf("Inodes: \t Total: %d \t Free: %d",
+			diskInfo[directory].Const.TotalInodes, tempStat.FreeInodes))
+		utils.ModuleLogs(logFile, fmt.Sprintf("Blocks: \t Total: %d \t Free: %d",
+			diskInfo[directory].Const.TotalBlocks, tempStat.FreeBlocks))
 	}
 }
 
 // GetDiskStatus function is getter funtion for the diskStatus to send status
 // of disk monitor.
-func GetDiskStatus() map[string]Status {
-	return diskStatus
+func GetDiskStatus() map[string]PartitionInfo {
+	return diskInfo
+}
+
+func loadPartitionConst() {
+	for _, directory := range partition {
+		diskInfo[directory] = PartitionInfo{PartitionStatus{}, PartitionStats{},
+			SetPartitionConst(directory)}
+	}
 }

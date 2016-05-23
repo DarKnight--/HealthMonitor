@@ -36,7 +36,7 @@ func PLogError(err error) {
 // PFileError is used to print the error when monitor do not have sufficient
 // file permission
 func PFileError(fileName string) {
-	log.Println("Unable to modify or create %s", fileName)
+	log.Println(fmt.Sprintf("Unable to modify or create %s", fileName))
 	log.Println("Please check the permission associated with the file")
 }
 
@@ -48,6 +48,7 @@ func GetPath(paths string) string {
 	return path.Join(os.Getenv("HOME"), paths)
 }
 
+// ModuleLogs is used to write the logs of the module in the @filename file
 func ModuleLogs(filename *os.File, status string) {
 	mutex.Lock()
 	log.SetOutput(filename)
@@ -55,6 +56,7 @@ func ModuleLogs(filename *os.File, status string) {
 	mutex.Unlock()
 }
 
+// ModuleError is used to log the errors of the module in the @filename file
 func ModuleError(filename *os.File, err string, description string) {
 	mutex.Lock()
 	log.SetOutput(filename)
