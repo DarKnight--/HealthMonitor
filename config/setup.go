@@ -72,7 +72,7 @@ func setupDisk() {
 		recheck_threshold 	INT NOT NULL,
 		disk				CHAR(500) NOT NULL
 		);`)
-	Database.Exec(`INSERT INTO Disk VALUES ("default", 2000, 1000, 2000, 1000, 30000,
+	Database.Exec(`INSERT INTO Disk VALUES ("default", 2000, 1000, 2000, 1000, 5000,
 			"/,` + os.Getenv("HOME") + `");`)
 }
 

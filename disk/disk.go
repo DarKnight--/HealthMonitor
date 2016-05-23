@@ -1,15 +1,14 @@
 package disk
 
+// It will work only on linux
+
 import (
-	"fmt"
 	"strings"
 	"syscall"
-
-	"health_monitor/utils"
 )
 
-// Config holds all the necessary parameters required by the module
 type (
+	// Config holds all the necessary parameters required by the module
 	Config struct {
 		profile           string
 		spaceWarningLimit int
@@ -19,23 +18,29 @@ type (
 		recheckThreshold  int
 		disks             string
 	}
+
+	// PartitionStats holds the data about the remaining inodes and blocks of the
+	// mount points
 	PartitionStats struct {
 		FreeInodes int
 		FreeBlocks int
 	}
+	// PartitionConst holds the constant data of the mount point
 	PartitionConst struct {
 		TotalInodes int
 		TotalBlocks int
 	}
 )
 
-func (conf Config) InodesInfo(directory string, pStats *PartitionStats) (bool, bool) { // It will work only on linux
+// InodesInfo will return the status of the inodes availabe based on the
+// Warning and danger limit set in the config.
+// -1 will refer to error, 1 for above warning limit, 2 & 3 for warning and
+// danger limit respectively
+func (conf Config) InodesInfo(directory string, pStats *PartitionStats) int {
 	var stat syscall.Statfs_t
 	err := syscall.Statfs(directory, &stat)
 	if err != nil {
-		utils.Perror(fmt.Sprintf("Unable to retrieve disk information about %s",
-			directory))
-		return false, false
+		return -1
 	}
 
 	pStats.FreeInodes = int(stat.Ffree)
@@ -44,13 +49,15 @@ func (conf Config) InodesInfo(directory string, pStats *PartitionStats) (bool, b
 		conf.inodeDangerLimit)
 }
 
-func (conf Config) DiskInfo(directory string, pStats *PartitionStats) (bool, bool) {
+// SpaceInfo will return the status of the space availabe based on the
+// Warning and danger limit set in the config.
+// -1 will refer to error, 1 for above warning limit, 2 & 3 for warning and
+// danger limit respectively
+func (conf Config) SpaceInfo(directory string, pStats *PartitionStats) int {
 	var stat syscall.Statfs_t
 	err := syscall.Statfs(directory, &stat)
 	if err != nil {
-		utils.Perror(fmt.Sprintf("Unable to retrieve disk information about %s",
-			directory))
-		return false, false
+		return -1
 	}
 
 	pStats.FreeBlocks = int(stat.Bfree)
@@ -59,28 +66,30 @@ func (conf Config) DiskInfo(directory string, pStats *PartitionStats) (bool, boo
 		conf.spaceDangerLimit)
 }
 
+// GetDisk will return all the mount points set to monitor
 func (conf Config) GetDisk() []string {
 	return strings.Split(conf.disks, ",")
 }
 
-func compareLimit(value int, wLimit int, dLimit int) (bool, bool) {
+func compareLimit(value int, wLimit int, dLimit int) int {
 	if value > wLimit { // disk is safe and has enough space
-		return true, false
+		return 1
 	}
 
 	if value > dLimit { // Warning limit reached
-		return true, true
+		return 2
 	}
 
-	return false, true // disk is running out of inodes, signal to free them
+	return 3 // disk is running out of inodes, signal to free them
 }
 
+// SetPartitionConst will return the TotalInodes and TotalBlocks for the given
+// mount point
 func SetPartitionConst(directory string) PartitionConst {
 	var stat syscall.Statfs_t
 	err := syscall.Statfs(directory, &stat)
 	if err != nil {
-		utils.Perror(fmt.Sprintf("Unable to retrieve disk information about %s",
-			directory))
+		return PartitionConst{}
 	}
 	var partitionConst PartitionConst
 	partitionConst.TotalBlocks = int(stat.Blocks)

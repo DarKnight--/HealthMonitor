@@ -12,14 +12,14 @@ import (
 	"health_monitor/utils"
 )
 
-// Status holds the status of the disk after the scan
 type (
+	// PartitionStatus holds the status of the partition after the scan
 	PartitionStatus struct {
-		SpaceNormal  bool
-		SpaceWarning bool
-		InodeNormal  bool
-		InodeWarning bool
+		Inode int
+		Space int
 	}
+	// PartitionInfo holds the information of partition's status, contants and
+	// stats after the scan
 	PartitionInfo struct {
 		Status PartitionStatus
 		Stats  PartitionStats
@@ -66,6 +66,7 @@ func Disk(status chan utils.Status, wg *sync.WaitGroup) {
 	partition = conf.GetDisk()
 	diskInfo = make(map[string]PartitionInfo)
 	loadPartitionConst()
+	checkDisk(conf)
 
 	for {
 		select {
@@ -85,10 +86,11 @@ func checkDisk(conf *Config) {
 	for _, directory := range partition {
 		var tempStatus PartitionStatus
 		var tempStat PartitionStats
-		tempStatus.InodeNormal, tempStatus.InodeWarning = conf.InodesInfo(directory, &tempStat)
-		tempStatus.SpaceNormal, tempStatus.SpaceWarning = conf.DiskInfo(directory, &tempStat)
+		tempStatus.Inode = conf.InodesInfo(directory, &tempStat)
+		tempStatus.Space = conf.SpaceInfo(directory, &tempStat)
 		diskInfo[directory] = PartitionInfo{tempStatus, tempStat, diskInfo[directory].Const}
-		//printStatusLog(directory, *conf)
+		printStatusLog(directory, tempStatus.Inode, "inode")
+		printStatusLog(directory, tempStatus.Space, "space")
 		utils.ModuleLogs(logFile, "Stats for mount "+directory+" :")
 		utils.ModuleLogs(logFile, fmt.Sprintf("Inodes: \t Total: %d \t Free: %d",
 			diskInfo[directory].Const.TotalInodes, tempStat.FreeInodes))
@@ -107,5 +109,25 @@ func loadPartitionConst() {
 	for _, directory := range partition {
 		diskInfo[directory] = PartitionInfo{PartitionStatus{}, PartitionStats{},
 			SetPartitionConst(directory)}
+	}
+}
+
+func printStatusLog(directory string, status int, types string) {
+	switch status {
+	case -1:
+		utils.ModuleError(logFile, fmt.Sprintf("Unable to retrieve the informtaion about %s mount point",
+			directory), "Check the mount point provided")
+
+	case 1:
+		utils.ModuleLogs(logFile, fmt.Sprintf("Mount point %s %s status : OK",
+			directory, types))
+
+	case 2:
+		utils.ModuleLogs(logFile, fmt.Sprintf("Mount point %s %s status : WARN",
+			directory, types))
+
+	case 3:
+		utils.ModuleLogs(logFile, fmt.Sprintf("Mount point %s %s status : Danger",
+			directory, types))
 	}
 }

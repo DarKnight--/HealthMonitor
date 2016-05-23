@@ -24,7 +24,8 @@ type Config struct {
 
 var connection http.Client
 
-func (l Config) checkByHEAD() bool {
+// CheckByHEAD will check the internet connectivity by sending a head request
+func (l Config) CheckByHEAD() bool {
 	resp, err := connection.Head(l.headURL)
 	if err != nil {
 		return false
@@ -33,8 +34,9 @@ func (l Config) checkByHEAD() bool {
 	return true
 }
 
+// CheckByDNS check the internet connectivity by resolving the host
 // TODO check for dnslookup time, if fooled by local dns server
-func (l Config) checkByDNS() bool {
+func (l Config) CheckByDNS() bool {
 	_, err := net.LookupHost("google.com")
 	if err != nil {
 		log.Println(err)
@@ -43,8 +45,8 @@ func (l Config) checkByDNS() bool {
 	return true
 }
 
-/* The function is used to send ping request.*/
-func (l Config) ping() bool {
+// Ping check the connectivity by sending ICMP packet to the target
+func (l Config) Ping() bool {
 	command := exec.Command("/bin/sh", "-c", "sudo ping "+l.pingAddress+
 		" -c 1 -W "+strconv.Itoa(l.pingThreshold/1000))
 	var waitStatus syscall.WaitStatus

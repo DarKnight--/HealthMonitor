@@ -51,16 +51,16 @@ func Live(status chan utils.Status, wg *sync.WaitGroup) {
 	live = loadData()
 	utils.ModuleLogs(logFile, "Loaded "+live.profile+" profile successfully")
 	liveStatus.Normal = true
-	Default := live.checkByHEAD
+	Default := live.CheckByHEAD
 
 	utils.ModuleLogs(logFile, "Default scan mode set to checkByHead")
-	if live.checkByDNS() {
+	if live.CheckByDNS() {
 		utils.ModuleLogs(logFile, "checkByDNS successful, setting it to default.")
-		Default = live.checkByDNS
+		Default = live.CheckByDNS
 	}
-	if live.ping() {
+	if live.Ping() {
 		utils.ModuleLogs(logFile, "Ping scan successful, setting it to default.")
-		Default = live.ping
+		Default = live.Ping
 	}
 	Default()
 	printStatusLog()
@@ -94,7 +94,7 @@ func internetCheck(defaultCheck func() bool, live *Config) {
 
 	for i := 0; i < 3; i++ {
 		time.Sleep(time.Duration(live.recheckThreshold) * time.Millisecond / 5)
-		if live.checkByHEAD() {
+		if live.CheckByHEAD() {
 			liveStatus.Normal = true
 			return
 		}
