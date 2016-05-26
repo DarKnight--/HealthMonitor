@@ -20,10 +20,12 @@ type (
 // GetTarget function calls to the OWTF api to recieve all the targets in the
 // OWTF database
 func GetTarget() ([]Target, error) {
-	var targets []Target
-	var objmap map[string]*json.RawMessage
-	var err error
-	var path = "/api/targets/search/"
+	const path = "/api/targets/search/"
+	var (
+		targets []Target
+		objmap  map[string]*json.RawMessage
+		err     error
+	)
 	// get all the tagrget json data from OWTF target endnode
 	var response *http.Response
 	response, err = http.Get(config.ConfigVars.OWTFAddress + path)
@@ -55,13 +57,14 @@ func GetTarget() ([]Target, error) {
 // CheckTarget checks whether the target in the database actually under the
 // scan.
 func CheckTarget(target string) bool {
-	var path = "/api/worklist/search?target_url="
-	var err error
-	//var objmap map[string]*json.RawMessage
-	var response *http.Response
-	var data struct {
-		recordsFiltered int `json: records_filtered`
-	}
+	const path = "/api/worklist/search?target_url="
+	var (
+		err      error
+		response *http.Response
+		data     struct {
+			RecordsFiltered int `json:"records_filtered"`
+		}
+	)
 
 	response, err = http.Get(config.ConfigVars.OWTFAddress + path + target)
 	if err != nil {
@@ -83,7 +86,7 @@ func CheckTarget(target string) bool {
 		return false
 	}
 
-	if data.recordsFiltered > 0 {
+	if data.RecordsFiltered > 0 {
 		return true
 	}
 

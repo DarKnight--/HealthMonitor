@@ -25,7 +25,7 @@ var (
 
 func init() {
 	var err error
-	var basePath = path.Join(os.Getenv("HOME"), ".owtfMonitor")
+	var basePath = path.Join(os.Getenv("HOME"), ".owtf_monitor")
 	// The necessary config file required by health_monitor
 	var configFile = path.Join(basePath, "config", "config.toml")
 	HealthMonitorLog = path.Join(basePath, "monitor.log")

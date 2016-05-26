@@ -10,10 +10,10 @@ var config = `# Config file for OWTF-HealthMonitor
 # Config file should contain absolute paths or file relative to $HOME directory
 
 # HomeDir is the directory where all the logs and config file will reside
-HomeDir = ".owtfMonitor/"
+HomeDir = ".owtf_monitor/"
 
 # DBFile is the sqlite database file absolute path
-DBFile = ".owtfMonitor/config/monitor.db"
+DBFile = ".owtf_monitor/config/monitor.db"
 
 # OWTFAddress is the address of OWTF API
 OWTFAddress = "http://127.0.0.1:8009"
@@ -24,7 +24,7 @@ Profile = "default"
 `
 
 func setupConfig() {
-	var baseDir = path.Join(os.Getenv("HOME"), ".owtfMonitor")
+	var baseDir = path.Join(os.Getenv("HOME"), ".owtf_monitor")
 	var configDir = path.Join(baseDir, "config")
 	var configFile = path.Join(configDir, "config.toml")
 
