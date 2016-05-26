@@ -12,3 +12,5 @@ Now create a folder for GO projects and add it to $GOPATH. The directory structu
   \bin
 ```
 The `health_monitor` must be in **src** folder. Currently do not use `go get` to fetch the project.
+
+**The logs for the monitor are stored in `$HOME/.owtf_monitor`. Untill no web ui or CLI is completed, the working can be monitored by the logs.**
