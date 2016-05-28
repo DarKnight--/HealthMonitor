@@ -1,6 +1,7 @@
 package disk
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path"
@@ -15,15 +16,15 @@ import (
 type (
 	// PartitionStatus holds the status of the partition after the scan
 	PartitionStatus struct {
-		Inode int
-		Space int
+		Inode int `json:"inode"`
+		Space int `json:"space"`
 	}
 	// PartitionInfo holds the information of partition's status, contants and
 	// stats after the scan
 	PartitionInfo struct {
-		Status PartitionStatus
-		Stats  PartitionStats
-		Const  PartitionConst
+		Status PartitionStatus `json:"partition_status"`
+		Stats  PartitionStats  `json:"partition_stats"`
+		Const  PartitionConst  `json:"partition_consts"`
 	}
 )
 
@@ -99,10 +100,19 @@ func checkDisk(conf *Config) {
 	}
 }
 
-// GetDiskStatus function is getter funtion for the diskStatus to send status
+// GetStatus function is getter funtion for the diskStatus to send status
 // of disk monitor.
-func GetDiskStatus() map[string]PartitionInfo {
+func GetStatus() map[string]PartitionInfo {
 	return diskInfo
+}
+
+// GetStatusJSON function retuns the json string of the diskInfo struct
+func GetStatusJSON() []byte {
+	data, err := json.Marshal(diskInfo)
+	if err != nil {
+		utils.ModuleError(logFile, err.Error(), "[!] Check the diskStatus struct")
+	}
+	return data
 }
 
 func loadPartitionConst() {

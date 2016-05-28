@@ -1,6 +1,7 @@
 package live
 
 import (
+	"encoding/json"
 	"os"
 	"path"
 	"runtime"
@@ -13,7 +14,7 @@ import (
 
 // Status holds the status of the internet connectivity after the scan
 type Status struct {
-	Normal bool
+	Normal bool `json:"normal"`
 }
 
 var (
@@ -80,10 +81,19 @@ func Live(status chan utils.Status, wg *sync.WaitGroup) {
 	}
 }
 
-// GetLiveStatus function is getter funtion for the liveStatus to send status
+// GetStatus function is getter funtion for the liveStatus to send status
 // of internet connectivity monitor.
-func GetLiveStatus() Status {
+func GetStatus() Status {
 	return liveStatus
+}
+
+// GetStatusJSON function retuns the json string of the liveStatus struct
+func GetStatusJSON() []byte {
+	data, err := json.Marshal(liveStatus)
+	if err != nil {
+		utils.ModuleError(logFile, err.Error(), "[!] Check the liveStatus struct")
+	}
+	return data
 }
 
 func internetCheck(defaultCheck func() bool, live *Config) {

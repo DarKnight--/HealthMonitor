@@ -22,13 +22,13 @@ type (
 	// PartitionStats holds the data about the remaining inodes and blocks of the
 	// mount points
 	PartitionStats struct {
-		FreeInodes int
-		FreeBlocks int
+		FreeInodes int `json:"free_nodes"`
+		FreeBlocks int `json:"free_blocks"`
 	}
 	// PartitionConst holds the constant data of the mount point
 	PartitionConst struct {
-		TotalInodes int
-		TotalBlocks int
+		TotalInodes int `json:"total_inodes"`
+		TotalBlocks int `json:"total_blocks"`
 	}
 )
 
