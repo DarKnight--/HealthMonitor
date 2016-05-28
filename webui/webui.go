@@ -9,6 +9,8 @@ import (
 	"strings"
 
 	"github.com/valyala/fasthttp"
+
+	"health_monitor/api"
 )
 
 var (
@@ -31,6 +33,8 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 		switch tempPath[1] {
 		case "static":
 			staticHandler(ctx, tempPath[2])
+		case "module":
+			statusHandler(ctx, tempPath[2])
 		default:
 			ctx.Error("not found", fasthttp.StatusNotFound)
 		}
@@ -54,6 +58,15 @@ func staticHandler(ctx *fasthttp.RequestCtx, filePath string) {
 	filePath = fmt.Sprintf(staticRoot, filePath)
 	if info, err := os.Stat(filePath); err == nil && !info.IsDir() {
 		fasthttp.ServeFile(ctx, filePath)
+		return
+	}
+	ctx.NotFound()
+}
+
+func statusHandler(ctx *fasthttp.RequestCtx, module string) {
+	if status, ok := api.StatusFunc[module]; ok {
+		ctx.SetContentType("application/json")
+		ctx.SetBody(status())
 		return
 	}
 	ctx.NotFound()
