@@ -2,11 +2,10 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"sync"
 
 	_ "health_monitor/api"
-	"health_monitor/config"
+	_ "health_monitor/config"
 	"health_monitor/disk"
 	"health_monitor/live"
 	"health_monitor/utils"
@@ -33,9 +32,7 @@ func main() {
 	flag.Parse()
 
 	go webui.RunServer("8009")
-	fmt.Println(*flags.Quite)
 
-	config.Database.Ping()
 	signal := make(chan utils.Status)
 	wg.Add(1)
 	go live.Live(signal, &wg)
