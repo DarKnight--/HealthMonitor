@@ -1,0 +1,5 @@
+<div>
+	{{range $index, $element := .}}
+		<p>Mount on: {{$index}} {{percent .Stats.FreeBlocks .Const.TotalBlocks}}% free </p>
+	{{end}}
+</div>

@@ -154,3 +154,30 @@ body{
 .panel-body{
     height: 200px;
 }
+
+.led-red {
+    margin: 40%;
+    width: 15px;
+    height: 15px;
+    background-color: #e31509;
+    border-radius: 50%;
+    box-shadow: #a32a26 0 -1px 7px 1px, inset #cb1d0a 0 -1px 9px, #ff2d4d 0 2px 12px;
+}
+
+.led-yellow {
+    margin: 40%;
+    width: 15px;
+    height: 15px;
+    background-color: #A90;
+    border-radius: 50%;
+    box-shadow: #747617 0 -1px 7px 1px, inset #aea620 0 -1px 9px, #DD0 0 2px 12px;
+}
+
+.led-green {
+    margin: 40%;
+    width: 15px;
+    height: 15px;
+    background-color: #99e100;
+    border-radius: 50%;
+    box-shadow: #4d962b 0 -1px 7px 1px, inset #3cbf15 0 -1px 9px, #2edd29 0 2px 12px;
+}

@@ -35,6 +35,8 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 			staticHandler(ctx, tempPath[2])
 		case "module":
 			statusHandler(ctx, tempPath[2])
+		case "template":
+			templateHandler(ctx, tempPath[2])
 		default:
 			ctx.Error("not found", fasthttp.StatusNotFound)
 		}

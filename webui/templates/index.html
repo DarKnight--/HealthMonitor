@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -42,132 +42,237 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12 col-sm-6 col-lg-4">
-                <div class="panel panel-default">
+                <div class="panel panel-default" id="module-1">
                     <div class="panel-heading col-sm-12">
-                        <h4 class="col-sm-8">Network Connectivity</h4>
+                        <div class="col-sm-2"><div class="led-red" id="led-1"></div></div>
+                        <h4 class="col-sm-6">Network Status</h4>
                         <div class="onoffswitch col-sm-4 pull-right">
-                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch1" checked>
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch1" checked onclick="toggleModule(this, '1')">
                             <label class="onoffswitch-label" for="myonoffswitch1">
                                 <span class="onoffswitch-inner"></span>
                                 <span class="onoffswitch-switch"></span>
                             </label>
                         </div>
-                  </div>
-                  <div class="panel-body" style="background: lightgrey"></div>
+                    </div>
+                    <a data-toggle="modal" href="network.html" data-target="#myModal">
+                        <div class="panel-body" style="background: lightgrey" id="off-1" hidden></div>
+                        <div class="panel-body" id="on-1">
+                            <div id="status-1">
+                                <p style="font-size: medium">Status: </p>
+                            </div>
+                        </div>
+                    </a>
                 </div>
+                </a>
             </div>
             <div class="col-xs-12 col-sm-6 col-lg-4">
-                <div class="panel panel-default">
+                <div class="panel panel-default" id="module-2">
                     <div class="panel-heading col-sm-12">
-                        <h4 class="col-sm-8">Target Connectivity</h4>
+                        <div class="col-sm-2"><div class="led-red" id="led-2"></div></div>
+                        <h4 class="col-sm-6">Target Status</h4>
                         <div class="onoffswitch col-sm-4 pull-right">
-                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch2" checked>
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch2" checked onclick="toggleModule(this,'2')">
                             <label class="onoffswitch-label" for="myonoffswitch2">
                                 <span class="onoffswitch-inner"></span>
                                 <span class="onoffswitch-switch"></span>
                             </label>
                         </div>
                   </div>
-                  <div class="panel-body">Monitor module result overview and status with color for quick view</div>
+                    <a data-toggle="modal" href="target.html" data-target="#myModal">
+                  <div class="panel-body" style="background: lightgrey" id="off-2" hidden></div>
+                    <div class="panel-body" id="on-2">
+                        <div id="status-2">
+                            <p style="font-size: medium">Status: </p>
+                        </div>
+                    </div>
+                        </a>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 col-lg-4">
-                <div class="panel panel-default">
+                <div class="panel panel-default" id="module-3">
                     <div class="panel-heading col-sm-12">
-                        <h4 class="col-sm-8">Disk space</h4>
+                        <div class="col-sm-2"><div class="led-red" id="led-3"></div></div>
+                        <h4 class="col-sm-6">Disk space</h4>
                         <div class="onoffswitch col-sm-4 pull-right">
-                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch3" checked>
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch3" checked onclick="toggleModule(this, '3')">
                             <label class="onoffswitch-label" for="myonoffswitch3">
                                 <span class="onoffswitch-inner"></span>
                                 <span class="onoffswitch-switch"></span>
                             </label>
                         </div>
                   </div>
-                  <div class="panel-body">Monitor module result overview and status with color for quick view</div>
+                    <a data-toggle="modal" href="disk.html" data-target="#myModal">
+                    <div class="panel-body" style="background: lightgrey" id="off-3" hidden></div>
+                    <div class="panel-body" id="on-3">
+                        <div id="status-3">
+                            <p style="font-size: medium">Status: </p>
+                        </div>
+                    </div>
+                        </a>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 col-lg-4">
-                <div class="panel panel-default">
+                <div class="panel panel-default" id="module-4">
                     <div class="panel-heading col-sm-12">
-                        <h4 class="col-sm-8">Inode usage</h4>
+                        <div class="col-sm-2"><div class="led-red" id="led-4"></div></div>
+                        <h4 class="col-sm-6">Inode usage</h4>
                         <div class="onoffswitch col-sm-4 pull-right">
-                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch4" checked>
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch4" checked onclick="toggleModule(this, '4')">
                             <label class="onoffswitch-label" for="myonoffswitch4">
                                 <span class="onoffswitch-inner"></span>
                                 <span class="onoffswitch-switch"></span>
                             </label>
                         </div>
                   </div>
-                  <div class="panel-body">Monitor module result overview and status with color for quick view</div>
+                    <a data-toggle="modal" href="inode.html" data-target="#myModal">
+                 <div class="panel-body" style="background: lightgrey" id="off-4" hidden></div>
+                    <div class="panel-body" id="on-4">
+                        <div id="status-4">
+                            <p style="font-size: medium">Status: </p>
+                        </div>
+                    </div>
+                        </a>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 col-lg-4">
-                <div class="panel panel-default">
+                <div class="panel panel-default" id="module-5">
                     <div class="panel-heading col-sm-12">
-                        <h4 class="col-sm-8">Ram Usage</h4>
+                        <div class="col-sm-2"><div class="led-red" id="led-5"></div></div>
+                        <h4 class="col-sm-6">Ram Usage</h4>
                         <div class="onoffswitch col-sm-4 pull-right">
-                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch5" checked>
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch5" checked onclick="toggleModule(this, '5')">
                             <label class="onoffswitch-label" for="myonoffswitch5">
                                 <span class="onoffswitch-inner"></span>
                                 <span class="onoffswitch-switch"></span>
                             </label>
                         </div>
                   </div>
-                    <div class="panel-body" style="background: lightgrey"></div>
+                    <a data-toggle="modal" href="ram.html" data-target="#myModal">
+                  <div class="panel-body" style="background: lightgrey" id="off-5" hidden></div>
+                    <div class="panel-body" id="on-5">
+                        <div id="status-5">
+                            <p style="font-size: medium">Status: </p>
+                        </div>
+                    </div>
+                        </a>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 col-lg-4">
-                <div class="panel panel-default">
+                <div class="panel panel-default" id="module-6">
                     <div class="panel-heading col-sm-12">
-                        <h4 class="col-sm-8">CPU usage</h4>
+                        <div class="col-sm-2"><div class="led-red" id="led-6"></div></div>
+                        <h4 class="col-sm-6">CPU usage</h4>
                         <div class="onoffswitch col-sm-4 pull-right">
-                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch6" checked>
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch6" checked onclick="toggleModule(this, '6')">
                             <label class="onoffswitch-label" for="myonoffswitch6">
                                 <span class="onoffswitch-inner"></span>
                                 <span class="onoffswitch-switch"></span>
                             </label>
                         </div>
                   </div>
-                    <div class="panel-body" style="background: lightgrey"></div>
+                    <a data-toggle="modal" href="cpu.html" data-target="#myModal">
+                  <div class="panel-body" style="background: lightgrey" id="off-6" hidden></div>
+                    <div class="panel-body" id="on-6">
+                        <div id="status-6">
+                            <p style="font-size: medium">Status: </p>
+                        </div>
+                    </div>
+                        </a>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 col-lg-4">
-                <div class="panel panel-default">
+                <div class="panel panel-default" id="module-7">
                     <div class="panel-heading col-sm-12">
-                        <h4 class="col-sm-8">Banwidth Usage</h4>
+                        <div class="col-sm-2"><div class="led-red" id="led-7"></div></div>
+                        <h4 class="col-sm-6">Banwidth Usage</h4>
                         <div class="onoffswitch col-sm-4 pull-right">
-                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch7" checked>
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch7" checked onclick="toggleModule(this, '7')">
                             <label class="onoffswitch-label" for="myonoffswitch7">
                                 <span class="onoffswitch-inner"></span>
                                 <span class="onoffswitch-switch"></span>
                             </label>
                         </div>
                   </div>
-                  <div class="panel-body">Monitor module result overview and status with color for quick view</div>
+                    <a data-toggle="modal" href="bandwidth.html" data-target="#myModal">
+                <div class="panel-body" style="background: lightgrey" id="off-7" hidden></div>
+                    <div class="panel-body" id="on-7">
+                        <div id="status-7">
+                            <p style="font-size: medium">Status: </p>
+                        </div>
+                    </div>
+                        </a>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 col-lg-4">
-                <div class="panel panel-default">
+                <div class="panel panel-default" id="module-8">
                     <div class="panel-heading col-sm-12">
-                        <h4 class="col-sm-8">Database metrics</h4>
+                        <div class="col-sm-2"><div class="led-red" id="led-8"></div></div>
+                        <h4 class="col-sm-6">Database metrics</h4>
                         <div class="onoffswitch col-sm-4 pull-right">
-                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch8" checked>
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch8" checked onclick="toggleModule(this, '8')">
                             <label class="onoffswitch-label" for="myonoffswitch8">
                                 <span class="onoffswitch-inner"></span>
                                 <span class="onoffswitch-switch"></span>
                             </label>
                         </div>
                   </div>
-                  <div class="panel-body">Monitor module result overview and status with color for quick view</div>
+                    <a data-toggle="modal" href="database.html" data-target="#myModal">
+                <div class="panel-body" style="background: lightgrey" id="off-8" hidden></div>
+                    <div class="panel-body" id="on-8">
+                        <div id="status-8">
+                            <p style="font-size: medium">Status: </p>
+                        </div>
+                    </div>
+                        </a>
                 </div>
             </div>
-
+             <!-- Modal -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    </div> <!-- /.modal-content -->
+                </div> <!-- /.modal-dialog -->
+            </div> <!-- /.modal -->
         </div>
     </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../static/js/jquery-1.12.4.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="../static/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            updateDisk();
+        });
+        
+        function toggleModule(checkbox, module) {
+            var selectedModule = $("#module-"+module);
+            if(checkbox.checked){
+                selectedModule.find("#led-"+module).show();
+                selectedModule.find("#on-"+module).show();
+                selectedModule.find("#off-"+module).hide();
+                return;
+            }
+            selectedModule.find("#led-"+module).hide();
+            selectedModule.find("#on-"+module).hide();
+            selectedModule.find("#off-"+module).show();
+        }
+// Make this function generic to all module data
+       updateDisk = function () {
+                   $.ajax({
+                        type: 'GET',
+                        url: '/template/disk-status',
+                        data: { get_param: 'value' },
+                        dataType: 'text',
+                        success: function (data) {
+                            console.log(data);
+                            $("#on-3").empty();
+                            $("#on-3").append(data);
+                            setTimeout(updateDisk, 5000);
+
+                        }
+                    });
+                };
+    </script>
 </body>
 </html>
