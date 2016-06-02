@@ -28,3 +28,19 @@ func diskTemplateHandler(ctx *fasthttp.RequestCtx) {
 		fmt.Print("template executing error: ", err)
 	}
 }
+
+func inodeTemplateHandler(ctx *fasthttp.RequestCtx) {
+	tmpl := fmt.Sprintf(templateRoot, "inode-status")
+	funcMap := template.FuncMap{"percent": percent}
+	t, err := template.New("inode-status").Funcs(funcMap).ParseFiles(tmpl)
+	if err != nil {
+		fmt.Print("template parsing error: ", err)
+		ctx.NotFound()
+		return
+	}
+
+	err = t.Execute(ctx, disk.GetStatus())
+	if err != nil {
+		fmt.Print("template executing error: ", err)
+	}
+}

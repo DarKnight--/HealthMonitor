@@ -68,7 +68,6 @@ func staticHandler(ctx *fasthttp.RequestCtx, filePath string) {
 func statusHandler(ctx *fasthttp.RequestCtx, module string) {
 	if status, ok := api.StatusFunc[module]; ok {
 		ctx.SetContentType("application/json")
-		fmt.Println(string(status()))
 		ctx.SetBody(status())
 		return
 	}
@@ -79,6 +78,8 @@ func templateHandler(ctx *fasthttp.RequestCtx, tmpl string) {
 	switch tmpl {
 	case "disk-status":
 		diskTemplateHandler(ctx)
+	case "inode-status":
+		inodeTemplateHandler(ctx)
 	default:
 		ctx.NotFound()
 	}
