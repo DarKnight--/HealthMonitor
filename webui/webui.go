@@ -33,10 +33,12 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 		switch tempPath[1] {
 		case "static":
 			staticHandler(ctx, tempPath[2])
-		case "module":
+		case "module": // Serves the json data of the modules.
 			statusHandler(ctx, tempPath[2])
-		case "template":
+		case "template": // Serves the template for short description
 			templateHandler(ctx, tempPath[2])
+		case "description": //Serves the page for serving modal
+			render(ctx, tempPath[2])
 		default:
 			ctx.Error("not found", fasthttp.StatusNotFound)
 		}
