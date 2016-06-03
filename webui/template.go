@@ -13,8 +13,8 @@ func percent(a int, b int) int {
 	return (a * 100) / b
 }
 
-func diskTemplateHandler(ctx *fasthttp.RequestCtx) {
-	tmpl := fmt.Sprintf(templateRoot, "disk-status")
+func diskTemplateHandler(ctx *fasthttp.RequestCtx, tmpl string) {
+	tmpl = fmt.Sprintf(templateRoot, "disk-status")
 	funcMap := template.FuncMap{"percent": percent}
 	t, err := template.New("disk-status").Funcs(funcMap).ParseFiles(tmpl)
 	if err != nil {
@@ -29,8 +29,8 @@ func diskTemplateHandler(ctx *fasthttp.RequestCtx) {
 	}
 }
 
-func inodeTemplateHandler(ctx *fasthttp.RequestCtx) {
-	tmpl := fmt.Sprintf(templateRoot, "inode-status")
+func inodeTemplateHandler(ctx *fasthttp.RequestCtx, tmpl string) {
+	tmpl = fmt.Sprintf(templateRoot, "inode-status")
 	funcMap := template.FuncMap{"percent": percent}
 	t, err := template.New("inode-status").Funcs(funcMap).ParseFiles(tmpl)
 	if err != nil {

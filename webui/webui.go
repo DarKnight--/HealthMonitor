@@ -77,10 +77,11 @@ func statusHandler(ctx *fasthttp.RequestCtx, module string) {
 func templateHandler(ctx *fasthttp.RequestCtx, tmpl string) {
 	switch tmpl {
 	case "disk-status":
-		diskTemplateHandler(ctx)
+		diskTemplateHandler(ctx, tmpl)
 	case "inode-status":
-		inodeTemplateHandler(ctx)
+		inodeTemplateHandler(ctx, tmpl)
 	default:
 		ctx.NotFound()
 	}
+	ctx.Response.Header.Add("module", tmpl)
 }
