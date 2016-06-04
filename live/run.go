@@ -28,6 +28,7 @@ func loadData() *Config {
 		setup.ConfigVars.Profile).Scan(&l.Profile, &l.HeadURL, &l.RecheckThreshold,
 		&l.PingThreshold, &l.HeadThreshold, &l.PingAddress, &l.PingProtocol)
 	if err != nil {
+		utils.ModuleError(logFile, "Error while quering from databse", err.Error())
 		return nil // TODO better to have fallback call to default profile
 	}
 	return &l

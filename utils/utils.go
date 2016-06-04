@@ -28,7 +28,7 @@ func PLogError(err error) {
 		fmt.Println("Error in opening log file")
 		fmt.Println(err.Error())
 		fmt.Println("OWTF Health Monitor will now exit. Run the setup script to" +
-			"set up the log and configuration filess")
+			"set up the log and configuration files")
 		os.Exit(1)
 	}
 }

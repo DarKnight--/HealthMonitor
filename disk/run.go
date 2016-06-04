@@ -41,7 +41,7 @@ func loadData() *Config {
 		&conf.SpaceDangerLimit, &conf.InodeWarningLimit, &conf.InodeDangerLimit,
 		&conf.RecheckThreshold, &conf.Disks)
 	if err != nil {
-		fmt.Println(err)
+		utils.ModuleError(logFile, "Error while quering from databse", err.Error())
 		return nil // TODO better to have fallback call to default profile
 	}
 	return &conf
