@@ -10,13 +10,13 @@ import (
 type (
 	// Config holds all the necessary parameters required by the module
 	Config struct {
-		profile           string
-		spaceWarningLimit int
-		spaceDangerLimit  int
-		inodeWarningLimit int
-		inodeDangerLimit  int
-		recheckThreshold  int
-		disks             string
+		Profile           string
+		SpaceWarningLimit int
+		SpaceDangerLimit  int
+		InodeWarningLimit int
+		InodeDangerLimit  int
+		RecheckThreshold  int
+		Disks             string
 	}
 
 	// PartitionStats holds the data about the remaining inodes and blocks of the
@@ -45,8 +45,8 @@ func (conf Config) InodesInfo(directory string, pStats *PartitionStats) int {
 
 	pStats.FreeInodes = int(stat.Ffree)
 
-	return compareLimit(int(stat.Ffree), conf.inodeWarningLimit,
-		conf.inodeDangerLimit)
+	return compareLimit(int(stat.Ffree), conf.InodeWarningLimit,
+		conf.InodeDangerLimit)
 }
 
 // SpaceInfo will return the status of the space availabe based on the
@@ -62,13 +62,13 @@ func (conf Config) SpaceInfo(directory string, pStats *PartitionStats) int {
 
 	pStats.FreeBlocks = int(stat.Bfree)
 
-	return compareLimit(int(stat.Bfree), conf.spaceWarningLimit,
-		conf.spaceDangerLimit)
+	return compareLimit(int(stat.Bfree), conf.SpaceWarningLimit,
+		conf.SpaceDangerLimit)
 }
 
 // GetDisk will return all the mount points set to monitor
 func (conf Config) GetDisk() []string {
-	return strings.Split(conf.disks, ",")
+	return strings.Split(conf.Disks, ",")
 }
 
 func compareLimit(value int, wLimit int, dLimit int) int {

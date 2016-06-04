@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"health_monitor/config"
+	"health_monitor/setup"
 	"health_monitor/utils"
 )
 
@@ -37,9 +37,9 @@ var (
 func loadData() *Config {
 	var conf Config
 	err := config.Database.QueryRow("SELECT * FROM Disk WHERE profile=?",
-		config.ConfigVars.Profile).Scan(&conf.profile, &conf.spaceWarningLimit,
-		&conf.spaceDangerLimit, &conf.inodeWarningLimit, &conf.inodeDangerLimit,
-		&conf.recheckThreshold, &conf.disks)
+		config.ConfigVars.Profile).Scan(&conf.Profile, &conf.SpaceWarningLimit,
+		&conf.SpaceDangerLimit, &conf.InodeWarningLimit, &conf.InodeDangerLimit,
+		&conf.RecheckThreshold, &conf.Disks)
 	if err != nil {
 		return nil // TODO better to have fallback call to default profile
 	}
@@ -63,7 +63,7 @@ func Disk(status chan utils.Status, wg *sync.WaitGroup) {
 	defer logFile.Close()
 
 	conf = loadData()
-	utils.ModuleLogs(logFile, "Loaded "+conf.profile+" profile successfully")
+	utils.ModuleLogs(logFile, "Loaded "+conf.Profile+" profile successfully")
 	partition = conf.GetDisk()
 	diskInfo = make(map[string]PartitionInfo)
 	loadPartitionConst()
@@ -76,7 +76,7 @@ func Disk(status chan utils.Status, wg *sync.WaitGroup) {
 				return
 			}
 
-		case <-time.After(time.Millisecond * time.Duration(conf.recheckThreshold)):
+		case <-time.After(time.Millisecond * time.Duration(conf.RecheckThreshold)):
 			checkDisk(conf)
 			runtime.Gosched()
 		}
