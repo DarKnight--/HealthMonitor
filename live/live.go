@@ -1,57 +1,54 @@
 package live
 
 import (
-	"log"
+	"encoding/json"
 	"net"
 	"net/http"
 	"os/exec"
 	"strconv"
 	"syscall"
-
-	"health_monitor/utils"
 )
 
 // Config holds all the necessary parameters required by the module
 type Config struct {
-	profile          string
-	headURL          string
-	recheckThreshold int // time in milliseconds
-	pingThreshold    int // time in milliseconds
-	headThreshold    int // time in milliseconds
-	pingAddress      string
-	pingProtocol     string
+	Profile          string
+	HeadURL          string
+	RecheckThreshold int // time in milliseconds
+	PingThreshold    int // time in milliseconds
+	HeadThreshold    int // time in milliseconds
+	PingAddress      string
+	PingProtocol     string
 }
 
 var connection http.Client
 
 // CheckByHEAD will check the internet connectivity by sending a head request
-func (l Config) CheckByHEAD() bool {
-	resp, err := connection.Head(l.headURL)
+func (l Config) CheckByHEAD() (bool, error) {
+	resp, err := connection.Head(l.HeadURL)
 	if err != nil {
-		return false
+		return false, err
 	}
 	defer resp.Body.Close()
-	return true
+	return true, nil
 }
 
 // CheckByDNS check the internet connectivity by resolving the host
 // TODO check for dnslookup time, if fooled by local dns server
-func (l Config) CheckByDNS() bool {
+func (l Config) CheckByDNS() (bool, error) {
 	_, err := net.LookupHost("google.com")
 	if err != nil {
-		log.Println(err)
-		return false
+		return false, err
 	}
-	return true
+	return true, nil
 }
 
 // Ping check the connectivity by sending ICMP packet to the target
-func (l Config) Ping() bool {
-	command := exec.Command("/bin/sh", "-c", "sudo ping "+l.pingAddress+
-		" -c 1 -W "+strconv.Itoa(l.pingThreshold/1000))
+func (l Config) Ping() (bool, error) {
+	var err error
+	command := exec.Command("/bin/sh", "-c", "sudo ping "+l.PingAddress+
+		" -c 1 -W "+strconv.Itoa(l.PingThreshold/1000))
 	var waitStatus syscall.WaitStatus
-	if err := command.Run(); err != nil {
-		utils.Perror(err.Error())
+	if err = command.Run(); err != nil {
 		// Did the command fail because of an unsuccessful exit code
 		if exitError, ok := err.(*exec.ExitError); ok {
 			waitStatus = exitError.Sys().(syscall.WaitStatus)
@@ -62,7 +59,15 @@ func (l Config) Ping() bool {
 	}
 
 	if waitStatus.ExitStatus() == 0 {
-		return true
+		return true, nil
 	}
-	return false
+	return false, err
+}
+
+func (l Config) GetConfigJSON() []byte {
+	data, err := json.Marshal(l)
+	if err != nil {
+		return nil
+	}
+	return data
 }
