@@ -36,11 +36,12 @@ var (
 
 func loadData() *Config {
 	var conf Config
-	err := config.Database.QueryRow("SELECT * FROM Disk WHERE profile=?",
-		config.ConfigVars.Profile).Scan(&conf.Profile, &conf.SpaceWarningLimit,
+	err := setup.Database.QueryRow("SELECT * FROM Disk WHERE profile=?",
+		setup.ConfigVars.Profile).Scan(&conf.Profile, &conf.SpaceWarningLimit,
 		&conf.SpaceDangerLimit, &conf.InodeWarningLimit, &conf.InodeDangerLimit,
 		&conf.RecheckThreshold, &conf.Disks)
 	if err != nil {
+		fmt.Println(err)
 		return nil // TODO better to have fallback call to default profile
 	}
 	return &conf
@@ -50,7 +51,7 @@ func loadData() *Config {
 func Disk(status chan utils.Status, wg *sync.WaitGroup) {
 	defer wg.Done()
 	var (
-		logFileName = path.Join(config.ConfigVars.HomeDir, "disk.log")
+		logFileName = path.Join(setup.ConfigVars.HomeDir, "disk.log")
 		err         error
 		conf        *Config
 	)

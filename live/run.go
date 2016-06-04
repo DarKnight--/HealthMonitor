@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"health_monitor/config"
+	"health_monitor/setup"
 	"health_monitor/utils"
 )
 
@@ -24,8 +24,8 @@ var (
 
 func loadData() *Config {
 	var l Config
-	err := config.Database.QueryRow("SELECT * FROM Live WHERE profile=?",
-		config.ConfigVars.Profile).Scan(&l.Profile, &l.HeadURL, &l.RecheckThreshold,
+	err := setup.Database.QueryRow("SELECT * FROM Live WHERE profile=?",
+		setup.ConfigVars.Profile).Scan(&l.Profile, &l.HeadURL, &l.RecheckThreshold,
 		&l.PingThreshold, &l.HeadThreshold, &l.PingAddress, &l.PingProtocol)
 	if err != nil {
 		return nil // TODO better to have fallback call to default profile
@@ -37,7 +37,7 @@ func loadData() *Config {
 func Live(status chan utils.Status, wg *sync.WaitGroup) {
 	defer wg.Done()
 	var (
-		logFileName = path.Join(config.ConfigVars.HomeDir, "live.log")
+		logFileName = path.Join(setup.ConfigVars.HomeDir, "live.log")
 		err         error
 		live        *Config
 		x           bool

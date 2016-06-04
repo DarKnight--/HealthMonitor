@@ -5,9 +5,9 @@ import (
 	"sync"
 
 	_ "health_monitor/api"
-	_ "health_monitor/config"
 	"health_monitor/disk"
 	"health_monitor/live"
+	_ "health_monitor/setup"
 	"health_monitor/utils"
 	"health_monitor/webui"
 )

@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"health_monitor/config"
+	"health_monitor/setup"
 )
 
 type (
@@ -28,7 +28,7 @@ func GetTarget() ([]Target, error) {
 	)
 	// get all the tagrget json data from OWTF target endnode
 	var response *http.Response
-	response, err = http.Get(config.ConfigVars.OWTFAddress + path)
+	response, err = http.Get(setup.ConfigVars.OWTFAddress + path)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -66,7 +66,7 @@ func CheckTarget(target string) bool {
 		}
 	)
 
-	response, err = http.Get(config.ConfigVars.OWTFAddress + path + target)
+	response, err = http.Get(setup.ConfigVars.OWTFAddress + path + target)
 	if err != nil {
 		log.Println(err)
 		// TODO check for error and if OWTF is down shutdown monitor gracefully
