@@ -1,16 +1,26 @@
-# HealthMonitor
-A tool written in GO to monitor OWASP-OWTF tool.
+# Health Monitor
 
-## Setting up environment for development
-To compile the project GO is needed to be installed on the machine. Follow up the [link](https://golang.org/doc/install) to have woking directory.
+A standalone app to monitor and control OWTF - written in Go.
 
-Now create a folder for GO projects and add it to $GOPATH. The directory structure should be as follows:
-```
-\$GOPATH
-  \src
-    \health_monitor
-  \bin
-```
-The `health_monitor` must be in **src** folder. Currently do not use `go get` to fetch the project.
 
-**The logs for the monitor are stored in `$HOME/.owtf_monitor`. Untill no web ui or CLI is completed, the working can be monitored by the logs.**
+## Install
+
+1. Clone or download and extract the repository to a folder, `health_monitor`, in `$GOPATH/src/`. (Do not use `go get` right now.)
+2. Build a static binary by `go build` which creates an executable file, `health_monitor` in the project root.
+3. Run the executable by `./health_monitor <flag>`. For help, run `./health_monitor --help`.
+
+
+## Developement
+
+1. First install **Go** and setup a developement environment following the [this guide](https://golang.org/doc/install).
+2. Clone the repository to `$GOPATH/src/`. (do not use `go get`!)
+3. Make changes, and run `go run healthmon.go` to see your changes without explicitly building a new binary. When done, build a new binary using `go build` and test your changes.
+4. Send a PR!
+
+
+> The logs for the monitor are stored in `$HOME/.owtf_monitor`. Until the web interface or CLI is completed, the working can be monitored by the logs.
+
+
+## LICENSE
+
+See [LICENSE](LICENSE)
