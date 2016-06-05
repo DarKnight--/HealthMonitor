@@ -7,8 +7,9 @@ import (
 
 var (
 	//StatusFunc is a map of all the function which gives json object of module status
-	StatusFunc map[string]func() []byte
-	ConfFunc   map[string]func() []byte
+	StatusFunc   map[string]func() []byte
+	ConfFunc     map[string]func() []byte
+	ConfSaveFunc map[string]func([]byte) error
 )
 
 func init() {
@@ -19,6 +20,10 @@ func init() {
 	ConfFunc = make(map[string]func() []byte)
 	ConfFunc["live"] = live.GetConfJSON
 	ConfFunc["disk"] = disk.GetConfJSON
+
+	ConfSaveFunc = make(map[string]func([]byte) error)
+	ConfSaveFunc["live"] = live.SaveConfig
+	ConfSaveFunc["disk"] = disk.SaveConfig
 }
 
 // GetStatusJSON will return json string of the status of module provided as a parameter
@@ -29,4 +34,8 @@ func GetStatusJSON(module string) []byte {
 // GetConfJSON will return json string of the config of module provided as a parameter
 func GetConfJSON(module string) []byte {
 	return ConfFunc[module]()
+}
+
+func SaveConfig(module string, data []byte) error {
+	return ConfSaveFunc[module](data)
 }

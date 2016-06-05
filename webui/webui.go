@@ -44,12 +44,14 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 		switch tempPath[1] {
 		case "static":
 			staticHandler(ctx, tempPath[2])
-		case "module": // Serves the json data of the modules.
+		case "module": // Serves the json data of the module's status.
 			statusHandler(ctx, tempPath[2])
 		case "template": // Serves the template for short description
 			templateHandler(ctx, tempPath[2])
 		case "description": //Serves the page for serving modal
 			render(ctx, tempPath[2])
+		case "settings": // Serves the json data of the module's config.
+			configHandler(ctx, tempPath[2])
 		default:
 			ctx.Error("not found", fasthttp.StatusNotFound)
 		}
@@ -87,6 +89,30 @@ func staticHandler(ctx *fasthttp.RequestCtx, filePath string) {
 
 func statusHandler(ctx *fasthttp.RequestCtx, module string) {
 	if status, ok := api.StatusFunc[module]; ok {
+		ctx.SetContentType("application/json")
+		ctx.SetBody(status())
+		return
+	}
+	utils.ModuleLogs(logFile, fmt.Sprintf("[404] Unable to find the requested json: %s",
+		ctx.Path()))
+	ctx.NotFound()
+}
+
+func configHandler(ctx *fasthttp.RequestCtx, module string) {
+	if ctx.IsPost() {
+		if status, ok := api.ConfSaveFunc[module]; ok {
+			err := status(ctx.PostBody())
+			if err != nil {
+				ctx.SetStatusCode(fasthttp.StatusBadRequest)
+				utils.ModuleLogs(logFile, fmt.Sprintf("[404] Unable to save data: %s",
+					ctx.Path()))
+			}
+			return
+		}
+		utils.ModuleLogs(logFile, fmt.Sprintf("[404] Unable to find the requested module: %s",
+			module))
+	}
+	if status, ok := api.ConfFunc[module]; ok {
 		ctx.SetContentType("application/json")
 		ctx.SetBody(status())
 		return
