@@ -282,16 +282,15 @@
                $.ajax({
                     type: 'GET',
                     url: '/template/'+key
-               }).done(function (data, status, jqXHR) {
-                        var str = jqXHR.getAllResponseHeaders();
-                        var mkey = str.substring(str.lastIndexOf(":") + 2, str.length-2);
-                        $("#on-"+mkey).empty().append(data);
+               }).done(function (data) {
+                        var str = this.url;
+                        var mkey = str.substring(str.lastIndexOf("/") + 1, str.length);
+						$("#on-"+mkey).empty().append(data);
                         modules[mkey](mkey);
                }).fail(function (jqXHR) {
                     if (jqXHR.status === 404){
-                        var str = jqXHR.getAllResponseHeaders();
-                        console.log(jqXHR.getAllResponseHeaders());
-                        var mkey = str.substring(str.lastIndexOf(":") + 2, str.length-2);
+                        var str = this.url;
+                        var mkey = str.substring(str.lastIndexOf("/") + 1, str.length);
                         toggleModule($("#switch-"+mkey).prop("checked", false), mkey);
                     }
                });

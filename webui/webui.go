@@ -85,5 +85,4 @@ func templateHandler(ctx *fasthttp.RequestCtx, tmpl string) {
 	default:
 		ctx.NotFound()
 	}
-	ctx.Response.Header.Add("module", tmpl)
 }
