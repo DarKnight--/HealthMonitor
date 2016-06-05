@@ -24,11 +24,9 @@ func GetTarget() ([]Target, error) {
 	var (
 		targets []Target
 		objmap  map[string]*json.RawMessage
-		err     error
 	)
 	// get all the tagrget json data from OWTF target endnode
-	var response *http.Response
-	response, err = http.Get(setup.ConfigVars.OWTFAddress + path)
+	response, err := http.Get(setup.ConfigVars.OWTFAddress + path)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -36,8 +34,7 @@ func GetTarget() ([]Target, error) {
 	defer response.Body.Close()
 
 	// Converting data recieved from http request to byte format
-	var dataByte []byte
-	dataByte, err = ioutil.ReadAll(response.Body)
+	dataByte, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -59,14 +56,12 @@ func GetTarget() ([]Target, error) {
 func CheckTarget(target string) bool {
 	const path = "/api/worklist/search?target_url="
 	var (
-		err      error
-		response *http.Response
-		data     struct {
+		data struct {
 			RecordsFiltered int `json:"records_filtered"`
 		}
 	)
 
-	response, err = http.Get(setup.ConfigVars.OWTFAddress + path + target)
+	response, err := http.Get(setup.ConfigVars.OWTFAddress + path + target)
 	if err != nil {
 		log.Println(err)
 		// TODO check for error and if OWTF is down shutdown monitor gracefully
