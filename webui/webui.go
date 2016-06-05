@@ -11,17 +11,28 @@ import (
 	"github.com/valyala/fasthttp"
 
 	"health_monitor/api"
+	"health_monitor/setup"
+	"health_monitor/utils"
 )
 
 var (
 	staticRoot   = path.Join("webui", "static", "%s")
 	templateRoot = path.Join("webui", "templates", "%s")
+	logFile      *os.File
 )
 
 // RunServer will serve the webui content
 func RunServer(port string) {
-	if err := fasthttp.ListenAndServe(":"+port, requestHandler); err != nil {
-		fmt.Println("error in running server")
+	var err error
+	logFileName := path.Join(setup.ConfigVars.HomeDir, "webui.log")
+	logFile, err = os.OpenFile(logFileName, os.O_RDWR|os.O_CREATE|os.O_APPEND,
+		0666)
+	if err != nil {
+		utils.PLogError(err)
+	}
+	defer logFile.Close()
+	if err = fasthttp.ListenAndServe(":"+port, requestHandler); err != nil {
+		utils.ModuleError(logFile, "Unable to run the server", err.Error())
 	}
 }
 
@@ -49,11 +60,15 @@ func render(ctx *fasthttp.RequestCtx, tmpl string) {
 	tmpl = fmt.Sprintf(templateRoot, tmpl)
 	t, err := template.ParseFiles(tmpl)
 	if err != nil {
-		fmt.Print("template parsing error: ", err)
+		utils.ModuleError(logFile, "template parsing error ", err.Error())
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		return
 	}
 	err = t.Execute(ctx, "")
 	if err != nil {
-		fmt.Print("template executing error: ", err)
+		utils.ModuleError(logFile, "template executing error: ", err.Error())
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		return
 	}
 	ctx.Response.Header.SetContentType("text/html; charset=utf-8")
 }
@@ -62,8 +77,11 @@ func staticHandler(ctx *fasthttp.RequestCtx, filePath string) {
 	filePath = fmt.Sprintf(staticRoot, filePath)
 	if info, err := os.Stat(filePath); err == nil && !info.IsDir() {
 		fasthttp.ServeFile(ctx, filePath)
+		utils.ModuleLogs(logFile, fmt.Sprintf("[200] File: %s", ctx.Path()))
 		return
 	}
+	utils.ModuleLogs(logFile, fmt.Sprintf("[404] Unable to find the requested static file: %s",
+		ctx.Path()))
 	ctx.NotFound()
 }
 
@@ -73,6 +91,8 @@ func statusHandler(ctx *fasthttp.RequestCtx, module string) {
 		ctx.SetBody(status())
 		return
 	}
+	utils.ModuleLogs(logFile, fmt.Sprintf("[404] Unable to find the requested json: %s",
+		ctx.Path()))
 	ctx.NotFound()
 }
 
@@ -83,6 +103,8 @@ func templateHandler(ctx *fasthttp.RequestCtx, tmpl string) {
 	case "inode-status":
 		inodeTemplateHandler(ctx, tmpl)
 	default:
+		utils.ModuleLogs(logFile, fmt.Sprintf("[404] Unable to find the requested template: %s",
+			ctx.Path()))
 		ctx.NotFound()
 	}
 }

@@ -5,6 +5,7 @@ import (
 	"html/template"
 
 	"health_monitor/disk"
+	"health_monitor/utils"
 
 	"github.com/valyala/fasthttp"
 )
@@ -18,14 +19,15 @@ func diskTemplateHandler(ctx *fasthttp.RequestCtx, tmpl string) {
 	funcMap := template.FuncMap{"percent": percent}
 	t, err := template.New("disk-status").Funcs(funcMap).ParseFiles(tmpl)
 	if err != nil {
-		fmt.Print("template parsing error: ", err)
-		ctx.NotFound()
+		utils.ModuleError(logFile, "template parsing error ", err.Error())
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 		return
 	}
 
 	err = t.Execute(ctx, disk.GetStatus())
 	if err != nil {
-		fmt.Print("template executing error: ", err)
+		utils.ModuleError(logFile, "template executing error: ", err.Error())
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 	}
 }
 
@@ -34,13 +36,14 @@ func inodeTemplateHandler(ctx *fasthttp.RequestCtx, tmpl string) {
 	funcMap := template.FuncMap{"percent": percent}
 	t, err := template.New("inode-status").Funcs(funcMap).ParseFiles(tmpl)
 	if err != nil {
-		fmt.Print("template parsing error: ", err)
-		ctx.NotFound()
+		utils.ModuleError(logFile, "template parsing error ", err.Error())
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 		return
 	}
 
 	err = t.Execute(ctx, disk.GetStatus())
 	if err != nil {
-		fmt.Print("template executing error: ", err)
+		utils.ModuleError(logFile, "template executing error: ", err.Error())
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 	}
 }
