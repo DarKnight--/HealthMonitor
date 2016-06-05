@@ -22,18 +22,6 @@ var (
 	logFile    *os.File
 )
 
-func loadData() *Config {
-	var l Config
-	err := setup.Database.QueryRow("SELECT * FROM Live WHERE profile=?",
-		setup.ConfigVars.Profile).Scan(&l.Profile, &l.HeadURL, &l.RecheckThreshold,
-		&l.PingThreshold, &l.HeadThreshold, &l.PingAddress, &l.PingProtocol)
-	if err != nil {
-		utils.ModuleError(logFile, "Error while quering from databse", err.Error())
-		return nil // TODO better to have fallback call to default profile
-	}
-	return &l
-}
-
 // Live is the driver function of this module for monitor
 func Live(status chan utils.Status, wg *sync.WaitGroup) {
 	defer wg.Done()
