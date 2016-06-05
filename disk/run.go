@@ -32,6 +32,7 @@ var (
 	diskInfo  map[string]PartitionInfo
 	partition []string
 	logFile   *os.File
+	conf      *Config
 )
 
 // Disk is driver funcion for the health_monitor to monitor disk
@@ -40,7 +41,6 @@ func Disk(status chan utils.Status, wg *sync.WaitGroup) {
 	var (
 		logFileName = path.Join(setup.ConfigVars.HomeDir, "disk.log")
 		err         error
-		conf        *Config
 	)
 
 	logFile, err = os.OpenFile(logFileName, os.O_RDWR|os.O_CREATE|os.O_APPEND,
@@ -128,4 +128,12 @@ func printStatusLog(directory string, status int, types string) {
 		utils.ModuleLogs(logFile, fmt.Sprintf("Mount point %s %s status : Danger",
 			directory, types))
 	}
+}
+
+func GetConfJSON() []byte {
+	data, err := json.Marshal(conf)
+	if err != nil {
+		utils.ModuleError(logFile, err.Error(), "[!] Check the conf struct")
+	}
+	return data
 }
