@@ -12,7 +12,7 @@ A standalone app to monitor and control OWTF - written in Go.
 
 ## Developement
 
-1. First install **Go** and setup a developement environment following the [this guide](https://golang.org/doc/install).
+1. First install **Go** and setup a development environment following the [this guide](https://golang.org/doc/install).
 2. Clone the repository to `$GOPATH/src/`. (do not use `go get`!)
 3. Make changes, and run `go run healthmon.go` to see your changes without explicitly building a new binary. When done, build a new binary using `go build` and test your changes.
 4. Send a PR!

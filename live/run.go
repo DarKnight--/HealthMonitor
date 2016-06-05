@@ -20,6 +20,7 @@ type Status struct {
 var (
 	liveStatus Status
 	logFile    *os.File
+	conf       *Config
 )
 
 // Live is the driver function of this module for monitor
@@ -28,7 +29,6 @@ func Live(status chan utils.Status, wg *sync.WaitGroup) {
 	var (
 		logFileName = path.Join(setup.ConfigVars.HomeDir, "live.log")
 		err         error
-		live        *Config
 		x           bool
 	)
 
@@ -39,23 +39,23 @@ func Live(status chan utils.Status, wg *sync.WaitGroup) {
 	}
 	defer logFile.Close()
 
-	live = loadData()
-	utils.ModuleLogs(logFile, "Loaded "+live.Profile+" profile successfully")
+	conf = loadData()
+	utils.ModuleLogs(logFile, "Loaded "+conf.Profile+" profile successfully")
 	liveStatus.Normal = true
-	Default := live.CheckByHEAD
+	Default := conf.CheckByHEAD
 
 	utils.ModuleLogs(logFile, "Default scan mode set to checkByHead")
-	if x, err = live.CheckByDNS(); x {
+	if x, err = conf.CheckByDNS(); x {
 		utils.ModuleLogs(logFile, "checkByDNS successful, setting it to default.")
-		Default = live.CheckByDNS
+		Default = conf.CheckByDNS
 	}
 	if err != nil {
 		utils.ModuleError(logFile, err.Error(), "Error in checkByDNS")
 	}
 
-	if x, err = live.Ping(); x {
+	if x, err = conf.Ping(); x {
 		utils.ModuleLogs(logFile, "Ping scan successful, setting it to default.")
-		Default = live.Ping
+		Default = conf.Ping
 	}
 	if err != nil {
 		utils.ModuleError(logFile, err.Error(), "Error in Ping")
@@ -71,8 +71,8 @@ func Live(status chan utils.Status, wg *sync.WaitGroup) {
 				return
 			}
 
-		case <-time.After(time.Millisecond * time.Duration(live.RecheckThreshold)):
-			internetCheck(Default, live)
+		case <-time.After(time.Millisecond * time.Duration(conf.RecheckThreshold)):
+			internetCheck(Default, conf)
 			printStatusLog()
 			runtime.Gosched()
 		}
@@ -94,7 +94,7 @@ func GetStatusJSON() []byte {
 	return data
 }
 
-func internetCheck(defaultCheck func() (bool, error), live *Config) {
+func internetCheck(defaultCheck func() (bool, error), conf *Config) {
 	var (
 		err error
 		x   bool
@@ -108,8 +108,8 @@ func internetCheck(defaultCheck func() (bool, error), live *Config) {
 	}
 
 	for i := 0; i < 3; i++ {
-		time.Sleep(time.Duration(live.RecheckThreshold) * time.Millisecond / 5)
-		if x, err = live.CheckByHEAD(); x {
+		time.Sleep(time.Duration(conf.RecheckThreshold) * time.Millisecond / 5)
+		if x, err = conf.CheckByHEAD(); x {
 			liveStatus.Normal = true
 			return
 		}
@@ -126,4 +126,12 @@ func printStatusLog() {
 	} else {
 		utils.ModuleLogs(logFile, "Scan successful, Status : Down")
 	}
+}
+
+func GetConfJSON() []byte {
+	data, err := json.Marshal(conf)
+	if err != nil {
+		utils.ModuleError(logFile, err.Error(), "[!] Check the conf struct")
+	}
+	return data
 }
