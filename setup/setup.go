@@ -17,6 +17,7 @@ var (
 		DBFile      string
 		OWTFAddress string
 		Profile     string
+		Port        string
 	}
 	// HealthMonitorLog holds the path to main log file
 	HealthMonitorLog string

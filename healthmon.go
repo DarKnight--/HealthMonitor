@@ -2,12 +2,13 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"sync"
 
 	_ "health_monitor/api"
 	"health_monitor/disk"
 	"health_monitor/live"
-	_ "health_monitor/setup"
+	"health_monitor/setup"
 	"health_monitor/utils"
 	"health_monitor/webui"
 )
@@ -31,7 +32,10 @@ func main() {
 
 	flag.Parse()
 
-	go webui.RunServer("8009")
+	go webui.RunServer(setup.ConfigVars.Port)
+	if (*flags.NoCLI == true) || (*flags.NoWebUI == false) {
+		fmt.Printf("[*] Server is up and running at 127.0.0.1:%s\n", setup.ConfigVars.Port)
+	}
 
 	signal := make(chan utils.Status)
 	wg.Add(1)

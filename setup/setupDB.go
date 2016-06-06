@@ -21,6 +21,8 @@ OWTFAddress = "http://127.0.0.1:8009"
 # Name of the profile to set when monitor starts. It stores last used profile.
 Profile = "default"
 
+# Port for the web server
+Port = "8080"
 `
 
 func setupConfig() {
