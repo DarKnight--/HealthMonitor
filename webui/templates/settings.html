@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Setting | OWASP OWTF - Health Monitor</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="../static/css/simple-sidebar.css" rel="stylesheet">
+</head>
+<body>
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#" onclick="updatePage('main-setting')">
+                        Settings
+                    </a>
+                </li>
+                <li class="sidebar-menu">
+                    <a href="#" onclick="updatePage('network-setting')">Network</a>
+                </li>
+                <li class="sidebar-menu">
+                    <a href="#" onclick="updatePage('target-setting')">Target</a>
+                </li>
+                <li class="sidebar-menu">
+                    <a href="#" onclick="updatePage('disk-setting')">Disk</a>
+                </li>
+                <li class="sidebar-menu">
+                    <a href="#">Events</a>
+                </li>
+                <li class="sidebar-menu">
+                    <a href="#">About</a>
+                </li>
+                <li class="sidebar-menu">
+                    <a href="#">Services</a>
+                </li>
+                <li class="sidebar-menu">
+                    <a href="#">Contact</a>
+                </li>
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12" id="page-data">
+
+                        <!--<a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="../static/js/jquery-1.12.4.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="../static/js/bootstrap.min.js"></script>
+
+    <!-- Menu Toggle Script -->
+    <script>
+//        $("#menu-toggle").click(function(e) {
+//            e.preventDefault();
+//            $("#wrapper").toggleClass("toggled");
+//        });
+        $(document).ready(function () {
+            updatePage("main-setting");
+        });
+         updatePage = function (key) {
+             var section = $("#page-data");
+             section.empty();
+            $.ajax({
+                type: 'GET',
+                url: '/description/'+key
+            }).done(function (data) {
+               section.append(data);
+
+            }).fail(function (jqXHR) {
+                if (jqXHR.status === 404){
+                    section.append("<p> Module is not ready</p>")
+                }
+            });
+       };
+    </script>
+
+</body>
+</html>

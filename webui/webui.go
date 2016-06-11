@@ -52,6 +52,8 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 			render(ctx, tempPath[2])
 		case "settings": // Serves the json data of the module's config.
 			configHandler(ctx, tempPath[2])
+		case "preferences":
+			render(ctx, "settings.html")
 		default:
 			ctx.Error("not found", fasthttp.StatusNotFound)
 		}
