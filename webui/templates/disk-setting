@@ -1,6 +1,12 @@
  <div>
     <form id="disk-setting" role="form" class="form-horizontal">
         <div class="form-group">
+            <label class="control-label col-sm-4 sr-only">profile</label>
+            <div col-sm-8>
+                <input type="text" id="Profile" name="Profile" hidden>
+             </div>
+        </div>
+        <div class="form-group">
             <label class="control-label col-sm-4">Space Warning Limit</label>
             <div col-sm-8>
                 <input type="number" id="SpaceWarningLimit" name="SpaceWarningLimit" placeholder="Enter the warning limit for disk blocks">
@@ -31,6 +37,11 @@
              <div col-sm-8>
                 <input type="text" id="Disks" name="Disks" placeholder="Enter the ',' seperated list of partitions">
              </div>
+        </div>
+        <br><br>
+        <div class="col-md-offset-5">
+            <button type="button" class="btn btn-default" data-dismiss="modal">SaveAs</button>
+            <button type="button" class="btn btn-primary">Save</button>
         </div>
     </form>
 </div>
