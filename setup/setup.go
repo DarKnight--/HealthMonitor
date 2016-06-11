@@ -3,6 +3,7 @@ package setup
 import (
 	"log"
 	"os"
+	"os/exec"
 	"path"
 
 	"github.com/BurntSushi/toml"
@@ -21,6 +22,7 @@ var (
 	}
 	// HealthMonitorLog holds the path to main log file
 	HealthMonitorLog string
+	OSVarient        []byte
 	logFile          *os.File
 )
 
@@ -53,7 +55,11 @@ func init() {
 	// Update the values if relative path is used
 	ConfigVars.HomeDir = utils.GetPath(ConfigVars.HomeDir)
 	ConfigVars.DBFile = utils.GetPath(ConfigVars.DBFile)
-
+	OSVarient, err = exec.Command("lsb_release", "-is").Output()
+	if err != nil {
+		log.Println("Unable to get os info")
+		log.Println(err)
+	}
 	dbInit()
 	logFile.Close()
 }

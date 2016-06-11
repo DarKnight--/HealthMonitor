@@ -52,6 +52,7 @@ func (l Config) Ping() (bool, error) {
 		// Did the command fail because of an unsuccessful exit code
 		if exitError, ok := err.(*exec.ExitError); ok {
 			waitStatus = exitError.Sys().(syscall.WaitStatus)
+			return false, err
 		}
 	} else {
 		// Command was successful

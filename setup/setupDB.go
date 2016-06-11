@@ -34,6 +34,7 @@ func setupConfig() {
 	ConfigVars.HomeDir = baseDir
 	ConfigVars.DBFile = path.Join(configDir, "monitor.db")
 	ConfigVars.OWTFAddress = "http://127.0.0.1:8009"
+	ConfigVars.Port = "8080"
 
 	_, err := os.Stat(configDir)
 	if err != nil {
@@ -42,6 +43,7 @@ func setupConfig() {
 	}
 
 	file, _ := os.OpenFile(configFile, os.O_WRONLY|os.O_CREATE, 0666)
+	defer file.Close()
 
 	file.WriteString(config)
 
