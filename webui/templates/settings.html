@@ -10,36 +10,54 @@
     <link href="../static/css/simple-sidebar.css" rel="stylesheet">
 </head>
 <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/"><span class="glyphicon glyphicon-home"></span> OWASP OWTF Health Monitor</a>
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a id="setting_btn" class="btn" href="/preferences/all"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
+                    <li><a id="help_btn" class="btn"><span class="glyphicon glyphicon-info-sign"></span> Help</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
     <div id="wrapper">
 
         <!-- Sidebar -->
         <div id="sidebar-wrapper">
             <ul class="sidebar-nav">
+                <br>
                 <li class="sidebar-brand">
-                    <a href="#" onclick="updatePage('main-setting')">
+                    <a href="#" onclick="updatePage('main-setting', 'main')">
                         Settings
                     </a>
                 </li>
                 <li class="sidebar-menu">
-                    <a href="#" onclick="updatePage('network-setting')">Network</a>
+                    <a href="#" onclick="updatePage('live-setting', 'live')">Network</a>
                 </li>
                 <li class="sidebar-menu">
-                    <a href="#" onclick="updatePage('target-setting')">Target</a>
+                    <a href="#" onclick="updatePage('target-setting', 'target')">Target</a>
                 </li>
                 <li class="sidebar-menu">
-                    <a href="#" onclick="updatePage('disk-setting')">Disk</a>
+                    <a href="#" onclick="updatePage('disk-setting', 'disk')">Disk</a>
                 </li>
                 <li class="sidebar-menu">
-                    <a href="#">Events</a>
+                    <a href="#">Ram</a>
                 </li>
                 <li class="sidebar-menu">
-                    <a href="#">About</a>
+                    <a href="#">CPU</a>
                 </li>
                 <li class="sidebar-menu">
-                    <a href="#">Services</a>
-                </li>
-                <li class="sidebar-menu">
-                    <a href="#">Contact</a>
+                    <a href="#">Database</a>
                 </li>
             </ul>
         </div>
@@ -49,8 +67,6 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12" id="page-data">
-
-                        <!--<a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>-->
                     </div>
                 </div>
             </div>
@@ -68,14 +84,10 @@
 
     <!-- Menu Toggle Script -->
     <script>
-//        $("#menu-toggle").click(function(e) {
-//            e.preventDefault();
-//            $("#wrapper").toggleClass("toggled");
-//        });
         $(document).ready(function () {
             updatePage("main-setting");
         });
-         updatePage = function (key) {
+         updatePage = function (key, key1) {
              var section = $("#page-data");
              section.empty();
             $.ajax({
@@ -85,9 +97,16 @@
                section.append(data);
 
             }).fail(function (jqXHR) {
-                if (jqXHR.status === 404){
                     section.append("<p> Module is not ready</p>")
-                }
+            });
+             $.ajax({
+                type: 'GET',
+                url: '/settings/'+key1
+            }).done(function (data) {
+               for (var key in data) {
+                   $('input[name="'+key+'"]').val(data[key]);
+               }
+            }).fail(function (jqXHR) {
             });
        };
     </script>
