@@ -232,6 +232,9 @@
             selectedModule.find("#led-"+module).hide();
             selectedModule.find("#on-"+module).hide();
             selectedModule.find("#off-"+module).show();
+            selectedModule.find("a").click(function(){
+                return false;
+            })
         }
         modules["network-status"] = function () {
         };
