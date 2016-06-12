@@ -31,8 +31,6 @@ func main() {
 		chans[i] = make(chan bool)
 	}
 
-	controlModule(chans, &wg)
-
 	flags.NoWebUI = flag.Bool("nowebui", false, "Disables the web ui")
 	flags.NoCLI = flag.Bool("nocli", false, "Disables cli")
 	flags.Quite = flag.Bool("quite", false, "Disables all notifications except email")
@@ -43,6 +41,9 @@ func main() {
 	if (*flags.NoCLI == true) || (*flags.NoWebUI == false) {
 		fmt.Printf("[*] Server is up and running at 127.0.0.1:%s\n", setup.ConfigVars.Port)
 	}
+	runModules(chans, &wg)
+	controlModule(chans, &wg)
+	setup.SaveStatus()
 }
 
 func controlModule(chans [5]chan bool, wg *sync.WaitGroup) {
@@ -51,21 +52,35 @@ func controlModule(chans [5]chan bool, wg *sync.WaitGroup) {
 		data := <-api.ControlChan
 		switch data.Module {
 		case "live":
-			if data.Run {
+			if data.Run && !setup.ModulesStatus.Live {
 				wg.Add(1)
 				go live.Live(chans[0], wg)
-			} else {
+			} else if setup.ModulesStatus.Live {
 				chans[0] <- true
 			}
 		case "target":
 			break
 		case "disk":
-			if data.Run {
+			if data.Run && !setup.ModulesStatus.Live {
 				wg.Add(1)
 				go disk.Disk(chans[2], wg)
-			} else {
+			} else if setup.ModulesStatus.Live {
 				chans[2] <- true
 			}
 		}
+	}
+}
+
+func runModules(chans [5]chan bool, wg *sync.WaitGroup) {
+	if setup.ModulesStatus.Live {
+		wg.Add(1)
+		go live.Live(chans[0], wg)
+	}
+	if setup.ModulesStatus.Target {
+
+	}
+	if setup.ModulesStatus.Disk {
+		wg.Add(1)
+		go disk.Disk(chans[2], wg)
 	}
 }
