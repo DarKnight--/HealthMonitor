@@ -41,6 +41,7 @@
         </div>
         <br><br>
         <div class="col-md-offset-5">
+            <button type="button" class="btn btn-default" onclick="fillForm('live')">Reset</button>
             <button type="button" class="btn btn-default" onclick="saveAs('live')">SaveAs</button>
             <button type="button" class="btn btn-primary" onclick="save('live')">Save</button>
         </div>

@@ -39,7 +39,8 @@
              </div>
         </div>
         <br><br>
-        <div class="col-md-offset-5">
+        <div class="col-md-offset-4">
+            <button type="button" class="btn btn-default" onclick="fillForm('disk')">Reset</button>
             <button type="button" class="btn btn-default" onclick="saveAs('disk')">SaveAs</button>
             <button type="button" class="btn btn-primary" onclick="save('disk')">Save</button>
         </div>
