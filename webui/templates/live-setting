@@ -41,8 +41,8 @@
         </div>
         <br><br>
         <div class="col-md-offset-5">
-            <button type="button" class="btn btn-default" data-dismiss="modal">SaveAs</button>
-            <button type="button" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-default" onclick="saveAs('live')">SaveAs</button>
+            <button type="button" class="btn btn-primary" onclick="save('live')">Save</button>
         </div>
     </form>
 </div>

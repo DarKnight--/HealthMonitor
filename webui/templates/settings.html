@@ -86,7 +86,26 @@
     <script>
         $(document).ready(function () {
             updatePage("main-setting");
+            $("form").submit(function(e) {
+                e.preventDefault(e);
+            });
         });
+         $.fn.serializeObject = function()
+            {
+                var o = {};
+                var a = this.serializeArray();
+                $.each(a, function() {
+                    if (o[this.name] !== undefined) {
+                        if (!o[this.name].push) {
+                            o[this.name] = [o[this.name]];
+                        }
+                        o[this.name].push(this.value || '');
+                    } else {
+                        o[this.name] = this.value || '';
+                    }
+                });
+                return o;
+            };
          updatePage = function (key, key1) {
              var section = $("#page-data");
              section.empty();
@@ -99,6 +118,10 @@
             }).fail(function (jqXHR) {
                     section.append("<p> Module is not ready</p>")
             });
+             fillForm(key1);
+
+         };
+         fillForm = function (key1) {
              $.ajax({
                 type: 'GET',
                 url: '/settings/'+key1
@@ -108,7 +131,21 @@
                }
             }).fail(function (jqXHR) {
             });
-       };
+         };
+         save = function (key) {
+            var formData =  JSON.stringify($("form").serializeObject());
+            $.post({url:"/settings/"+key,data:formData, contentType:"application/json; charset=utf-8"}
+            ).done(function (c) {
+                $("#page-data").prepend("<p> Saved the profile successfully</p>");
+            }).fail(function () {
+                $("#page-data").prepend("<p> Some error occured during saving</p>");
+            });
+         };
+        saveAs = function (key) {
+            var profile = prompt("Enter the new profile name:");
+            $('input[name="Profile"]').val(profile);
+            save(key);
+        };
     </script>
 
 </body>

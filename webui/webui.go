@@ -106,8 +106,8 @@ func configHandler(ctx *fasthttp.RequestCtx, module string) {
 			err := status(ctx.PostBody())
 			if err != nil {
 				ctx.SetStatusCode(fasthttp.StatusBadRequest)
-				utils.ModuleLogs(logFile, fmt.Sprintf("[404] Unable to save data: %s",
-					ctx.Path()))
+				utils.ModuleError(logFile, fmt.Sprintf("[404] Unable to save data: %s",
+					ctx.Path()), err.Error())
 			}
 			return
 		}
