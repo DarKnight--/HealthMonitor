@@ -41,3 +41,8 @@ func GetConfJSON(module string) []byte {
 func SaveConfig(module string, data []byte) error {
 	return ConfSaveFunc[module](data)
 }
+
+func ModuleStatus(module string, status bool) {
+	signal := utils.Status{module, status}
+	ControlChan <- signal
+}
