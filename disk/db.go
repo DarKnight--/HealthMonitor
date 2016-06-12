@@ -11,7 +11,7 @@ import (
 func loadData() *Config {
 	var conf *Config = new(Config)
 	err := setup.Database.QueryRow("SELECT * FROM Disk WHERE profile=?",
-		setup.ConfigVars.Profile).Scan(&conf.Profile, &conf.SpaceWarningLimit,
+		setup.ModulesStatus.Profile).Scan(&conf.Profile, &conf.SpaceWarningLimit,
 		&conf.SpaceDangerLimit, &conf.InodeWarningLimit, &conf.InodeDangerLimit,
 		&conf.RecheckThreshold, &conf.Disks)
 	if err != nil {
@@ -42,5 +42,6 @@ func SaveConfig(data []byte) error {
 		utils.ModuleError(logFile, "Unable to decode obtained json.", err.Error())
 		return err
 	}
-	return saveData(newConfig)
+	return nil
+	//	return saveData(newConfig)
 }
