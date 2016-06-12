@@ -24,7 +24,7 @@ var (
 )
 
 // Live is the driver function of this module for monitor
-func Live(status chan utils.Status, wg *sync.WaitGroup) {
+func Live(status <-chan bool, wg *sync.WaitGroup) {
 	defer wg.Done()
 	var (
 		logFileName = path.Join(setup.ConfigVars.HomeDir, "live.log")
@@ -66,11 +66,8 @@ func Live(status chan utils.Status, wg *sync.WaitGroup) {
 
 	for {
 		select {
-		case signal := <-status:
-			if signal.Module == 1 && signal.Run == false {
-				return
-			}
-
+		case <-status:
+			return
 		case <-time.After(time.Millisecond * time.Duration(conf.RecheckThreshold)):
 			internetCheck(Default, conf)
 			printStatusLog()

@@ -13,7 +13,7 @@ var mutex sync.Mutex
 
 // Status struct is used by monitor to send different modules signal to abort
 type Status struct {
-	Module int
+	Module string
 	Run    bool
 }
 

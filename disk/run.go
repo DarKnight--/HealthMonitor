@@ -36,7 +36,7 @@ var (
 )
 
 // Disk is driver funcion for the health_monitor to monitor disk
-func Disk(status chan utils.Status, wg *sync.WaitGroup) {
+func Disk(status <-chan bool, wg *sync.WaitGroup) {
 	defer wg.Done()
 	var (
 		logFileName = path.Join(setup.ConfigVars.HomeDir, "disk.log")
@@ -59,11 +59,8 @@ func Disk(status chan utils.Status, wg *sync.WaitGroup) {
 
 	for {
 		select {
-		case signal := <-status:
-			if signal.Module == 2 && signal.Run == false {
-				return
-			}
-
+		case <-status:
+			return
 		case <-time.After(time.Millisecond * time.Duration(conf.RecheckThreshold)):
 			checkDisk(conf)
 			runtime.Gosched()

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sync"
 
-	_ "health_monitor/api"
+	"health_monitor/api"
 	"health_monitor/disk"
 	"health_monitor/live"
 	"health_monitor/setup"
@@ -24,7 +24,14 @@ func main() {
 	var (
 		wg    sync.WaitGroup
 		flags Flags
+		chans [5]chan bool //Number of modules
 	)
+
+	for i := range chans {
+		chans[i] = make(chan bool)
+	}
+
+	controlModule(chans, &wg)
 
 	flags.NoWebUI = flag.Bool("nowebui", false, "Disables the web ui")
 	flags.NoCLI = flag.Bool("nocli", false, "Disables cli")
@@ -36,11 +43,29 @@ func main() {
 	if (*flags.NoCLI == true) || (*flags.NoWebUI == false) {
 		fmt.Printf("[*] Server is up and running at 127.0.0.1:%s\n", setup.ConfigVars.Port)
 	}
+}
 
-	signal := make(chan utils.Status)
-	wg.Add(1)
-	go live.Live(signal, &wg)
-	wg.Add(1)
-	go disk.Disk(signal, &wg)
-	wg.Wait()
+func controlModule(chans [5]chan bool, wg *sync.WaitGroup) {
+	api.ControlChan = make(chan utils.Status)
+	for {
+		data := <-api.ControlChan
+		switch data.Module {
+		case "live":
+			if data.Run {
+				wg.Add(1)
+				go live.Live(chans[0], wg)
+			} else {
+				chans[0] <- true
+			}
+		case "target":
+			break
+		case "disk":
+			if data.Run {
+				wg.Add(1)
+				go disk.Disk(chans[2], wg)
+			} else {
+				chans[2] <- true
+			}
+		}
+	}
 }

@@ -3,6 +3,7 @@ package api
 import (
 	"health_monitor/disk"
 	"health_monitor/live"
+	"health_monitor/utils"
 )
 
 var (
@@ -10,6 +11,7 @@ var (
 	StatusFunc   map[string]func() []byte
 	ConfFunc     map[string]func() []byte
 	ConfSaveFunc map[string]func([]byte) error
+	ControlChan  chan utils.Status
 )
 
 func init() {
