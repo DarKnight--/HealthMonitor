@@ -11,7 +11,7 @@ import (
 func loadData() *Config {
 	var conf *Config = new(Config)
 	err := setup.Database.QueryRow("SELECT * FROM Live WHERE profile=?",
-		setup.ConfigVars.Profile).Scan(&conf.Profile, &conf.HeadURL,
+		setup.ModulesStatus.Profile).Scan(&conf.Profile, &conf.HeadURL,
 		&conf.RecheckThreshold, &conf.PingThreshold, &conf.HeadThreshold,
 		&conf.PingAddress, &conf.PingProtocol)
 	if err != nil {

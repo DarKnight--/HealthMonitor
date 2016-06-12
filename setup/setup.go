@@ -14,11 +14,11 @@ import (
 var (
 	// ConfigVars will hold necessary variables loaded from config file
 	ConfigVars struct {
-		HomeDir     string
-		DBFile      string
-		OWTFAddress string
-		Profile     string
-		Port        string
+		HomeDir            string
+		DBFile             string
+		OWTFAddress        string
+		ModuleInfoFilePath string
+		Port               string
 	}
 	// HealthMonitorLog holds the path to main log file
 	HealthMonitorLog string
@@ -43,7 +43,6 @@ func init() {
 		setupConfig()
 		return
 	}
-
 	_, err = toml.DecodeFile(configFile, &ConfigVars) // Read the config file
 	if err != nil {
 		log.Println(err)
@@ -55,11 +54,14 @@ func init() {
 	// Update the values if relative path is used
 	ConfigVars.HomeDir = utils.GetPath(ConfigVars.HomeDir)
 	ConfigVars.DBFile = utils.GetPath(ConfigVars.DBFile)
+	ConfigVars.ModuleInfoFilePath = utils.GetPath(ConfigVars.ModuleInfoFilePath)
+
 	OSVarient, err = exec.Command("lsb_release", "-is").Output()
 	if err != nil {
 		log.Println("Unable to get os info")
 		log.Println(err)
 	}
 	dbInit()
+	loadStatus()
 	logFile.Close()
 }
