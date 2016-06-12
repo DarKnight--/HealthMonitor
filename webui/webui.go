@@ -52,6 +52,8 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 			render(ctx, tempPath[2])
 		case "settings": // Serves the json data of the module's config.
 			configHandler(ctx, tempPath[2])
+		case "moduleStatus":
+			moduleStatusHandler(ctx, tempPath[2])
 		default:
 			ctx.Error("not found", fasthttp.StatusNotFound)
 		}
@@ -133,4 +135,16 @@ func templateHandler(ctx *fasthttp.RequestCtx, tmpl string) {
 			ctx.Path()))
 		ctx.NotFound()
 	}
+}
+
+func moduleStatusHandler(ctx *fasthttp.RequestCtx, module string) {
+	if ctx.PostBody() == "1" {
+		api.ModuleStatus(module, true)
+	} else if ctx.PostBody() == "0" {
+		api.ModuleStatus(module, false)
+	} else {
+		ctx.NotFound()
+		return
+	}
+	ctx.SetStatusCode(fasthttp.StatusAccepted)
 }
