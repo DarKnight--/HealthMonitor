@@ -140,10 +140,14 @@ func templateHandler(ctx *fasthttp.RequestCtx, tmpl string) {
 }
 
 func moduleStatusHandler(ctx *fasthttp.RequestCtx, module string) {
-	if ctx.PostBody() == "1" {
+	if string(ctx.PostBody()) == "1" {
 		api.ModuleStatus(module, true)
-	} else if ctx.PostBody() == "0" {
+		utils.ModuleLogs(logFile, fmt.Sprintf("Turning on %s module",
+			module))
+	} else if string(ctx.PostBody()) == "0" {
 		api.ModuleStatus(module, false)
+		utils.ModuleLogs(logFile, fmt.Sprintf("Turning off %s module",
+			module))
 	} else {
 		ctx.NotFound()
 		return

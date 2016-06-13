@@ -67,6 +67,7 @@ func Live(status <-chan bool, wg *sync.WaitGroup) {
 	for {
 		select {
 		case <-status:
+			utils.ModuleLogs(logFile, "Recieved signal to turn off. Signing off")
 			return
 		case <-time.After(time.Millisecond * time.Duration(conf.RecheckThreshold)):
 			internetCheck(Default, conf)

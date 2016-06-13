@@ -53,18 +53,22 @@ func controlModule(chans [5]chan bool, wg *sync.WaitGroup) {
 		switch data.Module {
 		case "live":
 			if data.Run && !setup.ModulesStatus.Live {
+				setup.ModulesStatus.Live = true
 				wg.Add(1)
 				go live.Live(chans[0], wg)
 			} else if setup.ModulesStatus.Live {
+				setup.ModulesStatus.Live = false
 				chans[0] <- true
 			}
 		case "target":
 			break
 		case "disk":
-			if data.Run && !setup.ModulesStatus.Live {
+			if data.Run && !setup.ModulesStatus.Disk {
+				setup.ModulesStatus.Disk = true
 				wg.Add(1)
 				go disk.Disk(chans[2], wg)
-			} else if setup.ModulesStatus.Live {
+			} else if setup.ModulesStatus.Disk {
+				setup.ModulesStatus.Disk = false
 				chans[2] <- true
 			}
 		}
