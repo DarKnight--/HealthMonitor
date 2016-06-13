@@ -51,5 +51,4 @@ func setupConfig() {
 	// Complete initialisation process
 	dbInit()
 	loadStatus()
-	logFile.Close()
 }

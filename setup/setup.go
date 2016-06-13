@@ -23,7 +23,7 @@ var (
 	// HealthMonitorLog holds the path to main log file
 	HealthMonitorLog string
 	OSVarient        []byte
-	logFile          *os.File
+	MainLogFile      *os.File
 )
 
 func init() {
@@ -33,11 +33,10 @@ func init() {
 	var configFile = path.Join(basePath, "config", "config.toml")
 	HealthMonitorLog = path.Join(basePath, "monitor.log")
 	os.Mkdir(basePath, 0777)
-	logFile, err = os.OpenFile(HealthMonitorLog, os.O_RDWR|os.O_CREATE|
+	MainLogFile, err = os.OpenFile(HealthMonitorLog, os.O_RDWR|os.O_CREATE|
 		os.O_APPEND, 0666)
 	utils.PLogError(err)
-	defer logFile.Close()
-	log.SetOutput(logFile)
+	log.SetOutput(MainLogFile)
 	if _, err = os.Stat(configFile); os.IsNotExist(err) {
 		log.Println("The config file is missing. Creating one with default settings")
 		setupConfig()
@@ -63,5 +62,4 @@ func init() {
 	}
 	dbInit()
 	loadStatus()
-	logFile.Close()
 }
