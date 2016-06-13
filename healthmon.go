@@ -3,7 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 
 	"health_monitor/api"
 	"health_monitor/disk"
@@ -41,6 +44,12 @@ func main() {
 	if (*flags.NoCLI == true) || (*flags.NoWebUI == false) {
 		fmt.Printf("[*] Server is up and running at 127.0.0.1:%s\n", setup.ConfigVars.Port)
 	}
+
+	exitChan := make(chan os.Signal, 1)
+	signal.Notify(exitChan, syscall.SIGINT, syscall.SIGTERM)
+	wg.Add(1)
+	go tearDown(exitChan, &wg)
+
 	runModules(chans, &wg)
 	controlModule(chans, &wg)
 	setup.SaveStatus()
@@ -87,4 +96,19 @@ func runModules(chans [5]chan bool, wg *sync.WaitGroup) {
 		wg.Add(1)
 		go disk.Disk(chans[2], wg)
 	}
+}
+
+func tearDown(exitChan chan os.Signal, wg *sync.WaitGroup) {
+	<-exitChan
+	setup.MainLogFile.Close()
+	setup.DBLogFile.Close()
+	setup.Database.Close()
+	setup.SaveStatus()
+
+	var module string
+	for module, _ = range api.ConfFunc {
+		api.ChangeModuleStatus(module, false)
+	}
+	wg.Wait()
+	os.Exit(0)
 }
