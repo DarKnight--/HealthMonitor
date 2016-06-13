@@ -40,23 +40,30 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 	tempPath := strings.SplitN(string(ctx.Path()), "/", 3)
 	if len(tempPath) == 2 {
 		render(ctx, "index.html")
-	} else {
-		switch tempPath[1] {
-		case "static":
-			staticHandler(ctx, tempPath[2])
-		case "module": // Serves the json data of the module's status.
-			statusHandler(ctx, tempPath[2])
-		case "template": // Serves the template for short description
-			templateHandler(ctx, tempPath[2])
-		case "description": //Serves the page for serving modal
-			render(ctx, tempPath[2])
-		case "settings": // Serves the json data of the module's config.
-			configHandler(ctx, tempPath[2])
-		case "preferences":
-			render(ctx, "settings.html")
-		case "moduleStatus":
-			moduleStatusHandler(ctx, tempPath[2])
-		default:
+		return
+	}
+	switch tempPath[1] {
+	case "static":
+		staticHandler(ctx, tempPath[2])
+	case "settings": // Serves the json data of the module's config.
+		configHandler(ctx, tempPath[2])
+	case "preferences":
+		render(ctx, "settings.html")
+	case "moduleStatus":
+		moduleStatusHandler(ctx, tempPath[2])
+	default:
+		if api.ModuleStatus(tempPath[2]) {
+			switch tempPath[1] {
+			case "module": // Serves the json data of the module's status.
+				statusHandler(ctx, tempPath[2])
+			case "template": // Serves the template for short description
+				templateHandler(ctx, tempPath[2])
+			case "description": //Serves the page for serving modal
+				render(ctx, tempPath[2])
+			default:
+				ctx.Error("not found", fasthttp.StatusNotFound)
+			}
+		} else {
 			ctx.Error("not found", fasthttp.StatusNotFound)
 		}
 	}
@@ -128,9 +135,9 @@ func configHandler(ctx *fasthttp.RequestCtx, module string) {
 
 func templateHandler(ctx *fasthttp.RequestCtx, tmpl string) {
 	switch tmpl {
-	case "disk-status":
+	case "disk":
 		diskTemplateHandler(ctx, tmpl)
-	case "inode-status":
+	case "inode":
 		inodeTemplateHandler(ctx, tmpl)
 	default:
 		utils.ModuleLogs(logFile, fmt.Sprintf("[404] Unable to find the requested template: %s",
@@ -141,11 +148,11 @@ func templateHandler(ctx *fasthttp.RequestCtx, tmpl string) {
 
 func moduleStatusHandler(ctx *fasthttp.RequestCtx, module string) {
 	if string(ctx.PostBody()) == "1" {
-		api.ModuleStatus(module, true)
+		api.ChangeModuleStatus(module, true)
 		utils.ModuleLogs(logFile, fmt.Sprintf("Turning on %s module",
 			module))
 	} else if string(ctx.PostBody()) == "0" {
-		api.ModuleStatus(module, false)
+		api.ChangeModuleStatus(module, false)
 		utils.ModuleLogs(logFile, fmt.Sprintf("Turning off %s module",
 			module))
 	} else {

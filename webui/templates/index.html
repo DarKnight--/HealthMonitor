@@ -22,7 +22,7 @@
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" href="index.html"><span class="glyphicon glyphicon-home"></span> OWASP OWTF Health Monitor</a>
+                <a class="navbar-brand" href="/"><span class="glyphicon glyphicon-home"></span> OWASP OWTF Health Monitor</a>
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
@@ -42,161 +42,161 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12 col-sm-6 col-lg-4">
-                <div class="panel panel-default" id="module-network-status">
+                <div class="panel panel-default" id="module-live">
                     <div class="panel-heading col-sm-12">
-                        <div class="col-sm-2"><div class="led-red" id="led-network-status"></div></div>
+                        <div class="col-sm-2"><div class="led-red" id="led-live"></div></div>
                         <h4 class="col-sm-6">Network Status</h4>
                         <div class="onoffswitch col-sm-4 pull-right">
-                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-network-status" checked onclick="toggleModule(this, 'network-status')">
-                            <label class="onoffswitch-label" for="switch-network-status">
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-live" checked onclick="sendModuleStatus(this, 'live')">
+                            <label class="onoffswitch-label" for="switch-live">
                                 <span class="onoffswitch-inner"></span>
                                 <span class="onoffswitch-switch"></span>
                             </label>
                         </div>
                     </div>
-                    <a data-toggle="modal" href="/description/network.html" data-target="#myModal">
-                        <div class="panel-body" style="background: lightgrey" id="off-network-status" hidden></div>
-                        <div class="panel-body" id="on-network-status">
+                    <a data-toggle="modal" href="/description/live.html" data-target="#myModal">
+                        <div class="panel-body" style="background: lightgrey" id="off-live" hidden></div>
+                        <div class="panel-body" id="on-live">
                         </div>
                     </a>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 col-lg-4">
-                <div class="panel panel-default" id="module-target-status">
+                <div class="panel panel-default" id="module-target">
                     <div class="panel-heading col-sm-12">
-                        <div class="col-sm-2"><div class="led-red" id="led-target-status"></div></div>
+                        <div class="col-sm-2"><div class="led-red" id="led-target"></div></div>
                         <h4 class="col-sm-6">Target Status</h4>
                         <div class="onoffswitch col-sm-4 pull-right">
-                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-target-status" checked onclick="toggleModule(this,'target-status')">
-                            <label class="onoffswitch-label" for="switch-target-status">
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-target" checked onclick="sendModuleStatus(this,'target')">
+                            <label class="onoffswitch-label" for="switch-target">
                                 <span class="onoffswitch-inner"></span>
                                 <span class="onoffswitch-switch"></span>
                             </label>
                         </div>
                   </div>
                     <a data-toggle="modal" href="/description/target.html" data-target="#myModal">
-                  <div class="panel-body" style="background: lightgrey" id="off-target-status" hidden></div>
-                    <div class="panel-body" id="on-target-status">
+                  <div class="panel-body" style="background: lightgrey" id="off-target" hidden></div>
+                    <div class="panel-body" id="on-target">
                     </div>
                         </a>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 col-lg-4">
-                <div class="panel panel-default" id="module-disk-status">
+                <div class="panel panel-default" id="module-disk">
                     <div class="panel-heading col-sm-12">
-                        <div class="col-sm-2"><div class="led-red" id="led-disk-status"></div></div>
+                        <div class="col-sm-2"><div class="led-red" id="led-disk"></div></div>
                         <h4 class="col-sm-6">Disk space</h4>
                         <div class="onoffswitch col-sm-4 pull-right">
-                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-disk-status" checked onclick="toggleModule(this, 'disk-status')">
-                            <label class="onoffswitch-label" for="switch-disk-status">
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-disk" checked onclick="diskModule(this, 'inode')">
+                            <label class="onoffswitch-label" for="switch-disk">
                                 <span class="onoffswitch-inner"></span>
                                 <span class="onoffswitch-switch"></span>
                             </label>
                         </div>
                   </div>
                     <a data-toggle="modal" href="/description/disk.html" data-target="#myModal">
-                    <div class="panel-body" style="background: lightgrey" id="off-disk-status" hidden></div>
-                    <div class="panel-body" id="on-disk-status">
+                    <div class="panel-body" style="background: lightgrey" id="off-disk" hidden></div>
+                    <div class="panel-body" id="on-disk">
                     </div>
                         </a>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 col-lg-4">
-                <div class="panel panel-default" id="module-inode-status">
+                <div class="panel panel-default" id="module-inode">
                     <div class="panel-heading col-sm-12">
-                        <div class="col-sm-2"><div class="led-red" id="led-inode-status"></div></div>
+                        <div class="col-sm-2"><div class="led-red" id="led-inode"></div></div>
                         <h4 class="col-sm-6">Inode usage</h4>
                         <div class="onoffswitch col-sm-4 pull-right">
-                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-inode-status" checked onclick="toggleModule(this, 'inode-status')">
-                            <label class="onoffswitch-label" for="switch-inode-status">
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-inode" checked onclick="diskModule(this, 'disk')">
+                            <label class="onoffswitch-label" for="switch-inode">
                                 <span class="onoffswitch-inner"></span>
                                 <span class="onoffswitch-switch"></span>
                             </label>
                         </div>
                   </div>
                     <a data-toggle="modal" href="/description/inode.html" data-target="#myModal">
-                 <div class="panel-body" style="background: lightgrey" id="off-inode-status" hidden></div>
-                    <div class="panel-body" id="on-inode-status">
+                 <div class="panel-body" style="background: lightgrey" id="off-inode" hidden></div>
+                    <div class="panel-body" id="on-inode">
                     </div>
                         </a>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 col-lg-4">
-                <div class="panel panel-default" id="module-ram-usage">
+                <div class="panel panel-default" id="module-ram">
                     <div class="panel-heading col-sm-12">
-                        <div class="col-sm-2"><div class="led-red" id="led-ram-usage"></div></div>
+                        <div class="col-sm-2"><div class="led-red" id="led-ram"></div></div>
                         <h4 class="col-sm-6">Ram Usage</h4>
                         <div class="onoffswitch col-sm-4 pull-right">
-                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-ram-usage" checked onclick="toggleModule(this, 'ram-usage')">
-                            <label class="onoffswitch-label" for="switch-ram-usage">
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-ram" checked onclick="sendModuleStatus(this, 'ram')">
+                            <label class="onoffswitch-label" for="switch-ram">
                                 <span class="onoffswitch-inner"></span>
                                 <span class="onoffswitch-switch"></span>
                             </label>
                         </div>
                   </div>
                     <a data-toggle="modal" href="/description/ram.html" data-target="#myModal">
-                  <div class="panel-body" style="background: lightgrey" id="off-ram-usage" hidden></div>
-                    <div class="panel-body" id="on-ram-usage">
+                  <div class="panel-body" style="background: lightgrey" id="off-ram" hidden></div>
+                    <div class="panel-body" id="on-ram">
                     </div>
                         </a>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 col-lg-4">
-                <div class="panel panel-default" id="module-cpu-usage">
+                <div class="panel panel-default" id="module-cpu">
                     <div class="panel-heading col-sm-12">
-                        <div class="col-sm-2"><div class="led-red" id="led-cpu-usage"></div></div>
+                        <div class="col-sm-2"><div class="led-red" id="led-cpu"></div></div>
                         <h4 class="col-sm-6">CPU usage</h4>
                         <div class="onoffswitch col-sm-4 pull-right">
-                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-cpu-usage" checked onclick="toggleModule(this, 'cpu-usage')">
-                            <label class="onoffswitch-label" for="switch-cpu-usage">
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-cpu" checked onclick="sendModuleStatus(this, 'cpu')">
+                            <label class="onoffswitch-label" for="switch-cpu">
                                 <span class="onoffswitch-inner"></span>
                                 <span class="onoffswitch-switch"></span>
                             </label>
                         </div>
                   </div>
                     <a data-toggle="modal" href="/description/cpu.html" data-target="#myModal">
-                  <div class="panel-body" style="background: lightgrey" id="off-cpu-usage" hidden></div>
-                    <div class="panel-body" id="on-cpu-usage">
+                  <div class="panel-body" style="background: lightgrey" id="off-cpu" hidden></div>
+                    <div class="panel-body" id="on-cpu">
                     </div>
                         </a>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 col-lg-4">
-                <div class="panel panel-default" id="module-bandwidth-usage">
+                <div class="panel panel-default" id="module-bandwidth">
                     <div class="panel-heading col-sm-12">
-                        <div class="col-sm-2"><div class="led-red" id="led-bandwidth-usage"></div></div>
+                        <div class="col-sm-2"><div class="led-red" id="led-bandwidth"></div></div>
                         <h4 class="col-sm-6">Banwidth Usage</h4>
                         <div class="onoffswitch col-sm-4 pull-right">
-                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-bandwidth-usage" checked onclick="toggleModule(this, 'bandwidth-usage')">
-                            <label class="onoffswitch-label" for="switch-bandwidth-usage">
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-bandwidth" checked onclick="sendModuleStatus(this, 'bandwidth')">
+                            <label class="onoffswitch-label" for="switch-bandwidth">
                                 <span class="onoffswitch-inner"></span>
                                 <span class="onoffswitch-switch"></span>
                             </label>
                         </div>
                   </div>
                     <a data-toggle="modal" href="/description/bandwidth.html" data-target="#myModal">
-                <div class="panel-body" style="background: lightgrey" id="off-bandwidth-usage" hidden></div>
-                    <div class="panel-body" id="on-bandwidth-usage">
+                <div class="panel-body" style="background: lightgrey" id="off-bandwidth" hidden></div>
+                    <div class="panel-body" id="on-bandwidth">
                     </div>
                         </a>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 col-lg-4">
-                <div class="panel panel-default" id="module-database-metrics">
+                <div class="panel panel-default" id="module-database">
                     <div class="panel-heading col-sm-12">
-                        <div class="col-sm-2"><div class="led-red" id="led-database-metrics"></div></div>
+                        <div class="col-sm-2"><div class="led-red" id="led-database"></div></div>
                         <h4 class="col-sm-6">Database metrics</h4>
                         <div class="onoffswitch col-sm-4 pull-right">
-                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-database-metrics" checked onclick="toggleModule(this, 'database-metrics')">
-                            <label class="onoffswitch-label" for="switch-database-metrics">
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-database" checked onclick="sendModuleStatus(this, 'database')">
+                            <label class="onoffswitch-label" for="switch-database">
                                 <span class="onoffswitch-inner"></span>
                                 <span class="onoffswitch-switch"></span>
                             </label>
                         </div>
                   </div>
                     <a data-toggle="modal" href="/description/database.html" data-target="#myModal">
-                <div class="panel-body" style="background: lightgrey" id="off-database-metrics" hidden></div>
-                    <div class="panel-body" id="on-database-metrics">
+                <div class="panel-body" style="background: lightgrey" id="off-database" hidden></div>
+                    <div class="panel-body" id="on-database">
                     </div>
                         </a>
                 </div>
@@ -223,28 +223,28 @@
                $(e.target).removeData('bs.modal');
            });
 
-        function toggleModule(checkbox, module) {
-            var selectedModule = $("#module-"+module);
-            if(checkbox.checked){
-                selectedModule.find("#led-"+module).show();
-                selectedModule.find("#on-"+module).show();
-                selectedModule.find("#off-"+module).hide();
-                return;
-            }
+        function toggleModuleOn(module) {
+            var selectedModule = $("#module-" + module);
+            selectedModule.find("#led-" + module).show();
+            selectedModule.find("#on-" + module).show();
+            selectedModule.find("#off-" + module).hide();
+        }
+        function toggleModuleOff(module) {
+            var selectedModule = $("#module-" + module);
             selectedModule.find("#led-"+module).hide();
             selectedModule.find("#on-"+module).hide();
             selectedModule.find("#off-"+module).show();
             selectedModule.find("a").click(function(){
                 return false;
-            })
+            });
         }
-        modules["network-status"] = function () {
+        modules["live"] = function () {
         };
 
-        modules["target-status"] = function () {
+        modules["target"] = function () {
         };
 
-        modules["disk-status"] = function(module){
+        modules["disk"] = function(module){
             $.getJSON("/module/disk", function (result) {
                 var on = 1;
                 for(var key in result){
@@ -256,7 +256,7 @@
             });
         };
 
-        modules["inode-status"] = function (module) {
+        modules["inode"] = function (module) {
             $.getJSON("/module/disk", function (result) {
                 var on = 1;
                 for(var key in result){
@@ -268,22 +268,20 @@
             });
         };
 
-        modules["ram-usage"] = function () {
+        modules["ram"] = function () {
         };
 
-        modules["cpu-usage"] = function () {
+        modules["cpu"] = function () {
         };
 
-        modules["bandwidth-usage"] = function () {
+        modules["bandwidth"] = function () {
         };
 
-        modules["database-metrics"] = function () {
+        modules["database"] = function () {
         };
 
        updatePage = function () {
            for(var key in modules){
-               //alert(key);
-
                $.ajax({
                     type: 'GET',
                     url: '/template/'+key
@@ -296,12 +294,47 @@
                     if (jqXHR.status === 404){
                         var str = this.url;
                         var mkey = str.substring(str.lastIndexOf("/") + 1, str.length);
-                        toggleModule($("#switch-"+mkey).prop("checked", false), mkey);
+                        $("#switch-"+mkey).prop("checked", false);
+                        toggleModuleOff(mkey);
                     }
                });
            }
            setTimeout(updatePage, 30000);
        };
+        sendModuleStatus = function (checkbox, module) {
+            var content = "0";
+            if(checkbox.checked){
+                content = "1"
+            }
+            var addr = "/moduleStatus/" + module;
+             $.post({url:addr,data:content, contentType:"text/html"}
+             ).done(function () {
+                 if(content == "1"){
+                     toggleModuleOn(module)
+                 }else{
+                     toggleModuleOff(module);
+                 }
+
+             }).fail(function () {
+                if(content == "1"){
+                     $("#switch-"+mkey).prop("checked", false);
+                }
+                 else {
+                     $("#switch-"+mkey).prop("checked", true);
+                }
+             });
+            updatePage();
+        };
+    function diskModule(checkbox, invertModule) {
+        sendModuleStatus(checkbox, "disk");
+        if(checkbox.checked){
+            $("#switch-"+invertModule).prop("checked", true);
+            toggleModuleOn(invertModule)
+        }else{
+            $("#switch-"+invertModule).prop("checked", false);
+            toggleModuleOff(invertModule)
+        }
+    }
 
     </script>
     <!--<script src="../static/js/d3.min.js"></script>-->

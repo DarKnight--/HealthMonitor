@@ -3,6 +3,7 @@ package api
 import (
 	"health_monitor/disk"
 	"health_monitor/live"
+	"health_monitor/setup"
 	"health_monitor/utils"
 )
 
@@ -42,7 +43,22 @@ func SaveConfig(module string, data []byte) error {
 	return ConfSaveFunc[module](data)
 }
 
-func ModuleStatus(module string, status bool) {
+func ChangeModuleStatus(module string, status bool) {
 	signal := utils.Status{module, status}
 	ControlChan <- signal
+}
+
+func ModuleStatus(module string) bool {
+	switch module {
+	case "live":
+		return setup.ModulesStatus.Live
+	case "target":
+		return setup.ModulesStatus.Target
+	case "disk":
+		return setup.ModulesStatus.Disk
+	case "inode":
+		return setup.ModulesStatus.Disk
+	default:
+		return false
+	}
 }
