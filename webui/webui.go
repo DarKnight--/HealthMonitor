@@ -52,14 +52,14 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 	case "moduleStatus":
 		moduleStatusHandler(ctx, tempPath[2])
 	default:
-		if api.ModuleStatus(tempPath[2]) {
+		if api.ModuleStatus(tempPath[2]) || tempPath[2] == "main" {
 			switch tempPath[1] {
 			case "module": // Serves the json data of the module's status.
 				statusHandler(ctx, tempPath[2])
 			case "template": // Serves the template for short description
 				templateHandler(ctx, tempPath[2])
 			case "description": //Serves the page for serving modal
-				render(ctx, tempPath[2])
+				render(ctx, tempPath[2]+"-setting")
 			default:
 				ctx.Error("not found", fasthttp.StatusNotFound)
 			}

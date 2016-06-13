@@ -37,18 +37,18 @@
             <ul class="sidebar-nav">
                 <br>
                 <li class="sidebar-brand">
-                    <a href="#" onclick="updatePage('main-setting', 'main')">
+                    <a href="#" onclick="updatePage('main')">
                         Settings
                     </a>
                 </li>
                 <li class="sidebar-menu">
-                    <a href="#" onclick="updatePage('live-setting', 'live')">Network</a>
+                    <a href="#" onclick="updatePage('live')">Network</a>
                 </li>
                 <li class="sidebar-menu">
-                    <a href="#" onclick="updatePage('target-setting', 'target')">Target</a>
+                    <a href="#" onclick="updatePage('target')">Target</a>
                 </li>
                 <li class="sidebar-menu">
-                    <a href="#" onclick="updatePage('disk-setting', 'disk')">Disk</a>
+                    <a href="#" onclick="updatePage('disk')">Disk</a>
                 </li>
                 <li class="sidebar-menu">
                     <a href="#">Ram</a>
@@ -106,7 +106,7 @@
                 });
                 return o;
             };
-         updatePage = function (key, key1) {
+         updatePage = function (key) {
              var section = $("#page-data");
              section.empty();
             $.ajax({
@@ -118,7 +118,7 @@
             }).fail(function (jqXHR) {
                     section.append("<p> Module is not ready</p>")
             });
-             fillForm(key1);
+             fillForm(key);
 
          };
          fillForm = function (key1) {
