@@ -3,7 +3,6 @@ package api
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 
 	"health_monitor/setup"
@@ -28,7 +27,6 @@ func GetTarget() ([]Target, error) {
 	// get all the tagrget json data from OWTF target endnode
 	response, err := http.Get(setup.ConfigVars.OWTFAddress + path)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 	defer response.Body.Close()
@@ -36,7 +34,6 @@ func GetTarget() ([]Target, error) {
 	// Converting data recieved from http request to byte format
 	dataByte, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 
@@ -45,7 +42,6 @@ func GetTarget() ([]Target, error) {
 	// Converting json byte to targets data structure
 	err = json.Unmarshal(*objmap["data"], &targets)
 	if err != nil {
-		log.Println(err)
 		return targets, err
 	}
 	return targets, nil
@@ -53,7 +49,7 @@ func GetTarget() ([]Target, error) {
 
 // CheckTarget checks whether the target in the database actually under the
 // scan.
-func CheckTarget(target string) bool {
+func CheckTarget(target string) (bool, error) {
 	const path = "/api/worklist/search?target_url="
 	var (
 		data struct {
@@ -63,27 +59,24 @@ func CheckTarget(target string) bool {
 
 	response, err := http.Get(setup.ConfigVars.OWTFAddress + path + target)
 	if err != nil {
-		log.Println(err)
 		// TODO check for error and if OWTF is down shutdown monitor gracefully
-		return false
+		return false, err
 	}
 	defer response.Body.Close()
 	var dataByte []byte
 	dataByte, err = ioutil.ReadAll(response.Body)
 	if err != nil {
-		log.Println(err)
-		return false
+		return false, err
 	}
 
 	err = json.Unmarshal(dataByte, &data)
 	if err != nil {
-		log.Println("Error occured during decoding")
-		return false
+		return false, err
 	}
 
 	if data.RecordsFiltered > 0 {
-		return true
+		return true, nil
 	}
 
-	return false
+	return false, nil
 }
