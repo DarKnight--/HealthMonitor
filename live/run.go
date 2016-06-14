@@ -32,11 +32,7 @@ func Live(status chan utils.Status, wg *sync.WaitGroup) {
 		x           bool
 	)
 
-	logFile, err = os.OpenFile(logFileName, os.O_RDWR|os.O_CREATE|os.O_APPEND,
-		0666)
-	if err != nil {
-		utils.PLogError(err)
-	}
+	logFile = utils.OpenLogFile(logFileName)
 	defer logFile.Close()
 
 	conf = loadData()

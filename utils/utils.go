@@ -64,3 +64,12 @@ func ModuleError(filename *os.File, err string, description string) {
 	log.Print(description)
 	mutex.Unlock()
 }
+
+func OpenLogFile(logFileName string) *os.File {
+	logFile, err := os.OpenFile(logFileName, os.O_RDWR|os.O_CREATE|os.O_APPEND,
+		0666)
+	if err != nil {
+		PLogError(err)
+	}
+	return logFile
+}

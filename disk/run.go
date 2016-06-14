@@ -38,16 +38,9 @@ var (
 // Disk is driver funcion for the health_monitor to monitor disk
 func Disk(status chan utils.Status, wg *sync.WaitGroup) {
 	defer wg.Done()
-	var (
-		logFileName = path.Join(setup.ConfigVars.HomeDir, "disk.log")
-		err         error
-	)
 
-	logFile, err = os.OpenFile(logFileName, os.O_RDWR|os.O_CREATE|os.O_APPEND,
-		0666)
-	if err != nil {
-		utils.PLogError(err)
-	}
+	logFileName := path.Join(setup.ConfigVars.HomeDir, "disk.log")
+	logFile = utils.OpenLogFile(logFileName)
 	defer logFile.Close()
 
 	conf = loadData()
