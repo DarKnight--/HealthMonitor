@@ -20,7 +20,7 @@ func dbInit() {
 	var (
 		DBDriver    string
 		err         error
-		logFileName = path.Join(ConfigVars.HomeDir, "disk.log")
+		logFileName = path.Join(ConfigVars.HomeDir, "db.log")
 	)
 	DBLogFile, err = os.OpenFile(logFileName, os.O_RDWR|os.O_CREATE|os.O_APPEND,
 		0666)

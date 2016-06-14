@@ -100,6 +100,7 @@ func runModules(chans [5]chan bool, wg *sync.WaitGroup) {
 
 func tearDown(exitChan chan os.Signal, wg *sync.WaitGroup) {
 	<-exitChan
+	fmt.Println("in teardown")
 	setup.MainLogFile.Close()
 	setup.DBLogFile.Close()
 	setup.Database.Close()
@@ -109,6 +110,7 @@ func tearDown(exitChan chan os.Signal, wg *sync.WaitGroup) {
 	for module, _ = range api.ConfFunc {
 		api.ChangeModuleStatus(module, false)
 	}
+	wg.Done()
 	wg.Wait()
 	os.Exit(0)
 }
