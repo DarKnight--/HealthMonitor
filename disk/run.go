@@ -50,8 +50,7 @@ func Disk(status <-chan bool, wg *sync.WaitGroup) {
 	}
 	defer logFile.Close()
 
-	conf = loadData()
-	utils.ModuleLogs(logFile, "Loaded "+conf.Profile+" profile successfully")
+	utils.ModuleLogs(logFile, "Running with "+conf.Profile+" profile")
 	partition = conf.GetDisk()
 	diskInfo = make(map[string]PartitionInfo)
 	loadPartitionConst()
@@ -60,15 +59,16 @@ func Disk(status <-chan bool, wg *sync.WaitGroup) {
 	for {
 		select {
 		case <-status:
+			utils.ModuleLogs(logFile, "Recieved signal to turn off. Signing off")
 			return
 		case <-time.After(time.Millisecond * time.Duration(conf.RecheckThreshold)):
-			checkDisk(conf)
+			checkDisk()
 			runtime.Gosched()
 		}
 	}
 }
 
-func checkDisk(conf *Config) {
+func checkDisk() {
 	for _, directory := range partition {
 		var tempStatus PartitionStatus
 		var tempStat PartitionStats
@@ -128,9 +128,13 @@ func printStatusLog(directory string, status int, types string) {
 }
 
 func GetConfJSON() []byte {
-	data, err := json.Marshal(conf)
+	data, err := json.Marshal(LoadConfig())
 	if err != nil {
 		utils.ModuleError(logFile, err.Error(), "[!] Check the conf struct")
 	}
 	return data
+}
+
+func Init() {
+	conf = LoadConfig()
 }

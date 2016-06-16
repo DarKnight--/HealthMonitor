@@ -1,8 +1,11 @@
 package api
 
 import (
+	"encoding/json"
+
 	"health_monitor/disk"
 	"health_monitor/live"
+	"health_monitor/setup"
 	"health_monitor/utils"
 )
 
@@ -10,7 +13,7 @@ var (
 	//StatusFunc is a map of all the function which gives json object of module status
 	StatusFunc   map[string]func() []byte
 	ConfFunc     map[string]func() []byte
-	ConfSaveFunc map[string]func([]byte) error
+	ConfSaveFunc map[string]func([]byte, string) error
 	ControlChan  chan utils.Status
 )
 
@@ -23,7 +26,7 @@ func init() {
 	ConfFunc["live"] = live.GetConfJSON
 	ConfFunc["disk"] = disk.GetConfJSON
 
-	ConfSaveFunc = make(map[string]func([]byte) error)
+	ConfSaveFunc = make(map[string]func([]byte, string) error)
 	ConfSaveFunc["live"] = live.SaveConfig
 	ConfSaveFunc["disk"] = disk.SaveConfig
 }
@@ -39,10 +42,45 @@ func GetConfJSON(module string) []byte {
 }
 
 func SaveConfig(module string, data []byte) error {
-	return ConfSaveFunc[module](data)
+	profile := getProfile(data)
+	err := ConfSaveFunc[module](data, profile)
+	if profile == setup.ModulesStatus.Profile {
+		return err
+	}
+	for _, function := range ConfSaveFunc {
+		err := function(nil, profile)
+		if err != nil {
+			return err
+		}
+	}
+	setup.ModulesStatus.Profile = profile
+	return nil
 }
 
-func ModuleStatus(module string, status bool) {
+func getProfile(data []byte) string {
+	var Temp struct {
+		Profile string
+	}
+	json.Unmarshal(data, &Temp)
+	return Temp.Profile
+}
+
+func ChangeModuleStatus(module string, status bool) {
 	signal := utils.Status{module, status}
 	ControlChan <- signal
+}
+
+func ModuleStatus(module string) bool {
+	switch module {
+	case "live":
+		return setup.ModulesStatus.Live
+	case "target":
+		return setup.ModulesStatus.Target
+	case "disk":
+		return setup.ModulesStatus.Disk
+	case "inode":
+		return setup.ModulesStatus.Disk
+	default:
+		return false
+	}
 }

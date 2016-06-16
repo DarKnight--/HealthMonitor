@@ -40,21 +40,30 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 	tempPath := strings.SplitN(string(ctx.Path()), "/", 3)
 	if len(tempPath) == 2 {
 		render(ctx, "index.html")
-	} else {
-		switch tempPath[1] {
-		case "static":
-			staticHandler(ctx, tempPath[2])
-		case "module": // Serves the json data of the module's status.
-			statusHandler(ctx, tempPath[2])
-		case "template": // Serves the template for short description
-			templateHandler(ctx, tempPath[2])
-		case "description": //Serves the page for serving modal
-			render(ctx, tempPath[2])
-		case "settings": // Serves the json data of the module's config.
-			configHandler(ctx, tempPath[2])
-		case "moduleStatus":
-			moduleStatusHandler(ctx, tempPath[2])
-		default:
+		return
+	}
+	switch tempPath[1] {
+	case "static":
+		staticHandler(ctx, tempPath[2])
+	case "settings": // Serves the json data of the module's config.
+		configHandler(ctx, tempPath[2])
+	case "preferences":
+		render(ctx, "settings.html")
+	case "description": //Serves the page for serving modal
+		render(ctx, tempPath[2]+"-setting")
+	case "moduleStatus":
+		moduleStatusHandler(ctx, tempPath[2])
+	default:
+		if api.ModuleStatus(tempPath[2]) || tempPath[2] == "main" {
+			switch tempPath[1] {
+			case "module": // Serves the json data of the module's status.
+				statusHandler(ctx, tempPath[2])
+			case "template": // Serves the template for short description
+				templateHandler(ctx, tempPath[2])
+			default:
+				ctx.Error("not found", fasthttp.StatusNotFound)
+			}
+		} else {
 			ctx.Error("not found", fasthttp.StatusNotFound)
 		}
 	}
@@ -90,9 +99,9 @@ func staticHandler(ctx *fasthttp.RequestCtx, filePath string) {
 }
 
 func statusHandler(ctx *fasthttp.RequestCtx, module string) {
-	if status, ok := api.StatusFunc[module]; ok {
+	if _, ok := api.StatusFunc[module]; ok {
 		ctx.SetContentType("application/json")
-		ctx.SetBody(status())
+		ctx.SetBody(api.GetStatusJSON(module))
 		return
 	}
 	utils.ModuleLogs(logFile, fmt.Sprintf("[404] Unable to find the requested json: %s",
@@ -102,21 +111,21 @@ func statusHandler(ctx *fasthttp.RequestCtx, module string) {
 
 func configHandler(ctx *fasthttp.RequestCtx, module string) {
 	if ctx.IsPost() {
-		if status, ok := api.ConfSaveFunc[module]; ok {
-			err := status(ctx.PostBody())
+		if _, ok := api.ConfSaveFunc[module]; ok {
+			err := api.SaveConfig(module, ctx.PostBody())
 			if err != nil {
 				ctx.SetStatusCode(fasthttp.StatusBadRequest)
-				utils.ModuleLogs(logFile, fmt.Sprintf("[404] Unable to save data: %s",
-					ctx.Path()))
+				utils.ModuleError(logFile, fmt.Sprintf("[404] Unable to save data: %s",
+					ctx.Path()), err.Error())
 			}
 			return
 		}
 		utils.ModuleLogs(logFile, fmt.Sprintf("[404] Unable to find the requested module: %s",
 			module))
 	}
-	if status, ok := api.ConfFunc[module]; ok {
+	if _, ok := api.ConfFunc[module]; ok {
 		ctx.SetContentType("application/json")
-		ctx.SetBody(status())
+		ctx.SetBody(api.GetConfJSON(module))
 		return
 	}
 	utils.ModuleLogs(logFile, fmt.Sprintf("[404] Unable to find the requested json: %s",
@@ -126,9 +135,9 @@ func configHandler(ctx *fasthttp.RequestCtx, module string) {
 
 func templateHandler(ctx *fasthttp.RequestCtx, tmpl string) {
 	switch tmpl {
-	case "disk-status":
+	case "disk":
 		diskTemplateHandler(ctx, tmpl)
-	case "inode-status":
+	case "inode":
 		inodeTemplateHandler(ctx, tmpl)
 	default:
 		utils.ModuleLogs(logFile, fmt.Sprintf("[404] Unable to find the requested template: %s",
@@ -138,10 +147,14 @@ func templateHandler(ctx *fasthttp.RequestCtx, tmpl string) {
 }
 
 func moduleStatusHandler(ctx *fasthttp.RequestCtx, module string) {
-	if ctx.PostBody() == "1" {
-		api.ModuleStatus(module, true)
-	} else if ctx.PostBody() == "0" {
-		api.ModuleStatus(module, false)
+	if string(ctx.PostBody()) == "1" {
+		api.ChangeModuleStatus(module, true)
+		utils.ModuleLogs(logFile, fmt.Sprintf("Turning on %s module",
+			module))
+	} else if string(ctx.PostBody()) == "0" {
+		api.ChangeModuleStatus(module, false)
+		utils.ModuleLogs(logFile, fmt.Sprintf("Turning off %s module",
+			module))
 	} else {
 		ctx.NotFound()
 		return
