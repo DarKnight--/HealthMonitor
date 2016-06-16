@@ -39,8 +39,7 @@ func Live(status <-chan bool, wg *sync.WaitGroup) {
 	}
 	defer logFile.Close()
 
-	conf = LoadConfig()
-	utils.ModuleLogs(logFile, "Loaded "+conf.Profile+" profile successfully")
+	utils.ModuleLogs(logFile, "Running with "+conf.Profile+" profile")
 	liveStatus.Normal = true
 	Default := conf.CheckByHEAD
 
@@ -92,7 +91,7 @@ func GetStatusJSON() []byte {
 	return data
 }
 
-func internetCheck(defaultCheck func() (bool, error), conf *Config) {
+func internetCheck(defaultCheck func() (bool, error)) {
 	var (
 		err error
 		x   bool
@@ -132,4 +131,8 @@ func GetConfJSON() []byte {
 		utils.ModuleError(logFile, err.Error(), "[!] Check the conf struct")
 	}
 	return data
+}
+
+func Init() {
+	conf = LoadConfig()
 }

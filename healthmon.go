@@ -49,7 +49,7 @@ func main() {
 	signal.Notify(exitChan, syscall.SIGINT, syscall.SIGTERM)
 	wg.Add(1)
 	go tearDown(exitChan, &wg)
-
+	Init()
 	utils.ModuleLogs(setup.MainLogFile, "Running modules from last saved profile")
 	runModules(chans, &wg)
 	controlModule(chans, &wg)
@@ -103,6 +103,11 @@ func runModules(chans [5]chan bool, wg *sync.WaitGroup) {
 		utils.ModuleLogs(setup.MainLogFile, "Started disk module")
 		go disk.Disk(chans[2], wg)
 	}
+}
+
+func Init() {
+	live.Init()
+	disk.Init()
 }
 
 func tearDown(exitChan chan os.Signal, wg *sync.WaitGroup) {
