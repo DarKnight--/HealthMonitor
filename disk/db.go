@@ -8,14 +8,14 @@ import (
 	"health_monitor/utils"
 )
 
-func loadData() *Config {
+func LoadConfig() *Config {
 	var conf *Config = new(Config)
 	err := setup.Database.QueryRow("SELECT * FROM Disk WHERE profile=?",
 		setup.ModulesStatus.Profile).Scan(&conf.Profile, &conf.SpaceWarningLimit,
 		&conf.SpaceDangerLimit, &conf.InodeWarningLimit, &conf.InodeDangerLimit,
 		&conf.RecheckThreshold, &conf.Disks)
 	if err != nil {
-		utils.ModuleError(logFile, "Error while quering from databse", err.Error())
+		utils.ModuleError(setup.DBLogFile, "Module: disk, Error while quering from databse", err.Error())
 		return nil // TODO better to have fallback call to default profile
 	}
 	return conf
@@ -27,10 +27,10 @@ func saveData(newConf *Config) error {
 		newConf.InodeWarningLimit, newConf.InodeDangerLimit, newConf.RecheckThreshold,
 		newConf.Disks)
 	if err != nil {
-		utils.ModuleError(logFile, "Unable to insert/update profile", err.Error())
+		utils.ModuleError(setup.DBLogFile, "Module: disk, Unable to insert/update profile", err.Error())
 		return err
 	}
-	utils.ModuleLogs(logFile, fmt.Sprintf("Updated/Inserted the %s profile in db",
+	utils.ModuleLogs(setup.DBLogFile, fmt.Sprintf("Module: disk, Updated/Inserted the %s profile in db",
 		newConf.Profile))
 	return nil
 }
@@ -39,7 +39,7 @@ func SaveConfig(data []byte) error {
 	var newConfig = new(Config)
 	err := json.Unmarshal(data, newConfig)
 	if err != nil {
-		utils.ModuleError(logFile, "Unable to decode obtained json.", err.Error())
+		utils.ModuleError(setup.DBLogFile, "Module: disk, Unable to decode obtained json.", err.Error())
 		return err
 	}
 	return nil

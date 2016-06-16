@@ -32,7 +32,6 @@ var (
 	diskInfo  map[string]PartitionInfo
 	partition []string
 	logFile   *os.File
-	conf      *Config
 )
 
 // Disk is driver funcion for the health_monitor to monitor disk
@@ -40,6 +39,7 @@ func Disk(status <-chan bool, wg *sync.WaitGroup) {
 	defer wg.Done()
 	var (
 		logFileName = path.Join(setup.ConfigVars.HomeDir, "disk.log")
+		conf        *Config
 		err         error
 	)
 
@@ -50,7 +50,7 @@ func Disk(status <-chan bool, wg *sync.WaitGroup) {
 	}
 	defer logFile.Close()
 
-	conf = loadData()
+	conf = LoadConfig()
 	utils.ModuleLogs(logFile, "Loaded "+conf.Profile+" profile successfully")
 	partition = conf.GetDisk()
 	diskInfo = make(map[string]PartitionInfo)
@@ -129,7 +129,7 @@ func printStatusLog(directory string, status int, types string) {
 }
 
 func GetConfJSON() []byte {
-	data, err := json.Marshal(conf)
+	data, err := json.Marshal(LoadConfig())
 	if err != nil {
 		utils.ModuleError(logFile, err.Error(), "[!] Check the conf struct")
 	}

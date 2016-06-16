@@ -49,6 +49,8 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 		configHandler(ctx, tempPath[2])
 	case "preferences":
 		render(ctx, "settings.html")
+	case "description": //Serves the page for serving modal
+		render(ctx, tempPath[2]+"-setting")
 	case "moduleStatus":
 		moduleStatusHandler(ctx, tempPath[2])
 	default:
@@ -58,8 +60,6 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 				statusHandler(ctx, tempPath[2])
 			case "template": // Serves the template for short description
 				templateHandler(ctx, tempPath[2])
-			case "description": //Serves the page for serving modal
-				render(ctx, tempPath[2]+"-setting")
 			default:
 				ctx.Error("not found", fasthttp.StatusNotFound)
 			}

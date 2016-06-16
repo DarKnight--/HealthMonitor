@@ -3,6 +3,7 @@ package setup
 import (
 	"database/sql"
 	"os"
+	"path"
 
 	"github.com/mattn/go-sqlite3"
 
@@ -10,11 +11,22 @@ import (
 )
 
 // Database holds the active sqlite connection
-var Database *sql.DB
+var (
+	Database  *sql.DB
+	DBLogFile *os.File
+)
 
 func dbInit() {
-	var DBDriver string
-	var err error
+	var (
+		DBDriver    string
+		err         error
+		logFileName = path.Join(ConfigVars.HomeDir, "db.log")
+	)
+	DBLogFile, err = os.OpenFile(logFileName, os.O_RDWR|os.O_CREATE|os.O_APPEND,
+		0666)
+	if err != nil {
+		utils.PLogError(err)
+	}
 	sql.Register(DBDriver, &sqlite3.SQLiteDriver{})
 	Database, err = sql.Open(DBDriver, ConfigVars.DBFile)
 	if err != nil {
