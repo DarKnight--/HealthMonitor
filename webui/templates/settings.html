@@ -95,6 +95,10 @@
                 var o = {};
                 var a = this.serializeArray();
                 $.each(a, function() {
+                    var temp = parseInt(this.value, 10);
+                        if(!isNaN(temp)){
+                            this.value = temp;
+                        }
                     if (o[this.name] !== undefined) {
                         if (!o[this.name].push) {
                             o[this.name] = [o[this.name]];
