@@ -62,13 +62,13 @@ func Disk(status <-chan bool, wg *sync.WaitGroup) {
 			utils.ModuleLogs(logFile, "Recieved signal to turn off. Signing off")
 			return
 		case <-time.After(time.Millisecond * time.Duration(conf.RecheckThreshold)):
-			checkDisk()
+			checkDisk(conf)
 			runtime.Gosched()
 		}
 	}
 }
 
-func checkDisk() {
+func checkDisk(conf *Config) {
 	for _, directory := range partition {
 		var tempStatus PartitionStatus
 		var tempStat PartitionStats

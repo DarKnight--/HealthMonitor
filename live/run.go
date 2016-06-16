@@ -91,7 +91,7 @@ func GetStatusJSON() []byte {
 	return data
 }
 
-func internetCheck(defaultCheck func() (bool, error)) {
+func internetCheck(defaultCheck func() (bool, error), conf *Config) {
 	var (
 		err error
 		x   bool
