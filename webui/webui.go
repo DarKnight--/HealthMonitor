@@ -99,9 +99,9 @@ func staticHandler(ctx *fasthttp.RequestCtx, filePath string) {
 }
 
 func statusHandler(ctx *fasthttp.RequestCtx, module string) {
-	if status, ok := api.StatusFunc[module]; ok {
+	if _, ok := api.StatusFunc[module]; ok {
 		ctx.SetContentType("application/json")
-		ctx.SetBody(status())
+		ctx.SetBody(api.GetStatusJSON(module))
 		return
 	}
 	utils.ModuleLogs(logFile, fmt.Sprintf("[404] Unable to find the requested json: %s",
@@ -111,8 +111,8 @@ func statusHandler(ctx *fasthttp.RequestCtx, module string) {
 
 func configHandler(ctx *fasthttp.RequestCtx, module string) {
 	if ctx.IsPost() {
-		if status, ok := api.ConfSaveFunc[module]; ok {
-			err := status(ctx.PostBody())
+		if _, ok := api.ConfSaveFunc[module]; ok {
+			err := api.SaveConfig(module, ctx.PostBody())
 			if err != nil {
 				ctx.SetStatusCode(fasthttp.StatusBadRequest)
 				utils.ModuleError(logFile, fmt.Sprintf("[404] Unable to save data: %s",
@@ -123,9 +123,9 @@ func configHandler(ctx *fasthttp.RequestCtx, module string) {
 		utils.ModuleLogs(logFile, fmt.Sprintf("[404] Unable to find the requested module: %s",
 			module))
 	}
-	if status, ok := api.ConfFunc[module]; ok {
+	if _, ok := api.ConfFunc[module]; ok {
 		ctx.SetContentType("application/json")
-		ctx.SetBody(status())
+		ctx.SetBody(api.GetConfJSON(module))
 		return
 	}
 	utils.ModuleLogs(logFile, fmt.Sprintf("[404] Unable to find the requested json: %s",

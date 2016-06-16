@@ -32,6 +32,7 @@ var (
 	diskInfo  map[string]PartitionInfo
 	partition []string
 	logFile   *os.File
+	conf      *Config
 )
 
 // Disk is driver funcion for the health_monitor to monitor disk
@@ -39,7 +40,6 @@ func Disk(status <-chan bool, wg *sync.WaitGroup) {
 	defer wg.Done()
 	var (
 		logFileName = path.Join(setup.ConfigVars.HomeDir, "disk.log")
-		conf        *Config
 		err         error
 	)
 

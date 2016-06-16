@@ -22,8 +22,8 @@ func LoadConfig() *Config {
 }
 
 func saveData(newConf *Config) error {
-	_, err := setup.Database.Exec(`INSERT OR REPLACE INTO Disk VALUES(?,?,?,?,?,?,?)`,
-		&newConf.Profile, newConf.HeadURL, newConf.RecheckThreshold,
+	_, err := setup.Database.Exec(`INSERT OR REPLACE INTO Live VALUES(?,?,?,?,?,?,?)`,
+		newConf.Profile, newConf.HeadURL, newConf.RecheckThreshold,
 		newConf.PingThreshold, newConf.HeadThreshold, newConf.PingAddress, newConf.PingProtocol)
 	if err != nil {
 		utils.ModuleError(setup.DBLogFile, "Module: live, Unable to insert/update profile",
@@ -35,12 +35,20 @@ func saveData(newConf *Config) error {
 	return nil
 }
 
-func SaveConfig(data []byte) error {
+func SaveConfig(data []byte, profile string) error {
+	if len(data) == 0 {
+		if profile != conf.Profile {
+			conf.Profile = profile
+			return saveData(conf)
+		}
+		return nil
+	}
 	var newConfig = new(Config)
 	err := json.Unmarshal(data, newConfig)
 	if err != nil {
 		utils.ModuleError(setup.DBLogFile, "Module: live, Unable to decode obtained json.", err.Error())
 		return err
 	}
+	conf = newConfig
 	return saveData(newConfig)
 }

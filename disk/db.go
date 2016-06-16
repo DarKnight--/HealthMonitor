@@ -35,13 +35,20 @@ func saveData(newConf *Config) error {
 	return nil
 }
 
-func SaveConfig(data []byte) error {
+func SaveConfig(data []byte, profile string) error {
+	if data == nil {
+		if profile != conf.Profile {
+			conf.Profile = profile
+			return saveData(conf)
+		}
+		return nil
+	}
 	var newConfig = new(Config)
 	err := json.Unmarshal(data, newConfig)
 	if err != nil {
 		utils.ModuleError(setup.DBLogFile, "Module: disk, Unable to decode obtained json.", err.Error())
 		return err
 	}
-	return nil
-	//	return saveData(newConfig)
+	conf = newConfig
+	return saveData(newConfig)
 }

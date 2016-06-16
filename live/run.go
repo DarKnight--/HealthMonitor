@@ -20,6 +20,7 @@ type Status struct {
 var (
 	liveStatus Status
 	logFile    *os.File
+	conf       *Config
 )
 
 // Live is the driver function of this module for monitor
@@ -27,7 +28,6 @@ func Live(status <-chan bool, wg *sync.WaitGroup) {
 	defer wg.Done()
 	var (
 		logFileName = path.Join(setup.ConfigVars.HomeDir, "live.log")
-		conf        *Config
 		err         error
 		x           bool
 	)
