@@ -11,6 +11,7 @@ import (
 	"health_monitor/api"
 	"health_monitor/disk"
 	"health_monitor/live"
+	"health_monitor/ram"
 	"health_monitor/setup"
 	"health_monitor/utils"
 	"health_monitor/webui"
@@ -85,6 +86,17 @@ func controlModule(chans [5]chan bool, wg *sync.WaitGroup) {
 				utils.ModuleLogs(setup.MainLogFile, "Stopped disk module")
 				chans[2] <- true
 			}
+		case "ram":
+			if data.Run && !setup.ModulesStatus.Ram {
+				setup.ModulesStatus.Ram = true
+				wg.Add(1)
+				utils.ModuleLogs(setup.MainLogFile, "Started ram module")
+				go ram.Ram(chans[3], wg)
+			} else if setup.ModulesStatus.Ram {
+				setup.ModulesStatus.Ram = false
+				utils.ModuleLogs(setup.MainLogFile, "Stopped ram module")
+				chans[3] <- true
+			}
 		}
 	}
 }
@@ -103,11 +115,17 @@ func runModules(chans [5]chan bool, wg *sync.WaitGroup) {
 		utils.ModuleLogs(setup.MainLogFile, "Started disk module")
 		go disk.Disk(chans[2], wg)
 	}
+	if setup.ModulesStatus.Ram {
+		wg.Add(1)
+		utils.ModuleLogs(setup.MainLogFile, "Started ram module")
+		go ram.Ram(chans[3], wg)
+	}
 }
 
 func Init() {
 	live.Init()
 	disk.Init()
+	ram.Init()
 }
 
 func tearDown(exitChan chan os.Signal, wg *sync.WaitGroup) {

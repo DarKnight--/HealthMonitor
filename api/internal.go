@@ -5,6 +5,7 @@ import (
 
 	"health_monitor/disk"
 	"health_monitor/live"
+	"health_monitor/ram"
 	"health_monitor/setup"
 	"health_monitor/utils"
 )
@@ -21,14 +22,17 @@ func init() {
 	StatusFunc = make(map[string]func() []byte)
 	StatusFunc["live"] = live.GetStatusJSON
 	StatusFunc["disk"] = disk.GetStatusJSON
+	StatusFunc["ram"] = ram.GetStatusJSON
 
 	ConfFunc = make(map[string]func() []byte)
 	ConfFunc["live"] = live.GetConfJSON
 	ConfFunc["disk"] = disk.GetConfJSON
+	ConfFunc["ram"] = ram.GetConfJSON
 
 	ConfSaveFunc = make(map[string]func([]byte, string) error)
 	ConfSaveFunc["live"] = live.SaveConfig
 	ConfSaveFunc["disk"] = disk.SaveConfig
+	ConfSaveFunc["ram"] = disk.SaveConfig
 }
 
 // GetStatusJSON will return json string of the status of module provided as a parameter

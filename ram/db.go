@@ -8,10 +8,10 @@ import (
 	"health_monitor/utils"
 )
 
-func LoadCofig() *Config {
+func LoadConfig() *Config {
 	var conf *Config = new(Config)
 	err := setup.Database.QueryRow("SELECT * FROM Ram WHERE profile=?",
-		setup.ConfigVars.Profile).Scan(&conf.Profile, &conf.RamWarningLimit,
+		setup.ModulesStatus.Profile).Scan(&conf.Profile, &conf.RamWarningLimit,
 		&conf.RecheckThreshold)
 	if err != nil {
 		utils.ModuleError(logFile, "Error while quering from databse", err.Error())

@@ -1,6 +1,7 @@
 package ram
 
 import (
+	"encoding/json"
 	"os"
 	"path"
 	"runtime"
@@ -18,6 +19,8 @@ type (
 
 	Info struct {
 		Status Status
+		Stats  MemoryStat
+		Consts MemoryConst
 	}
 )
 
@@ -27,20 +30,18 @@ var (
 	conf    *Config
 )
 
-func Ram(status chan utils.Status, wg *sync.WaitGroup) {
+func Ram(status <-chan bool, wg *sync.WaitGroup) {
 	defer wg.Done()
-	var (
-		logFileName = path.Join(setup.ConfigVars.HomeDir, "disk.log")
-		err         error
-	)
+	var logFileName = path.Join(setup.ConfigVars.HomeDir, "disk.log")
 
 	logFile = utils.OpenLogFile(logFileName)
 	defer logFile.Close()
 
 	utils.ModuleLogs(logFile, "Running with "+conf.Profile+" profile")
+	ramInfo.Consts.InitMemoryConst()
 	for {
 		select {
-		case signal := <-status:
+		case <-status:
 			utils.ModuleLogs(logFile, "Recieved signal to turn off. Signing off")
 			return
 		case <-time.After(time.Millisecond * time.Duration(conf.RecheckThreshold)):
@@ -51,6 +52,32 @@ func Ram(status chan utils.Status, wg *sync.WaitGroup) {
 }
 
 func checkRam() {
+	ramInfo.Stats.LoadMemoryStats()
+	if ramInfo.Stats.FreePhysical < conf.RamWarningLimit {
+		ramInfo.Status.Normal = false
+	} else {
+		ramInfo.Status.Normal = true
+	}
+}
+
+func GetStatus() Info {
+	return ramInfo
+}
+
+func GetConfJSON() []byte {
+	data, err := json.Marshal(LoadConfig())
+	if err != nil {
+		utils.ModuleError(logFile, err.Error(), "[!] Check the conf struct")
+	}
+	return data
+}
+
+func GetStatusJSON() []byte {
+	data, err := json.Marshal(ramInfo)
+	if err != nil {
+		utils.ModuleError(logFile, err.Error(), "[!] Check the ramInfo struct")
+	}
+	return data
 }
 
 func Init() {

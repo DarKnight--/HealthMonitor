@@ -14,6 +14,7 @@ var (
 		Live    bool
 		Target  bool
 		Disk    bool
+		Ram     bool
 	}
 )
 
@@ -37,6 +38,7 @@ func initStatus() {
 	ModulesStatus.Live = true
 	ModulesStatus.Target = true
 	ModulesStatus.Disk = true
+	ModulesStatus.Ram = true
 
 	SaveStatus()
 }
