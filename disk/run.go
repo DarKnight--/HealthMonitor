@@ -36,15 +36,14 @@ var (
 )
 
 // Disk is driver funcion for the health_monitor to monitor disk
-func Disk(status chan utils.Status, wg *sync.WaitGroup) {
+func Disk(status <-chan bool, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	logFileName := path.Join(setup.ConfigVars.HomeDir, "disk.log")
 	logFile = utils.OpenLogFile(logFileName)
 	defer logFile.Close()
 
-	conf = loadData()
-	utils.ModuleLogs(logFile, "Loaded "+conf.Profile+" profile successfully")
+	utils.ModuleLogs(logFile, "Running with "+conf.Profile+" profile")
 	partition = conf.GetDisk()
 	diskInfo = make(map[string]PartitionInfo)
 	loadPartitionConst()
@@ -52,11 +51,9 @@ func Disk(status chan utils.Status, wg *sync.WaitGroup) {
 
 	for {
 		select {
-		case signal := <-status:
-			if signal.Module == 2 && signal.Run == false {
-				return
-			}
-
+		case <-status:
+			utils.ModuleLogs(logFile, "Recieved signal to turn off. Signing off")
+			return
 		case <-time.After(time.Millisecond * time.Duration(conf.RecheckThreshold)):
 			checkDisk(conf)
 			runtime.Gosched()
@@ -124,9 +121,13 @@ func printStatusLog(directory string, status int, types string) {
 }
 
 func GetConfJSON() []byte {
-	data, err := json.Marshal(conf)
+	data, err := json.Marshal(LoadConfig())
 	if err != nil {
 		utils.ModuleError(logFile, err.Error(), "[!] Check the conf struct")
 	}
 	return data
+}
+
+func Init() {
+	conf = LoadConfig()
 }

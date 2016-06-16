@@ -24,7 +24,7 @@ var (
 )
 
 // Live is the driver function of this module for monitor
-func Live(status chan utils.Status, wg *sync.WaitGroup) {
+func Live(status <-chan bool, wg *sync.WaitGroup) {
 	defer wg.Done()
 	var (
 		logFileName = path.Join(setup.ConfigVars.HomeDir, "live.log")
@@ -35,8 +35,7 @@ func Live(status chan utils.Status, wg *sync.WaitGroup) {
 	logFile = utils.OpenLogFile(logFileName)
 	defer logFile.Close()
 
-	conf = loadData()
-	utils.ModuleLogs(logFile, "Loaded "+conf.Profile+" profile successfully")
+	utils.ModuleLogs(logFile, "Running with "+conf.Profile+" profile")
 	liveStatus.Normal = true
 	Default := conf.CheckByHEAD
 
@@ -62,11 +61,9 @@ func Live(status chan utils.Status, wg *sync.WaitGroup) {
 
 	for {
 		select {
-		case signal := <-status:
-			if signal.Module == 1 && signal.Run == false {
-				return
-			}
-
+		case <-status:
+			utils.ModuleLogs(logFile, "Recieved signal to turn off. Signing off")
+			return
 		case <-time.After(time.Millisecond * time.Duration(conf.RecheckThreshold)):
 			internetCheck(Default, conf)
 			printStatusLog()
@@ -125,9 +122,13 @@ func printStatusLog() {
 }
 
 func GetConfJSON() []byte {
-	data, err := json.Marshal(conf)
+	data, err := json.Marshal(LoadConfig())
 	if err != nil {
 		utils.ModuleError(logFile, err.Error(), "[!] Check the conf struct")
 	}
 	return data
+}
+
+func Init() {
+	conf = LoadConfig()
 }

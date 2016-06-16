@@ -1,0 +1,5 @@
+<h1>Settings for  OWASP OWTF - Health Monitor</h1>
+<p>You can change all the setings ragarding the monitor and save them as different profiles.</p>
+<p>Current profile: <code>default</code></p>
+
+ <!-- TODO Add settings for the main settings -->
