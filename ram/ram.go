@@ -7,6 +7,11 @@ package ram
 import "C"
 
 type (
+	Config struct {
+		Profile          string
+		RamWarningLimit  int
+		RecheckThreshold int
+	}
 	MemoryConst struct {
 		TotalVirtual  int
 		TotalPhysical int
