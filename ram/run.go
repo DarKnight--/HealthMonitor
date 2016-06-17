@@ -13,10 +13,12 @@ import (
 )
 
 type (
+	// Status holds the status of the RAM after the scan
 	Status struct {
 		Normal bool
 	}
-
+	//Info holds the information of RAM's status, contants and
+	// stats after the scan
 	Info struct {
 		Status Status
 		Stats  MemoryStat
@@ -30,7 +32,8 @@ var (
 	conf    *Config
 )
 
-func Ram(status <-chan bool, wg *sync.WaitGroup) {
+//RAM is the driver function of this module for monitor
+func RAM(status <-chan bool, wg *sync.WaitGroup) {
 	defer wg.Done()
 	var logFileName = path.Join(setup.ConfigVars.HomeDir, "ram.log")
 
@@ -39,21 +42,22 @@ func Ram(status <-chan bool, wg *sync.WaitGroup) {
 
 	utils.ModuleLogs(logFile, "Running with "+conf.Profile+" profile")
 	ramInfo.Consts.InitMemoryConst()
+	checkRAM()
 	for {
 		select {
 		case <-status:
 			utils.ModuleLogs(logFile, "Recieved signal to turn off. Signing off")
 			return
 		case <-time.After(time.Millisecond * time.Duration(conf.RecheckThreshold)):
-			checkRam()
+			checkRAM()
 			runtime.Gosched()
 		}
 	}
 }
 
-func checkRam() {
+func checkRAM() {
 	ramInfo.Stats.LoadMemoryStats()
-	if ramInfo.Stats.FreePhysical < conf.RamWarningLimit {
+	if ramInfo.Stats.FreePhysical < conf.RAMWarningLimit {
 		ramInfo.Status.Normal = false
 		utils.ModuleLogs(logFile, "Ram is being used over the warning limit")
 	} else {
@@ -62,10 +66,13 @@ func checkRam() {
 	}
 }
 
+// GetStatus function is getter funtion for the ramInfo to send status
+// of ram monitor
 func GetStatus() Info {
 	return ramInfo
 }
 
+//GetConfJSON returns the json byte array of the module's config
 func GetConfJSON() []byte {
 	data, err := json.Marshal(LoadConfig())
 	if err != nil {
@@ -74,6 +81,7 @@ func GetConfJSON() []byte {
 	return data
 }
 
+// GetStatusJSON function retuns the json string of the ramInfo struct
 func GetStatusJSON() []byte {
 	data, err := json.Marshal(ramInfo)
 	if err != nil {
@@ -82,6 +90,7 @@ func GetStatusJSON() []byte {
 	return data
 }
 
+//Init is the initialization function of the module
 func Init() {
 	conf = LoadConfig()
 }

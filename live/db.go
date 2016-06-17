@@ -8,8 +8,9 @@ import (
 	"health_monitor/utils"
 )
 
+//LoadConfig load the config of the module from the db
 func LoadConfig() *Config {
-	var conf *Config = new(Config)
+	var conf = new(Config)
 	err := setup.Database.QueryRow("SELECT * FROM Live WHERE profile=?",
 		setup.ModulesStatus.Profile).Scan(&conf.Profile, &conf.HeadURL,
 		&conf.RecheckThreshold, &conf.PingThreshold, &conf.HeadThreshold,
@@ -35,6 +36,7 @@ func saveData(newConf *Config) error {
 	return nil
 }
 
+//SaveConfig save the config of the module to the database
 func SaveConfig(data []byte, profile string) error {
 	if len(data) == 0 {
 		if profile != conf.Profile {

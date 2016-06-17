@@ -8,8 +8,9 @@ import (
 	"health_monitor/utils"
 )
 
+//LoadConfig load the config of the module from the db
 func LoadConfig() *Config {
-	var conf *Config = new(Config)
+	var conf = new(Config)
 	err := setup.Database.QueryRow("SELECT * FROM Disk WHERE profile=?",
 		setup.ModulesStatus.Profile).Scan(&conf.Profile, &conf.SpaceWarningLimit,
 		&conf.SpaceDangerLimit, &conf.InodeWarningLimit, &conf.InodeDangerLimit,
@@ -35,6 +36,7 @@ func saveData(newConf *Config) error {
 	return nil
 }
 
+//SaveConfig save the config of the module to the database
 func SaveConfig(data []byte, profile string) error {
 	if data == nil {
 		if profile != conf.Profile {

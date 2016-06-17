@@ -121,6 +121,7 @@ func printStatusLog() {
 	}
 }
 
+//GetConfJSON returns the json byte array of the module's config
 func GetConfJSON() []byte {
 	data, err := json.Marshal(LoadConfig())
 	if err != nil {
@@ -129,6 +130,7 @@ func GetConfJSON() []byte {
 	return data
 }
 
+//Init is the initialization function of the module
 func Init() {
 	conf = LoadConfig()
 }

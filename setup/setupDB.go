@@ -44,7 +44,7 @@ func setupDisk() {
 	utils.ModuleLogs(DBLogFile, "Inserted default values to Disk table")
 }
 
-func setupRam() {
+func setupRAM() {
 	Database.Exec(`CREATE TABLE IF NOT EXISTS Ram(
 		profile				CHAR(50) PRIMARY KEY NOT NULL,
 		ram_w_limit			INT NOT NULL,
@@ -61,6 +61,6 @@ func setupRam() {
 func setupDB() {
 	setupLive()
 	setupDisk()
-	setupRam()
+	setupRAM()
 	return
 }

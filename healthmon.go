@@ -87,13 +87,13 @@ func controlModule(chans [5]chan bool, wg *sync.WaitGroup) {
 				chans[2] <- true
 			}
 		case "ram":
-			if data.Run && !setup.ModulesStatus.Ram {
-				setup.ModulesStatus.Ram = true
+			if data.Run && !setup.ModulesStatus.RAM {
+				setup.ModulesStatus.RAM = true
 				wg.Add(1)
 				utils.ModuleLogs(setup.MainLogFile, "Started ram module")
-				go ram.Ram(chans[3], wg)
-			} else if setup.ModulesStatus.Ram {
-				setup.ModulesStatus.Ram = false
+				go ram.RAM(chans[3], wg)
+			} else if setup.ModulesStatus.RAM {
+				setup.ModulesStatus.RAM = false
 				utils.ModuleLogs(setup.MainLogFile, "Stopped ram module")
 				chans[3] <- true
 			}
@@ -115,13 +115,14 @@ func runModules(chans [5]chan bool, wg *sync.WaitGroup) {
 		utils.ModuleLogs(setup.MainLogFile, "Started disk module")
 		go disk.Disk(chans[2], wg)
 	}
-	if setup.ModulesStatus.Ram {
+	if setup.ModulesStatus.RAM {
 		wg.Add(1)
 		utils.ModuleLogs(setup.MainLogFile, "Started ram module")
-		go ram.Ram(chans[3], wg)
+		go ram.RAM(chans[3], wg)
 	}
 }
 
+//Init initialises all the modules of the monitor
 func Init() {
 	live.Init()
 	disk.Init()
@@ -136,7 +137,7 @@ func tearDown(exitChan chan os.Signal, wg *sync.WaitGroup) {
 	utils.ModuleLogs(setup.MainLogFile, "Saved all config data. Stopping running modules")
 
 	var module string
-	for module, _ = range api.ConfFunc {
+	for module = range api.ConfFunc {
 		api.ChangeModuleStatus(module, false)
 	}
 

@@ -22,8 +22,10 @@ var (
 	}
 	// HealthMonitorLog holds the path to main log file
 	HealthMonitorLog string
-	OSVarient        []byte
-	MainLogFile      *os.File
+	//OSVarient holds the os name of the current system
+	OSVarient []byte
+	//MainLogFile is the file pointer of the monitor.log file
+	MainLogFile *os.File
 )
 
 func init() {

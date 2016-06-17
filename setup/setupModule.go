@@ -11,12 +11,13 @@ import (
 )
 
 var (
+	//ModulesStatus holds the running status of all the modules of monitor
 	ModulesStatus struct {
 		Profile string
 		Live    bool
 		Target  bool
 		Disk    bool
-		Ram     bool
+		RAM     bool
 	}
 )
 
@@ -39,11 +40,12 @@ func initStatus() {
 	ModulesStatus.Live = true
 	ModulesStatus.Target = true
 	ModulesStatus.Disk = true
-	ModulesStatus.Ram = true
+	ModulesStatus.RAM = true
 
 	SaveStatus()
 }
 
+//SaveStatus saves the status of all the modules to disk
 func SaveStatus() {
 	var buffer bytes.Buffer
 	encoder := toml.NewEncoder(&buffer)

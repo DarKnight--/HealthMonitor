@@ -8,10 +8,11 @@ import (
 	"health_monitor/utils"
 )
 
+//LoadConfig load the config of the module from the db
 func LoadConfig() *Config {
-	var conf *Config = new(Config)
+	var conf = new(Config)
 	err := setup.Database.QueryRow("SELECT * FROM Ram WHERE profile=?",
-		setup.ModulesStatus.Profile).Scan(&conf.Profile, &conf.RamWarningLimit,
+		setup.ModulesStatus.Profile).Scan(&conf.Profile, &conf.RAMWarningLimit,
 		&conf.RecheckThreshold)
 	if err != nil {
 		utils.ModuleError(logFile, "Error while quering from databse", err.Error())
@@ -22,7 +23,7 @@ func LoadConfig() *Config {
 
 func saveData(newConf *Config) error {
 	_, err := setup.Database.Exec(`INSERT OR REPLACE INTO Ram VALUES(?,?,?)`,
-		newConf.Profile, newConf.RamWarningLimit, newConf.RecheckThreshold)
+		newConf.Profile, newConf.RAMWarningLimit, newConf.RecheckThreshold)
 	if err != nil {
 		utils.ModuleError(logFile, "Module: ram, Unable to insert/update profile", err.Error())
 		return err
@@ -32,6 +33,7 @@ func saveData(newConf *Config) error {
 	return nil
 }
 
+//SaveConfig save the config of the module to the database
 func SaveConfig(data []byte, profile string) error {
 	if data == nil {
 		if profile != conf.Profile {

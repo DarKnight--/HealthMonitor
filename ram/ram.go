@@ -7,22 +7,25 @@ package ram
 import "C"
 
 type (
+	// Config holds all the necessary parameters required by the module
 	Config struct {
 		Profile          string
-		RamWarningLimit  int
+		RAMWarningLimit  int
 		RecheckThreshold int
 	}
+	//MemoryConst holds the constant data of the memory
 	MemoryConst struct {
 		TotalVirtual  int
 		TotalPhysical int
 	}
-
+	//MemoryStat holds the current stats of the memory
 	MemoryStat struct {
 		FreeVirtual  int
 		FreePhysical int
 	}
 )
 
+//LoadMemoryStats saves the current memory status in the MemoryStat struct
 func (stat *MemoryStat) LoadMemoryStats() {
 	var memInfo _Ctype_struct_sysinfo
 	C.sysinfo(&memInfo)
@@ -31,6 +34,7 @@ func (stat *MemoryStat) LoadMemoryStats() {
 	stat.FreeVirtual = int(memInfo.freeswap)*memUnit + stat.FreePhysical
 }
 
+//InitMemoryConst saves the memory constants in the MemoryStat struct
 func (consts *MemoryConst) InitMemoryConst() {
 	var memInfo _Ctype_struct_sysinfo
 	C.sysinfo(&memInfo)

@@ -7,6 +7,7 @@ import (
 	"os"
 )
 
+//MemoryByPID return the physical memory reserved by the process with given pid
 func MemoryByPID(pid int) (uint64, error) {
 
 	f, err := os.Open(fmt.Sprintf("/proc/%d/status", pid))
