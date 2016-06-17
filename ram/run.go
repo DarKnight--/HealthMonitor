@@ -32,7 +32,7 @@ var (
 
 func Ram(status <-chan bool, wg *sync.WaitGroup) {
 	defer wg.Done()
-	var logFileName = path.Join(setup.ConfigVars.HomeDir, "disk.log")
+	var logFileName = path.Join(setup.ConfigVars.HomeDir, "ram.log")
 
 	logFile = utils.OpenLogFile(logFileName)
 	defer logFile.Close()
@@ -55,8 +55,10 @@ func checkRam() {
 	ramInfo.Stats.LoadMemoryStats()
 	if ramInfo.Stats.FreePhysical < conf.RamWarningLimit {
 		ramInfo.Status.Normal = false
+		utils.ModuleLogs(logFile, "Ram is being used over the warning limit")
 	} else {
 		ramInfo.Status.Normal = true
+		utils.ModuleLogs(logFile, "Ram usage is normal")
 	}
 }
 

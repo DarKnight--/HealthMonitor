@@ -32,8 +32,18 @@ func setupDisk() {
 			"/,` + os.Getenv("HOME") + `");`)
 }
 
+func setupRam() {
+	Database.Exec(`CREATE TABLE IF NOT EXISTS Ram(
+		profile				CHAR(50) PRIMARY KEY NOT NULL,
+		ram_w_limit			INT NOT NULL,
+		recheck_threshold 	INT NOT NULL
+		);`)
+	Database.Exec(`INSERT INTO Ram VALUES ("default", 90000, 5000);`)
+}
+
 func setupDB() {
 	setupLive()
 	setupDisk()
+	setupRam()
 	return
 }
