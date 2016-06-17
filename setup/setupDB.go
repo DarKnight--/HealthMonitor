@@ -2,6 +2,8 @@ package setup
 
 import (
 	"os"
+
+	"health_monitor/utils"
 )
 
 func setupLive() {
@@ -14,8 +16,13 @@ func setupLive() {
 		ping_address		CHAR(50) NOT NULL,
 		ping_protocol		CHAR(10)
 		);`)
-	Database.Exec(`INSERT INTO Live VALUES (
+	_, err := Database.Exec(`INSERT OR REPLACE INTO Live VALUES (
 	"default", "https://google.com", 30000, 4000, 4000,"8.8.8.8", "tcp");`)
+	if err != nil {
+		utils.ModuleError(DBLogFile, "Unable to insert value to Live table", err.Error())
+		return
+	}
+	utils.ModuleLogs(DBLogFile, "Inserted default values to Live table")
 }
 
 func setupDisk() {
@@ -28,8 +35,13 @@ func setupDisk() {
 		recheck_threshold 	INT NOT NULL,
 		disk				CHAR(500) NOT NULL
 		);`)
-	Database.Exec(`INSERT INTO Disk VALUES ("default", 2000, 1000, 2000, 1000, 5000,
+	_, err := Database.Exec(`INSERT OR REPLACE INTO Disk VALUES ("default", 2000, 1000, 2000, 1000, 5000,
 			"/,` + os.Getenv("HOME") + `");`)
+	if err != nil {
+		utils.ModuleError(DBLogFile, "Unable to insert value to Disk table", err.Error())
+		return
+	}
+	utils.ModuleLogs(DBLogFile, "Inserted default values to Disk table")
 }
 
 func setupRam() {
@@ -38,7 +50,12 @@ func setupRam() {
 		ram_w_limit			INT NOT NULL,
 		recheck_threshold 	INT NOT NULL
 		);`)
-	Database.Exec(`INSERT INTO Ram VALUES ("default", 90000, 5000);`)
+	_, err := Database.Exec(`INSERT OR REPLACE INTO Ram VALUES ("default", 90000, 5000);`)
+	if err != nil {
+		utils.ModuleError(DBLogFile, "Unable to insert value to Ram table", err.Error())
+		return
+	}
+	utils.ModuleLogs(DBLogFile, "Inserted default values to Ram table")
 }
 
 func setupDB() {

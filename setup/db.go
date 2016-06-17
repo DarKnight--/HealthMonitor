@@ -30,15 +30,14 @@ func dbInit() {
 	sql.Register(DBDriver, &sqlite3.SQLiteDriver{})
 	Database, err = sql.Open(DBDriver, ConfigVars.DBFile)
 	if err != nil {
-		utils.Perror("Failed to create the handle")
-		utils.Perror(err.Error())
+		utils.ModuleError(DBLogFile, "Failed to create the handle", err.Error())
 	}
 	if err = Database.Ping(); err != nil {
-		utils.Perror("Failed to keep connection alive")
-		utils.Perror(err.Error())
+		utils.ModuleError(DBLogFile, "Failed to keep connection alive", err.Error())
 	}
 
 	if stats, _ := os.Stat(ConfigVars.DBFile); stats.Size() == 0 {
+		utils.ModuleError(DBLogFile, "Database not found", "Creating one with default values.")
 		setupDB()
 	}
 }
