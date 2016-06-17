@@ -9,6 +9,7 @@ import (
 )
 
 const (
+	//DebianAPTPath is the path where downloaded apt packages are found
 	DebianAPTPath = "/var/cache/apt/archives"
 )
 

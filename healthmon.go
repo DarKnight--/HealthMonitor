@@ -11,6 +11,7 @@ import (
 	"health_monitor/api"
 	"health_monitor/disk"
 	"health_monitor/live"
+	"health_monitor/ram"
 	"health_monitor/setup"
 	"health_monitor/utils"
 	"health_monitor/webui"
@@ -85,6 +86,17 @@ func controlModule(chans [5]chan bool, wg *sync.WaitGroup) {
 				utils.ModuleLogs(setup.MainLogFile, "Stopped disk module")
 				chans[2] <- true
 			}
+		case "ram":
+			if data.Run && !setup.ModulesStatus.RAM {
+				setup.ModulesStatus.RAM = true
+				wg.Add(1)
+				utils.ModuleLogs(setup.MainLogFile, "Started ram module")
+				go ram.RAM(chans[3], wg)
+			} else if setup.ModulesStatus.RAM {
+				setup.ModulesStatus.RAM = false
+				utils.ModuleLogs(setup.MainLogFile, "Stopped ram module")
+				chans[3] <- true
+			}
 		}
 	}
 }
@@ -103,11 +115,18 @@ func runModules(chans [5]chan bool, wg *sync.WaitGroup) {
 		utils.ModuleLogs(setup.MainLogFile, "Started disk module")
 		go disk.Disk(chans[2], wg)
 	}
+	if setup.ModulesStatus.RAM {
+		wg.Add(1)
+		utils.ModuleLogs(setup.MainLogFile, "Started ram module")
+		go ram.RAM(chans[3], wg)
+	}
 }
 
+//Init initialises all the modules of the monitor
 func Init() {
 	live.Init()
 	disk.Init()
+	ram.Init()
 }
 
 func tearDown(exitChan chan os.Signal, wg *sync.WaitGroup) {
@@ -118,7 +137,7 @@ func tearDown(exitChan chan os.Signal, wg *sync.WaitGroup) {
 	utils.ModuleLogs(setup.MainLogFile, "Saved all config data. Stopping running modules")
 
 	var module string
-	for module, _ = range api.ConfFunc {
+	for module = range api.ConfFunc {
 		api.ChangeModuleStatus(module, false)
 	}
 

@@ -5,28 +5,31 @@ import (
 	"log"
 	"os"
 
+	"health_monitor/utils"
+
 	"github.com/BurntSushi/toml"
 )
 
 var (
+	//ModulesStatus holds the running status of all the modules of monitor
 	ModulesStatus struct {
 		Profile string
 		Live    bool
 		Target  bool
 		Disk    bool
+		RAM     bool
 	}
 )
 
 func loadStatus() {
 	if _, err := os.Stat(ConfigVars.ModuleInfoFilePath); os.IsNotExist(err) {
-		log.Println("The module status file is missing. Creating one with default settings")
+		utils.ModuleError(MainLogFile, "The module status file is missing. Creating one with default settings", "")
 		initStatus()
 		return
 	}
 	_, err := toml.DecodeFile(ConfigVars.ModuleInfoFilePath, &ModulesStatus) // Read the module status file
 	if err != nil {
-		log.Println(err)
-		log.Println("The module status file is corrupt, creating one with default values")
+		utils.ModuleError(MainLogFile, "The module status file is corrupt, creating one with default values", err.Error())
 		initStatus()
 		return
 	}
@@ -37,14 +40,17 @@ func initStatus() {
 	ModulesStatus.Live = true
 	ModulesStatus.Target = true
 	ModulesStatus.Disk = true
+	ModulesStatus.RAM = true
 
 	SaveStatus()
 }
 
+//SaveStatus saves the status of all the modules to disk
 func SaveStatus() {
 	var buffer bytes.Buffer
 	encoder := toml.NewEncoder(&buffer)
 	err := encoder.Encode(ModulesStatus)
+	log.SetOutput(MainLogFile)
 	if err != nil {
 		log.Fatal(err)
 	}

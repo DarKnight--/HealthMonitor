@@ -1,7 +1,6 @@
 package live
 
 import (
-	"encoding/json"
 	"net"
 	"net/http"
 	"os/exec"
@@ -63,12 +62,4 @@ func (l Config) Ping() (bool, error) {
 		return true, nil
 	}
 	return false, err
-}
-
-func (l Config) GetConfigJSON() []byte {
-	data, err := json.Marshal(l)
-	if err != nil {
-		return nil
-	}
-	return data
 }
