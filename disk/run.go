@@ -117,6 +117,7 @@ func printStatusLog(directory string, status int, types string) {
 	case 3:
 		utils.ModuleLogs(logFile, fmt.Sprintf("Mount point %s %s status : Danger",
 			directory, types))
+		basicCleanup()
 	}
 }
 
