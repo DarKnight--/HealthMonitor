@@ -1,8 +1,15 @@
 package disk
 
 import (
+	"archive/tar"
+	"compress/gzip"
+	"io"
+	"log"
 	"os"
+	"os/exec"
+	"path/filepath"
 	"reflect"
+	"time"
 
 	"health_monitor/setup"
 	"health_monitor/utils"
@@ -17,7 +24,22 @@ var (
 	kali = []byte{75, 97, 108, 105, 10}
 )
 
+func basicCleanup() {
+	//TODO pause owtf
+	utils.ModuleLogs(logFile, "Performing basic cleanup")
+	utils.ModuleLogs(logFile, "Performing apt cache clean up")
+	removeAptCache()
+	utils.ModuleLogs(logFile, "Compressing owtf proxy-cache: /tmp/owtf/proxy-cache")
+	compressFolder("/tmp/owtf/proxy-cache", "/tmp/owtf/proxy-cache"+time.Now().Format(time.Stamp)+".tar.gz")
+	os.RemoveAll(utils.GetPath(".w3af/tmp/"))
+}
+
 func removeAptCache() {
+	cmd := exec.Command("sudo", "apt-get", "clean")
+	err := cmd.Run()
+	if err != nil {
+		utils.ModuleError(logFile, "Unable to clean apt-get", err.Error())
+	}
 	if reflect.DeepEqual(setup.OSVarient, kali) {
 		err := os.RemoveAll(DebianAPTPath)
 		if err != nil {
@@ -25,4 +47,52 @@ func removeAptCache() {
 		}
 		utils.ModuleLogs(logFile, "Deleted apt cache successfully.")
 	}
+}
+
+func compressFolder(basePath string, outFName string) error {
+	outFile, err := os.Create(outFName)
+	if err != nil {
+		utils.ModuleError(logFile, "Unable to open file for compressing", err.Error())
+		return err
+	}
+	defer outFile.Close()
+
+	gzipWriter := gzip.NewWriter(outFile)
+	defer gzipWriter.Close()
+
+	tarWriter := tar.NewWriter(gzipWriter)
+	defer tarWriter.Close()
+
+	walkFunction := func(path string, info os.FileInfo, err error) error {
+		if info.Mode().IsDir() {
+			return nil
+		}
+
+		new_path := path[len(basePath)+1:]
+		if len(new_path) == 0 {
+			return nil
+		}
+		fr, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer fr.Close()
+
+		if h, err := tar.FileInfoHeader(info, new_path); err != nil {
+			log.Fatalln(err)
+		} else {
+			h.Name = new_path
+			if err = tarWriter.WriteHeader(h); err != nil {
+				utils.ModuleError(logFile, "Unable to add file headers", err.Error())
+			}
+		}
+		if _, err := io.Copy(tarWriter, fr); err != nil {
+			utils.ModuleError(logFile, "Unable to write to tar file", err.Error())
+		}
+		return nil
+	}
+	if err = filepath.Walk(basePath, walkFunction); err != nil {
+		return err
+	}
+	return nil
 }
