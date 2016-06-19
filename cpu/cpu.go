@@ -15,12 +15,18 @@ var (
 )
 
 type (
+	Config struct {
+		Profile          string
+		CPUWarningLimit  int
+		RecheckThreshold int
+	}
+
 	CPUStat struct {
 		CPUUsage float32
 	}
 )
 
-func (stat *CPUStat) Init() error {
+func (conf Config) Init() error {
 	f, err := os.Open("/proc/stat")
 	if err != nil {
 		return err
@@ -46,7 +52,7 @@ func (stat *CPUStat) Init() error {
 	return nil
 }
 
-func (stat *CPUStat) CPUUsage() error {
+func (conf *Config) CPUUsage(stat *CPUStat) error {
 	var totalUser, totalUserLow, totalSys, totalIdle, total uint64
 	var percent float32
 	stat.CPUUsage = percent
