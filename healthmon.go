@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"health_monitor/api"
+	"health_monitor/cpu"
 	"health_monitor/disk"
 	"health_monitor/live"
 	"health_monitor/ram"
@@ -97,6 +98,17 @@ func controlModule(chans [5]chan bool, wg *sync.WaitGroup) {
 				utils.ModuleLogs(setup.MainLogFile, "Stopped ram module")
 				chans[3] <- true
 			}
+		case "cpu":
+			if data.Run && !setup.ModulesStatus.CPU {
+				setup.ModulesStatus.CPU = true
+				wg.Add(1)
+				utils.ModuleLogs(setup.MainLogFile, "Started cpu module")
+				go ram.RAM(chans[4], wg)
+			} else if setup.ModulesStatus.CPU {
+				setup.ModulesStatus.CPU = false
+				utils.ModuleLogs(setup.MainLogFile, "Stopped cpu module")
+				chans[4] <- true
+			}
 		}
 	}
 }
@@ -120,6 +132,11 @@ func runModules(chans [5]chan bool, wg *sync.WaitGroup) {
 		utils.ModuleLogs(setup.MainLogFile, "Started ram module")
 		go ram.RAM(chans[3], wg)
 	}
+	if setup.ModulesStatus.CPU {
+		wg.Add(1)
+		utils.ModuleLogs(setup.MainLogFile, "Started cpu module")
+		go ram.RAM(chans[4], wg)
+	}
 }
 
 //Init initialises all the modules of the monitor
@@ -127,6 +144,7 @@ func Init() {
 	live.Init()
 	disk.Init()
 	ram.Init()
+	cpu.Init()
 }
 
 func tearDown(exitChan chan os.Signal, wg *sync.WaitGroup) {
