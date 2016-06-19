@@ -6,6 +6,8 @@ import (
 	"health_monitor/setup"
 	"io/ioutil"
 	"net/http"
+
+	"health_monitor/utils"
 )
 
 type (
@@ -85,18 +87,28 @@ func CheckTarget(target string) (bool, error) {
 	return false, nil
 }
 
+//CheckOWTF will check the running status of owtf based on the api. It will return
+// error if OWTF is down or --nowebui option is used
 func CheckOWTF() error {
 	return getRequest(setup.ConfigVars.OWTFAddress)
 }
 
+//PauseWorker will pause the worker with specified worker value
 func PauseWorker(worker int) error {
 	return getRequest(workerPath + string(worker) + "/pause")
 }
 
+//PauseAllWorker will pause all the workers running by OWTF
 func PauseAllWorker() error {
 	return toggleAllWorker(PauseWorker)
 }
 
+//ResumeWorker will resume the worker with specified worker value
+func ResumeWorker(worker int) error {
+	return getRequest(workerPath + string(worker) + "/resume")
+}
+
+//ResumeAllWorker will resume all the workers running by OWTF
 func ResumeAllWorker() error {
 	return toggleAllWorker(ResumeWorker)
 }
@@ -114,10 +126,6 @@ func toggleAllWorker(toCall func(int) error) error {
 		}
 	}
 	return nil
-}
-
-func ResumeWorker(worker int) error {
-	return getRequest(workerPath + string(worker) + "/resume")
 }
 
 func getTotalWorker() (int, error) {
