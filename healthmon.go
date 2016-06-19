@@ -135,7 +135,7 @@ func runModules(chans [5]chan bool, wg *sync.WaitGroup) {
 	if setup.ModulesStatus.CPU {
 		wg.Add(1)
 		utils.ModuleLogs(setup.MainLogFile, "Started cpu module")
-		go ram.RAM(chans[4], wg)
+		go cpu.CPU(chans[4], wg)
 	}
 }
 

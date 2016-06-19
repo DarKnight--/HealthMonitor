@@ -40,6 +40,7 @@ func CPU(status <-chan bool, wg *sync.WaitGroup) {
 
 	utils.ModuleLogs(logFile, "Running with "+conf.Profile+" profile")
 	conf.Init()
+	time.Sleep(time.Second)
 	checkCPU()
 	for {
 		select {

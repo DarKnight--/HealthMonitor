@@ -61,10 +61,10 @@ func setupRAM() {
 func setupCPU() {
 	Database.Exec(`CREATE TABLE IF NOT EXISTS CPU(
 		profile				CHAR(50) PRIMARY KEY NOT NULL,
-		ram_w_limit			INT NOT NULL,
+		cpu_w_limit			INT NOT NULL,
 		recheck_threshold 	INT NOT NULL
 		);`)
-	_, err := Database.Exec(`INSERT OR REPLACE INTO CPU VALUES ("default", 90000, 5000);`)
+	_, err := Database.Exec(`INSERT OR REPLACE INTO CPU VALUES ("default", 95, 5000);`)
 	if err != nil {
 		utils.ModuleError(DBLogFile, "Unable to insert value to CPU table", err.Error())
 		return
