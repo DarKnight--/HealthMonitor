@@ -60,6 +60,7 @@ func checkCPU() {
 		cpuInfo.Status.Normal = true
 		utils.ModuleLogs(logFile, "CPU usage is normal")
 	} else {
+		// TODO add alert
 		cpuInfo.Status.Normal = false
 		utils.ModuleLogs(logFile, "CPU is being used over the warning limit")
 	}
