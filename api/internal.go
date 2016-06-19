@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 
+	"health_monitor/cpu"
 	"health_monitor/disk"
 	"health_monitor/live"
 	"health_monitor/ram"
@@ -26,16 +27,19 @@ func init() {
 	StatusFunc["live"] = live.GetStatusJSON
 	StatusFunc["disk"] = disk.GetStatusJSON
 	StatusFunc["ram"] = ram.GetStatusJSON
+	StatusFunc["cpu"] = cpu.GetStatusJSON
 
 	ConfFunc = make(map[string]func() []byte)
 	ConfFunc["live"] = live.GetConfJSON
 	ConfFunc["disk"] = disk.GetConfJSON
 	ConfFunc["ram"] = ram.GetConfJSON
+	ConfFunc["cpu"] = cpu.GetConfJSON
 
 	ConfSaveFunc = make(map[string]func([]byte, string) error)
 	ConfSaveFunc["live"] = live.SaveConfig
 	ConfSaveFunc["disk"] = disk.SaveConfig
-	ConfSaveFunc["ram"] = disk.SaveConfig
+	ConfSaveFunc["ram"] = ram.SaveConfig
+	ConfSaveFunc["cpu"] = cpu.SaveConfig
 }
 
 // GetStatusJSON will return json string of the status of module provided as a parameter
@@ -91,6 +95,8 @@ func ModuleStatus(module string) bool {
 	case "inode":
 		return setup.ModulesStatus.Disk
 	case "ram":
+		return setup.ModulesStatus.RAM
+	case "cpu":
 		return setup.ModulesStatus.RAM
 	default:
 		return false

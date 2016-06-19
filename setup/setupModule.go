@@ -18,6 +18,7 @@ var (
 		Target  bool
 		Disk    bool
 		RAM     bool
+		CPU     bool
 	}
 )
 
@@ -41,6 +42,7 @@ func initStatus() {
 	ModulesStatus.Target = true
 	ModulesStatus.Disk = true
 	ModulesStatus.RAM = true
+	ModulesStatus.CPU = true
 
 	SaveStatus()
 }
