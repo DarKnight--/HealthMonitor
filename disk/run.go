@@ -133,4 +133,7 @@ func GetConfJSON() []byte {
 //Init is the initialization function of the module
 func Init() {
 	conf = LoadConfig()
+	if conf == nil {
+		utils.CheckConf(logFile, setup.MainLogFile, "disk", &setup.ModulesStatus.Profile, setup.SetupDisk)
+	}
 }

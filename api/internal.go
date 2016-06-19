@@ -18,8 +18,6 @@ var (
 	ConfFunc map[string]func() []byte
 	//ConfSaveFunc is the map of all the function which save the module config to database
 	ConfSaveFunc map[string]func([]byte, string) error
-	//ControlChan is the channel to send stop or start signal to main function
-	ControlChan chan utils.Status
 )
 
 func init() {
@@ -79,8 +77,7 @@ func getProfile(data []byte) string {
 
 //ChangeModuleStatus sends the signal to main function about the changing the status of module
 func ChangeModuleStatus(module string, status bool) {
-	signal := utils.Status{Module: module, Run: status}
-	ControlChan <- signal
+	utils.SendModuleStatus(module, status)
 }
 
 //ModuleStatus return the running status of the given module.
@@ -100,13 +97,5 @@ func ModuleStatus(module string) bool {
 		return setup.ModulesStatus.RAM
 	default:
 		return false
-	}
-}
-
-func RestartAllModules() {
-	var module string
-	for module = range ConfFunc {
-		ChangeModuleStatus(module, false)
-		ChangeModuleStatus(module, true)
 	}
 }
