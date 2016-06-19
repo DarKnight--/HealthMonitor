@@ -102,3 +102,11 @@ func ModuleStatus(module string) bool {
 		return false
 	}
 }
+
+func RestartAllModules() {
+	var module string
+	for module = range ConfFunc {
+		ChangeModuleStatus(module, false)
+		ChangeModuleStatus(module, true)
+	}
+}

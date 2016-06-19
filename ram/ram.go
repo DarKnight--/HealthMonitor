@@ -26,7 +26,7 @@ type (
 )
 
 //LoadMemoryStats saves the current memory status in the MemoryStat struct
-func (stat *MemoryStat) LoadMemoryStats() {
+func (conf Config) LoadMemoryStats(stat *MemoryStat) {
 	var memInfo _Ctype_struct_sysinfo
 	C.sysinfo(&memInfo)
 	memUnit := int(memInfo.mem_unit)
@@ -35,7 +35,7 @@ func (stat *MemoryStat) LoadMemoryStats() {
 }
 
 //InitMemoryConst saves the memory constants in the MemoryStat struct
-func (consts *MemoryConst) InitMemoryConst() {
+func (conf *Config) InitMemoryConst(consts *MemoryConst) {
 	var memInfo _Ctype_struct_sysinfo
 	C.sysinfo(&memInfo)
 	memUnit := int(memInfo.mem_unit)
