@@ -36,6 +36,9 @@ func main() {
 		chans[i] = make(chan bool)
 	}
 
+	utils.LiveEmergency = make(chan bool)
+	defer close(utils.LiveEmergency)
+
 	flags.NoWebUI = flag.Bool("nowebui", false, "Disables the web ui")
 	flags.NoCLI = flag.Bool("nocli", false, "Disables cli")
 	flags.Quite = flag.Bool("quite", false, "Disables all notifications except email")

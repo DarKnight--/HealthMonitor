@@ -65,6 +65,9 @@ func Live(status <-chan bool, wg *sync.WaitGroup) {
 			internetCheck(Default, conf)
 			printStatusLog()
 			runtime.Gosched()
+		case <-utils.LiveEmergency:
+			internetCheck(Default, conf)
+			runtime.Gosched()
 		}
 	}
 }

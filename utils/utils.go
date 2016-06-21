@@ -12,8 +12,9 @@ import (
 var (
 	mutex sync.Mutex
 	//ControlChan is the channel to send stop or start signal to main function
-	ControlChan chan Status
-	Modules     = []string{"live", "target", "disk", "ram", "cpu"}
+	ControlChan   chan Status
+	Modules       = []string{"live", "target", "disk", "ram", "cpu"}
+	LiveEmergency chan bool
 )
 
 // Status struct is used by monitor to send different modules signal to abort

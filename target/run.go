@@ -89,7 +89,8 @@ func checkTarget() {
 
 func generateHash(target string) string {
 	status, response, err := fasthttp.Get(nil, "http://localhost:8009")
-	if !(err == nil && status/100 == 2) {
+	if err != nil {
+		utils.LiveEmergency <- true
 		return ""
 	}
 	hash, err := HashString(response)
