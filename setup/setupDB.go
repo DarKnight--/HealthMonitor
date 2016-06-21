@@ -6,7 +6,7 @@ import (
 	"health_monitor/utils"
 )
 
-func setupLive() {
+func SetupLive() {
 	Database.Exec(`CREATE TABLE IF NOT EXISTS Live(
 		profile  			CHAR(50) PRIMARY KEY NOT NULL,
 		head_url 			CHAR(50) NOT NULL,
@@ -25,7 +25,7 @@ func setupLive() {
 	utils.ModuleLogs(DBLogFile, "Inserted default values to Live table")
 }
 
-func setupDisk() {
+func SetupDisk() {
 	Database.Exec(`CREATE TABLE IF NOT EXISTS Disk(
 		profile				CHAR(50) PRIMARY KEY NOT NULL,
 		space_w_limit		INT NOT NULL,
@@ -44,7 +44,7 @@ func setupDisk() {
 	utils.ModuleLogs(DBLogFile, "Inserted default values to Disk table")
 }
 
-func setupRAM() {
+func SetupRAM() {
 	Database.Exec(`CREATE TABLE IF NOT EXISTS Ram(
 		profile				CHAR(50) PRIMARY KEY NOT NULL,
 		ram_w_limit			INT NOT NULL,
@@ -58,7 +58,7 @@ func setupRAM() {
 	utils.ModuleLogs(DBLogFile, "Inserted default values to Ram table")
 }
 
-func setupCPU() {
+func SetupCPU() {
 	Database.Exec(`CREATE TABLE IF NOT EXISTS CPU(
 		profile				CHAR(50) PRIMARY KEY NOT NULL,
 		cpu_w_limit			INT NOT NULL,
@@ -73,9 +73,9 @@ func setupCPU() {
 }
 
 func setupDB() {
-	setupLive()
-	setupDisk()
-	setupRAM()
-	setupCPU()
+	SetupLive()
+	SetupDisk()
+	SetupRAM()
+	SetupCPU()
 	return
 }

@@ -9,7 +9,12 @@ import (
 	"sync"
 )
 
-var mutex sync.Mutex
+var (
+	mutex sync.Mutex
+	//ControlChan is the channel to send stop or start signal to main function
+	ControlChan chan Status
+	Modules     = []string{"live", "target", "disk", "ram", "cpu"}
+)
 
 // Status struct is used by monitor to send different modules signal to abort
 type Status struct {
@@ -72,4 +77,31 @@ func OpenLogFile(logFileName string) *os.File {
 		PLogError(err)
 	}
 	return logFile
+}
+
+func SendModuleStatus(module string, status bool) {
+	signal := Status{Module: module, Run: status}
+	ControlChan <- signal
+}
+
+func CheckConf(moduleLogFile *os.File, masterLogFile *os.File, module string,
+	profile *string, setupFunc func()) {
+	ModuleError(moduleLogFile, "Unable to find config for profile "+
+		*profile, "Setting up environment")
+	if *profile == "default" {
+		setupFunc()
+	} else {
+		*profile = "default"
+		ModuleError(masterLogFile, fmt.Sprintf("Unable to load profile: %s for %s module",
+			*profile, module), "Restating monitor with default value")
+		RestartAllModules()
+	}
+}
+
+func RestartAllModules() {
+	var module string
+	for _, module = range Modules {
+		SendModuleStatus(module, false)
+		SendModuleStatus(module, true)
+	}
 }

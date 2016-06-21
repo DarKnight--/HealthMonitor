@@ -60,6 +60,7 @@ func checkCPU() {
 		cpuInfo.Status.Normal = true
 		utils.ModuleLogs(logFile, "CPU usage is normal")
 	} else {
+		// TODO add alert
 		cpuInfo.Status.Normal = false
 		utils.ModuleLogs(logFile, "CPU is being used over the warning limit")
 	}
@@ -92,4 +93,7 @@ func GetStatusJSON() []byte {
 //Init is the initialization function of the module
 func Init() {
 	conf = LoadConfig()
+	if conf == nil {
+		utils.CheckConf(logFile, setup.MainLogFile, "cpu", &setup.ModulesStatus.Profile, setup.SetupCPU)
+	}
 }

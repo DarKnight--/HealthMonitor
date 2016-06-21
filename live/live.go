@@ -22,27 +22,27 @@ type Config struct {
 var connection http.Client
 
 // CheckByHEAD will check the internet connectivity by sending a head request
-func (l Config) CheckByHEAD() (bool, error) {
+func (l Config) CheckByHEAD() error {
 	resp, err := connection.Head(l.HeadURL)
 	if err != nil {
-		return false, err
+		return err
 	}
 	defer resp.Body.Close()
-	return true, nil
+	return nil
 }
 
 // CheckByDNS check the internet connectivity by resolving the host
 // TODO check for dnslookup time, if fooled by local dns server
-func (l Config) CheckByDNS() (bool, error) {
+func (l Config) CheckByDNS() error {
 	_, err := net.LookupHost("google.com")
 	if err != nil {
-		return false, err
+		return err
 	}
-	return true, nil
+	return nil
 }
 
 // Ping check the connectivity by sending ICMP packet to the target
-func (l Config) Ping() (bool, error) {
+func (l Config) Ping() error {
 	var err error
 	command := exec.Command("/bin/sh", "-c", "sudo ping "+l.PingAddress+
 		" -c 1 -W "+strconv.Itoa(l.PingThreshold/1000))
@@ -51,7 +51,7 @@ func (l Config) Ping() (bool, error) {
 		// Did the command fail because of an unsuccessful exit code
 		if exitError, ok := err.(*exec.ExitError); ok {
 			waitStatus = exitError.Sys().(syscall.WaitStatus)
-			return false, err
+			return err
 		}
 	} else {
 		// Command was successful
@@ -59,7 +59,7 @@ func (l Config) Ping() (bool, error) {
 	}
 
 	if waitStatus.ExitStatus() == 0 {
-		return true, nil
+		return nil
 	}
-	return false, err
+	return err
 }
