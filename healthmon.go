@@ -59,9 +59,9 @@ func main() {
 }
 
 func controlModule(chans [5]chan bool, wg *sync.WaitGroup) {
-	api.ControlChan = make(chan utils.Status)
+	utils.ControlChan = make(chan utils.Status)
 	for {
-		data := <-api.ControlChan
+		data := <-utils.ControlChan
 		switch data.Module {
 		case "live":
 			if data.Run && !setup.ModulesStatus.Live {
@@ -155,7 +155,7 @@ func tearDown(exitChan chan os.Signal, wg *sync.WaitGroup) {
 	utils.ModuleLogs(setup.MainLogFile, "Saved all config data. Stopping running modules")
 
 	var module string
-	for module = range api.ConfFunc {
+	for _, module = range utils.Modules {
 		api.ChangeModuleStatus(module, false)
 	}
 

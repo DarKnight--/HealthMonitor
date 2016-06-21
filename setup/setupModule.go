@@ -24,7 +24,7 @@ var (
 
 func loadStatus() {
 	if _, err := os.Stat(ConfigVars.ModuleInfoFilePath); os.IsNotExist(err) {
-		utils.ModuleError(MainLogFile, "The module status file is missing. Creating one with default settings", "")
+		utils.ModuleError(MainLogFile, "The module status file is missing.", "Creating one with default settings")
 		initStatus()
 		return
 	}
