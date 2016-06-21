@@ -86,7 +86,7 @@ func PauseWorker(worker int) error {
 
 //PauseAllWorker will pause all the workers running by OWTF
 func PauseAllWorker() error {
-	return toggleAllWorker(PauseWorker)
+	return PauseWorker(0)
 }
 
 //ResumeWorker will resume the worker with specified worker value
@@ -96,38 +96,7 @@ func ResumeWorker(worker int) error {
 
 //ResumeAllWorker will resume all the workers running by OWTF
 func ResumeAllWorker() error {
-	return toggleAllWorker(ResumeWorker)
-}
-
-func toggleAllWorker(toCall func(int) error) error {
-	workers, err := getTotalWorker()
-	if err != nil {
-		return err
-	}
-
-	for i := 1; i <= workers; i++ {
-		err = toCall(i)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func getTotalWorker() (int, error) {
-	const path = "http://127.0.0.1:8010/api/workers/"
-	var data []interface{}
-
-	_, response, err := fasthttp.Get(nil, path)
-	if err != nil {
-		return -1, err
-	}
-
-	err = json.Unmarshal(response, &data)
-	if err != nil {
-		return 0, err
-	}
-	return len(data), nil
+	return ResumeWorker(0)
 }
 
 func getRequest(path string) error {
