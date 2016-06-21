@@ -2,6 +2,7 @@ package target
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
 	"path"
 	"runtime"
@@ -67,9 +68,10 @@ func checkTarget() {
 		if status {
 			hash, ok := targetHash[target.TargetURL]
 			if !ok {
-				hash = generateHash(target.TargetURL)
-				if len(hash) == 0 {
-					//TODO Alert to do
+				hash, err = generateHash(target.TargetURL)
+				if err != nil {
+					utils.ModuleError(logFile, "Unable to get hash for the target",
+						"Hash is not in the database, tried for first time")
 					continue
 				}
 				targetHash[target.TargetURL] = hash
@@ -81,37 +83,40 @@ func checkTarget() {
 				targetInfo[target.TargetURL] = TargetStatus{Scanned: true, Normal: true}
 			} else {
 				targetInfo[target.TargetURL] = TargetStatus{Scanned: true, Normal: false}
-				//TODO action for target
 			}
 		}
 	}
 }
 
-func generateHash(target string) string {
-	status, response, err := fasthttp.Get(nil, "http://localhost:8009")
+func generateHash(target string) (string, error) {
+	status, response, err := fasthttp.Get(nil, target)
 	if err != nil {
 		utils.LiveEmergency <- true
-		return ""
+		return "", err
+	}
+	if status/100 != 2 {
+		return "", errors.New("Status code returned by target is " + string(status))
 	}
 	hash, err := HashString(response)
 	if err != nil {
-		return ""
+		return "", err
 	}
-	return hash
+	return hash, nil
 }
 
 func compareTargetHash(target string, hash string) bool {
-	newHash := generateHash(target)
-	if len(newHash) == 0 {
-		// TODO Alert
+	newHash, err := generateHash(target)
+	if err != nil {
+		utils.ModuleError(logFile, "Unable to generate hash for target "+target, err.Error())
 		return false
 	}
 	result := CompareHash(hash, newHash)
 	if result == -1 {
-		// TODO Alert
+		utils.ModuleError(logFile, "Unable to compare hashes", "Please check the target")
 		return false
 	} else if result < conf.FuzzyThreshold {
-		// TODO Alert for major change in target
+		utils.ModuleError(logFile, "Target is possible down or blocking OWTF", "Check the logs of OWTF and target")
+		//TODO action for target
 		return false
 	}
 	return true
