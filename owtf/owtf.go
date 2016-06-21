@@ -3,11 +3,10 @@ package owtf
 import (
 	"encoding/json"
 	"errors"
-	"health_monitor/setup"
-	"io/ioutil"
-	"net/http"
 
-	"health_monitor/utils"
+	"health_monitor/setup"
+
+	"github.com/valyala/fasthttp"
 )
 
 type (
@@ -32,19 +31,12 @@ func GetTarget() ([]Target, error) {
 		objmap  map[string]*json.RawMessage
 	)
 	// get all the tagrget json data from OWTF target endnode
-	response, err := http.Get(setup.ConfigVars.OWTFAddress + targetPath)
-	if err != nil {
-		return nil, err
-	}
-	defer response.Body.Close()
-
-	// Converting data recieved from http request to byte format
-	dataByte, err := ioutil.ReadAll(response.Body)
+	_, response, err := fasthttp.Get(nil, setup.ConfigVars.OWTFAddress+targetPath)
 	if err != nil {
 		return nil, err
 	}
 
-	err = json.Unmarshal(dataByte, &objmap)
+	err = json.Unmarshal(response, &objmap)
 
 	// Converting json byte to targets data structure
 	err = json.Unmarshal(*objmap["data"], &targets)
@@ -63,19 +55,13 @@ func CheckTarget(target string) (bool, error) {
 		}
 	)
 
-	response, err := http.Get(setup.ConfigVars.OWTFAddress + checkTargetPath + target)
+	_, response, err := fasthttp.Get(nil, setup.ConfigVars.OWTFAddress+checkTargetPath+target)
 	if err != nil {
 		// TODO check for error and if OWTF is down shutdown monitor gracefully
 		return false, err
 	}
-	defer response.Body.Close()
-	var dataByte []byte
-	dataByte, err = ioutil.ReadAll(response.Body)
-	if err != nil {
-		return false, err
-	}
 
-	err = json.Unmarshal(dataByte, &data)
+	err = json.Unmarshal(response, &data)
 	if err != nil {
 		return false, err
 	}
@@ -130,25 +116,14 @@ func toggleAllWorker(toCall func(int) error) error {
 
 func getTotalWorker() (int, error) {
 	const path = "http://127.0.0.1:8010/api/workers/"
-	var (
-		err      error
-		response *http.Response
-		data     []interface{}
-	)
+	var data []interface{}
 
-	response, err = http.Get(path)
+	_, response, err := fasthttp.Get(nil, path)
 	if err != nil {
 		return -1, err
 	}
-	defer response.Body.Close()
-	var dataByte []byte
-	dataByte, err = ioutil.ReadAll(response.Body)
-	if err != nil {
-		//TODO alert for the error
-		return 0, err
-	}
 
-	err = json.Unmarshal(dataByte, &data)
+	err = json.Unmarshal(response, &data)
 	if err != nil {
 		return 0, err
 	}
@@ -156,11 +131,11 @@ func getTotalWorker() (int, error) {
 }
 
 func getRequest(path string) error {
-	response, err := http.Get(path)
+	status, _, err := fasthttp.Get(nil, path)
 	if err == nil {
-		if response.StatusCode == 200 {
+		if status == 200 {
 		} else {
-			return errors.New("Response code is " + response.Status)
+			return errors.New("Response code is " + string(status))
 		}
 		return nil
 	}

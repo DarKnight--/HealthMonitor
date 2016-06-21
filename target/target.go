@@ -9,6 +9,7 @@ import (
 type (
 	Config struct {
 		Profile          string
+		FuzzyThreshold   int
 		RecheckThreshold int
 	}
 )
