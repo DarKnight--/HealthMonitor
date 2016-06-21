@@ -29,7 +29,6 @@ func Live(status <-chan bool, wg *sync.WaitGroup) {
 	var (
 		logFileName = path.Join(setup.ConfigVars.HomeDir, "live.log")
 		err         error
-		x           bool
 	)
 
 	logFile = utils.OpenLogFile(logFileName)
@@ -40,19 +39,17 @@ func Live(status <-chan bool, wg *sync.WaitGroup) {
 	Default := conf.CheckByHEAD
 
 	utils.ModuleLogs(logFile, "Default scan mode set to checkByHead")
-	if x, err = conf.CheckByDNS(); x {
+	if err = conf.CheckByDNS(); err == nil {
 		utils.ModuleLogs(logFile, "checkByDNS successful, setting it to default.")
 		Default = conf.CheckByDNS
-	}
-	if err != nil {
+	} else {
 		utils.ModuleError(logFile, err.Error(), "Error in checkByDNS")
 	}
 
-	if x, err = conf.Ping(); x {
+	if err = conf.Ping(); err == nil {
 		utils.ModuleLogs(logFile, "Ping scan successful, setting it to default.")
 		Default = conf.Ping
-	}
-	if err != nil {
+	} else {
 		utils.ModuleError(logFile, err.Error(), "Error in Ping")
 	}
 
@@ -87,26 +84,21 @@ func GetStatusJSON() []byte {
 	return data
 }
 
-func internetCheck(defaultCheck func() (bool, error), conf *Config) {
-	var (
-		err error
-		x   bool
-	)
-	if x, err = defaultCheck(); x {
+func internetCheck(defaultCheck func() error, conf *Config) {
+	var err error
+	if err = defaultCheck(); err == nil {
 		liveStatus.Normal = true
 		return
-	}
-	if err != nil {
+	} else {
 		utils.ModuleError(logFile, err.Error(), "")
 	}
 
 	for i := 0; i < 3; i++ {
 		time.Sleep(time.Duration(conf.RecheckThreshold) * time.Millisecond / 5)
-		if x, err = conf.CheckByHEAD(); x {
+		if err = conf.CheckByHEAD(); err == nil {
 			liveStatus.Normal = true
 			return
-		}
-		if err != nil {
+		} else {
 			utils.ModuleError(logFile, err.Error(), "")
 		}
 	}

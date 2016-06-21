@@ -64,52 +64,33 @@ func controlModule(chans [5]chan bool, wg *sync.WaitGroup) {
 		data := <-utils.ControlChan
 		switch data.Module {
 		case "live":
-			if data.Run && !setup.ModulesStatus.Live {
-				setup.ModulesStatus.Live = true
-				wg.Add(1)
-				utils.ModuleLogs(setup.MainLogFile, "Started live module")
-				go live.Live(chans[0], wg)
-			} else if setup.ModulesStatus.Live {
-				setup.ModulesStatus.Live = false
-				utils.ModuleLogs(setup.MainLogFile, "Stopped live module")
-				chans[0] <- true
-			}
+			break
 		case "target":
 			break
 		case "disk":
-			if data.Run && !setup.ModulesStatus.Disk {
-				setup.ModulesStatus.Disk = true
-				wg.Add(1)
-				utils.ModuleLogs(setup.MainLogFile, "Started disk module")
-				go disk.Disk(chans[2], wg)
-			} else if setup.ModulesStatus.Disk {
-				setup.ModulesStatus.Disk = false
-				utils.ModuleLogs(setup.MainLogFile, "Stopped disk module")
-				chans[2] <- true
-			}
+			controlModuleHelper(data.Run, &setup.ModulesStatus.Disk, data.Module,
+				disk.Disk, chans[2], wg)
 		case "ram":
-			if data.Run && !setup.ModulesStatus.RAM {
-				setup.ModulesStatus.RAM = true
-				wg.Add(1)
-				utils.ModuleLogs(setup.MainLogFile, "Started ram module")
-				go ram.RAM(chans[3], wg)
-			} else if setup.ModulesStatus.RAM {
-				setup.ModulesStatus.RAM = false
-				utils.ModuleLogs(setup.MainLogFile, "Stopped ram module")
-				chans[3] <- true
-			}
+			controlModuleHelper(data.Run, &setup.ModulesStatus.RAM, data.Module,
+				ram.RAM, chans[3], wg)
 		case "cpu":
-			if data.Run && !setup.ModulesStatus.CPU {
-				setup.ModulesStatus.CPU = true
-				wg.Add(1)
-				utils.ModuleLogs(setup.MainLogFile, "Started cpu module")
-				go ram.RAM(chans[4], wg)
-			} else if setup.ModulesStatus.CPU {
-				setup.ModulesStatus.CPU = false
-				utils.ModuleLogs(setup.MainLogFile, "Stopped cpu module")
-				chans[4] <- true
-			}
+			controlModuleHelper(data.Run, &setup.ModulesStatus.CPU, data.Module,
+				cpu.CPU, chans[4], wg)
 		}
+	}
+}
+
+func controlModuleHelper(run bool, moduleStatus *bool, moduleName string,
+	module func(<-chan bool, *sync.WaitGroup), channel chan bool, wg *sync.WaitGroup) {
+	if run && !*moduleStatus {
+		*moduleStatus = true
+		wg.Add(1)
+		utils.ModuleLogs(setup.MainLogFile, "Started "+moduleName+"module")
+		go module(channel, wg)
+	} else if *moduleStatus {
+		*moduleStatus = false
+		utils.ModuleLogs(setup.MainLogFile, "Stopped "+moduleName+"module")
+		channel <- true
 	}
 }
 
