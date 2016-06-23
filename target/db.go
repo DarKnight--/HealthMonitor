@@ -52,4 +52,25 @@ func SaveConfig(data []byte, profile string) error {
 	return saveData(newConfig)
 }
 
-//TODO write the code for saving hashes in db
+func saveTarget(target string, hash string) {
+	_, err := setup.Database.Exec(`INSERT OR REPLACE INTO target VALUES(?,?)`,
+		target, hash)
+
+	if err != nil {
+		utils.ModuleError(logFile, "Module: target, Unable to insert/update target hash", err.Error())
+		return
+	}
+	utils.ModuleLogs(logFile, fmt.Sprintf("Module: target, Updated/Inserted the %s target hash in db",
+		target))
+}
+
+func loadTarget(target string) string {
+	var hash string
+	err := setup.Database.QueryRow("SELECT hash FROM Target WHERE url=?", target).Scan(
+		&hash)
+	if err != nil {
+		utils.ModuleError(logFile, "Error while quering from databse", err.Error())
+		return "" // TODO better to have fallback call to default profile
+	}
+	return hash
+}

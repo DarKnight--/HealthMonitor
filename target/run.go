@@ -37,6 +37,12 @@ func Target(status <-chan bool, wg *sync.WaitGroup) {
 	logFile = utils.OpenLogFile(logFileName)
 	defer logFile.Close()
 
+	err := owtf.CheckOWTF()
+	if err != nil {
+		utils.ModuleError(logFile, err.Error(), "Owtf is not running, Signing off")
+		setup.ModulesStatus.Target = false
+		return
+	}
 	targetInfo = make(map[string]TargetStatus)
 
 	utils.ModuleLogs(logFile, "Running with "+conf.Profile+" profile")
@@ -68,11 +74,15 @@ func checkTarget() {
 		if status {
 			hash, ok := targetHash[target.TargetURL]
 			if !ok {
-				hash, err = generateHash(target.TargetURL)
-				if err != nil {
-					utils.ModuleError(logFile, "Unable to get hash for the target",
-						"Hash is not in the database, tried for first time")
-					continue
+				hash = loadTarget(target.TargetURL)
+				if hash == "" {
+					hash, err = generateHash(target.TargetURL)
+					if err != nil {
+						utils.ModuleError(logFile, "Unable to get hash for the target",
+							"Hash is not in the database, tried for first time")
+						continue
+					}
+					saveTarget(target.TargetURL, hash)
 				}
 				targetHash[target.TargetURL] = hash
 				// Save this hash to database
