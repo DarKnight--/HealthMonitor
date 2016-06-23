@@ -44,6 +44,7 @@ func Target(status <-chan bool, wg *sync.WaitGroup) {
 		return
 	}
 	targetInfo = make(map[string]TargetStatus)
+	targetHash = make(map[string]string)
 
 	utils.ModuleLogs(logFile, "Running with "+conf.Profile+" profile")
 	checkTarget()
@@ -125,10 +126,11 @@ func compareTargetHash(target string, hash string) bool {
 		utils.ModuleError(logFile, "Unable to compare hashes", "Please check the target")
 		return false
 	} else if result < conf.FuzzyThreshold {
-		utils.ModuleError(logFile, "Target is possible down or blocking OWTF", "Check the logs of OWTF and target")
+		utils.ModuleError(logFile, "Target "+target+" is possible down or blocking OWTF", "Check the logs of OWTF and target")
 		//TODO action for target
 		return false
 	}
+	utils.ModuleLogs(logFile, "Target "+target+" is up")
 	return true
 }
 
@@ -159,4 +161,7 @@ func GetStatusJSON() []byte {
 //Init is the initialization function of the module
 func Init() {
 	conf = LoadConfig()
+	if conf == nil {
+		utils.CheckConf(logFile, setup.MainLogFile, "target", &setup.ModulesStatus.Profile, setup.SetupTarget)
+	}
 }

@@ -50,12 +50,12 @@ func GetTarget() ([]Target, error) {
 // scan.
 func CheckTarget(target string) (bool, error) {
 	var (
-		data struct {
-			RecordsFiltered int `json:"records_filtered"`
+		data []struct {
+			Id int `json:"id"`
 		}
 	)
 
-	_, response, err := fasthttp.Get(nil, setup.ConfigVars.OWTFAddress+checkTargetPath+target)
+	_, response, err := fasthttp.Get(nil, "http://127.0.0.1:8009/api/targets?target_url=https://google.com")
 	if err != nil {
 		// TODO check for error and if OWTF is down shutdown monitor gracefully
 		return false, err
@@ -66,7 +66,7 @@ func CheckTarget(target string) (bool, error) {
 		return false, err
 	}
 
-	if data.RecordsFiltered > 0 {
+	if data[0].Id > 0 {
 		return true, nil
 	}
 

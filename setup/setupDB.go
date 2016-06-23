@@ -78,13 +78,16 @@ func SetupTarget() {
 		fuzzy_threshold		INT NOT NULL,
 		recheck_threshold 	INT NOT NULL
 		);`)
-	_, err := Database.Exec(`INSERT OR REPLACE INTO CPU VALUES ("default", 50, 5000);`)
+	_, err := Database.Exec(`INSERT OR REPLACE INTO Target VALUES ("default", 50, 5000);`)
 	if err != nil {
 		utils.ModuleError(DBLogFile, "Unable to insert value to Target table", err.Error())
 		return
 	}
 	utils.ModuleLogs(DBLogFile, "Inserted default values to Target table")
-	_, err = Database.Exec(`CREATE TABLE IF NOT EXISTS TargetHash(
+}
+
+func SetupTargetHash() {
+	_, err := Database.Exec(`CREATE TABLE IF NOT EXISTS TargetHash(
 		url			CHAR(50) PRIMARY KEY NOT NULL,
 		hash		CHAR(300) NOT NULL,
 		Timestamp 	DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -97,9 +100,10 @@ func SetupTarget() {
 
 func setupDB() {
 	SetupLive()
+	SetupTarget()
 	SetupDisk()
 	SetupRAM()
 	SetupCPU()
-	SetupTarget()
+	SetupTargetHash()
 	return
 }

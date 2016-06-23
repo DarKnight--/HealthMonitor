@@ -14,6 +14,7 @@ import (
 	"health_monitor/live"
 	"health_monitor/ram"
 	"health_monitor/setup"
+	"health_monitor/target"
 	"health_monitor/utils"
 	"health_monitor/webui"
 )
@@ -69,7 +70,8 @@ func controlModule(chans [5]chan bool, wg *sync.WaitGroup) {
 		case "live":
 			break
 		case "target":
-			break
+			controlModuleHelper(data.Run, &setup.ModulesStatus.Target, data.Module,
+				target.Target, chans[1], wg)
 		case "disk":
 			controlModuleHelper(data.Run, &setup.ModulesStatus.Disk, data.Module,
 				disk.Disk, chans[2], wg)
@@ -104,7 +106,9 @@ func runModules(chans [5]chan bool, wg *sync.WaitGroup) {
 		go live.Live(chans[0], wg)
 	}
 	if setup.ModulesStatus.Target {
+		wg.Add(1)
 		utils.ModuleLogs(setup.MainLogFile, "Started target module")
+		go target.Target(chans[2], wg)
 	}
 	if setup.ModulesStatus.Disk {
 		wg.Add(1)
@@ -126,6 +130,7 @@ func runModules(chans [5]chan bool, wg *sync.WaitGroup) {
 //Init initialises all the modules of the monitor
 func Init() {
 	live.Init()
+	target.Init()
 	disk.Init()
 	ram.Init()
 	cpu.Init()

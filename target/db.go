@@ -22,7 +22,7 @@ func LoadConfig() *Config {
 }
 
 func saveData(newConf *Config) error {
-	_, err := setup.Database.Exec(`INSERT OR REPLACE INTO target VALUES(?,?,?)`,
+	_, err := setup.Database.Exec(`INSERT OR REPLACE INTO Target VALUES(?,?,?)`,
 		newConf.Profile, newConf.FuzzyThreshold, newConf.RecheckThreshold)
 	if err != nil {
 		utils.ModuleError(logFile, "Module: target, Unable to insert/update profile", err.Error())
@@ -53,7 +53,7 @@ func SaveConfig(data []byte, profile string) error {
 }
 
 func saveTarget(target string, hash string) {
-	_, err := setup.Database.Exec(`INSERT OR REPLACE INTO target VALUES(?,?)`,
+	_, err := setup.Database.Exec(`INSERT OR REPLACE INTO TargetHash VALUES(?,?,CURRENT_TIMESTAMP)`,
 		target, hash)
 
 	if err != nil {
@@ -66,7 +66,7 @@ func saveTarget(target string, hash string) {
 
 func loadTarget(target string) string {
 	var hash string
-	err := setup.Database.QueryRow("SELECT hash FROM Target WHERE url=?", target).Scan(
+	err := setup.Database.QueryRow("SELECT hash FROM TargetHash WHERE url=?", target).Scan(
 		&hash)
 	if err != nil {
 		utils.ModuleError(logFile, "Error while quering from databse", err.Error())
