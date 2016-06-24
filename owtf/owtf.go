@@ -3,8 +3,10 @@ package owtf
 import (
 	"encoding/json"
 	"errors"
+	"time"
 
 	"health_monitor/setup"
+	"health_monitor/utils"
 
 	"github.com/valyala/fasthttp"
 )
@@ -22,6 +24,10 @@ const (
 	checkTargetPath = "/api/worklist/search?target_url="
 	workerPath      = "http://127.0.0.1:8010/api/workers/"
 )
+
+func init() {
+	go monitorOwtf()
+}
 
 // GetTarget function calls to the OWTF api to recieve all the targets in the
 // OWTF database
@@ -109,4 +115,62 @@ func getRequest(path string) error {
 		return nil
 	}
 	return err
+}
+
+func monitorOwtf() {
+	for true {
+		time.Sleep(time.Second)
+		if setup.ModulesStatus.Profile != "" {
+			break
+		}
+	}
+	time.Sleep(time.Second)
+
+	var (
+		workers []struct {
+			Busy   bool `json:"busy"`
+			Paused bool `json:"busy"`
+		}
+		owtfStatus bool
+		lastStatus bool
+	)
+
+	for true {
+		status, response, err := fasthttp.Get(nil, workerPath)
+		if !(err == nil && status/100 == 2) {
+			//OWTF is down
+			continue
+		}
+
+		err = json.Unmarshal(response, &workers)
+		if err != nil {
+			utils.ModuleError(setup.MainLogFile, "Unable parse json obtained", err.Error())
+			continue
+		}
+		owtfStatus = false
+		lastStatus = true
+		//TODO check for free the workers
+		for _, worker := range workers {
+			if worker.Busy && !worker.Paused {
+				owtfStatus = true
+				break
+			}
+		}
+		if owtfStatus != lastStatus {
+			if owtfStatus {
+				startModules()
+			} else {
+				pauseModules()
+			}
+		}
+		time.Sleep(time.Second)
+	}
+}
+
+func pauseModules() {
+	utils.SendModuleStatus("target", false) //turn of target module
+}
+
+func startModules() {
+	utils.SendModuleStatus("target", true)
 }

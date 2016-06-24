@@ -91,6 +91,7 @@ func internetCheck(defaultCheck func() error, conf *Config) {
 	var err error
 	if err = defaultCheck(); err == nil {
 		liveStatus.Normal = true
+		upAction()
 		return
 	} else {
 		utils.ModuleError(logFile, err.Error(), "")
@@ -105,6 +106,7 @@ func internetCheck(defaultCheck func() error, conf *Config) {
 			utils.ModuleError(logFile, err.Error(), "")
 		}
 	}
+	downAction()
 	liveStatus.Normal = false
 }
 
