@@ -71,8 +71,7 @@ func checkTarget() {
 		status, err := owtf.CheckTarget(target.TargetURL)
 		if err != nil {
 			utils.ModuleError(logFile, "Unable to check target status", err.Error())
-		}
-		if status {
+		} else if status {
 			hash, ok := targetHash[target.TargetURL]
 			if !ok {
 				hash = loadTarget(target.TargetURL)

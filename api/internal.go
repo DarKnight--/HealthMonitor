@@ -98,7 +98,7 @@ func ModuleStatus(module string) bool {
 	case "ram":
 		return setup.ModulesStatus.RAM
 	case "cpu":
-		return setup.ModulesStatus.RAM
+		return setup.ModulesStatus.CPU
 	default:
 		return false
 	}

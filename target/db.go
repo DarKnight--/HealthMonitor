@@ -69,7 +69,8 @@ func loadTarget(target string) string {
 	err := setup.Database.QueryRow("SELECT hash FROM TargetHash WHERE url=?", target).Scan(
 		&hash)
 	if err != nil {
-		utils.ModuleError(logFile, "Error while quering from databse", err.Error())
+		utils.ModuleError(logFile, fmt.Sprintf("Error while quering %s from databse",
+			target), err.Error())
 		return "" // TODO better to have fallback call to default profile
 	}
 	return hash

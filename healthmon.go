@@ -68,6 +68,8 @@ func controlModule(chans [5]chan bool, wg *sync.WaitGroup) {
 		data := <-utils.ControlChan
 		switch data.Module {
 		case "live":
+			controlModuleHelper(data.Run, &setup.ModulesStatus.Live, data.Module,
+				live.Live, chans[0], wg)
 			break
 		case "target":
 			controlModuleHelper(data.Run, &setup.ModulesStatus.Target, data.Module,
@@ -108,7 +110,7 @@ func runModules(chans [5]chan bool, wg *sync.WaitGroup) {
 	if setup.ModulesStatus.Target {
 		wg.Add(1)
 		utils.ModuleLogs(setup.MainLogFile, "Started target module")
-		go target.Target(chans[2], wg)
+		go target.Target(chans[1], wg)
 	}
 	if setup.ModulesStatus.Disk {
 		wg.Add(1)

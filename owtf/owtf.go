@@ -56,12 +56,12 @@ func GetTarget() ([]Target, error) {
 // scan.
 func CheckTarget(target string) (bool, error) {
 	var (
-		data []struct {
-			Id int `json:"id"`
+		data struct {
+			RecordsFiltered int `json:"records_filtered"`
 		}
 	)
 
-	_, response, err := fasthttp.Get(nil, "http://127.0.0.1:8009/api/targets?target_url=https://google.com")
+	_, response, err := fasthttp.Get(nil, setup.ConfigVars.OWTFAddress+checkTargetPath+target)
 	if err != nil {
 		// TODO check for error and if OWTF is down shutdown monitor gracefully
 		return false, err
@@ -72,7 +72,7 @@ func CheckTarget(target string) (bool, error) {
 		return false, err
 	}
 
-	if data[0].Id > 0 {
+	if data.RecordsFiltered > 0 {
 		return true, nil
 	}
 
@@ -125,16 +125,15 @@ func monitorOwtf() {
 		}
 	}
 	time.Sleep(time.Second)
-
 	var (
 		workers []struct {
 			Busy   bool `json:"busy"`
-			Paused bool `json:"busy"`
+			Paused bool `json:"paused"`
 		}
 		owtfStatus bool
 		lastStatus bool
 	)
-
+	lastStatus = true
 	for true {
 		status, response, err := fasthttp.Get(nil, workerPath)
 		if !(err == nil && status/100 == 2) {
@@ -148,7 +147,6 @@ func monitorOwtf() {
 			continue
 		}
 		owtfStatus = false
-		lastStatus = true
 		//TODO check for free the workers
 		for _, worker := range workers {
 			if worker.Busy && !worker.Paused {
@@ -156,6 +154,7 @@ func monitorOwtf() {
 				break
 			}
 		}
+
 		if owtfStatus != lastStatus {
 			if owtfStatus {
 				startModules()
@@ -163,6 +162,7 @@ func monitorOwtf() {
 				pauseModules()
 			}
 		}
+		lastStatus = owtfStatus
 		time.Sleep(time.Second)
 	}
 }
