@@ -16,7 +16,7 @@ func LoadConfig() *Config {
 		&conf.RecheckThreshold)
 	if err != nil {
 		utils.ModuleError(logFile, "Error while quering from databse", err.Error())
-		return nil // TODO better to have fallback call to default profile
+		return nil
 	}
 	return conf
 }

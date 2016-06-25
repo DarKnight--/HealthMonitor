@@ -93,18 +93,17 @@ func internetCheck(defaultCheck func() error, conf *Config) {
 		liveStatus.Normal = true
 		upAction()
 		return
-	} else {
-		utils.ModuleError(logFile, err.Error(), "")
 	}
+	utils.ModuleError(logFile, err.Error(), "")
 
 	for i := 0; i < 3; i++ {
 		time.Sleep(time.Duration(conf.RecheckThreshold) * time.Millisecond / 5)
 		if err = conf.CheckByHEAD(); err == nil {
 			liveStatus.Normal = true
 			return
-		} else {
-			utils.ModuleError(logFile, err.Error(), "")
 		}
+		utils.ModuleError(logFile, err.Error(), "")
+
 	}
 	downAction()
 	liveStatus.Normal = false
@@ -131,6 +130,6 @@ func GetConfJSON() []byte {
 func Init() {
 	conf = LoadConfig()
 	if conf == nil {
-		utils.CheckConf(logFile, setup.MainLogFile, "live", &setup.ModulesStatus.Profile, setup.SetupLive)
+		utils.CheckConf(logFile, setup.MainLogFile, "live", &setup.ModulesStatus.Profile, setup.Live)
 	}
 }

@@ -15,17 +15,19 @@ var (
 )
 
 type (
+	// Config holds all the necessary parameters required by the module
 	Config struct {
 		Profile          string
 		CPUWarningLimit  int
 		RecheckThreshold int
 	}
-
-	CPUStat struct {
+	// Stat holds the data about the % usage of cpu
+	Stat struct {
 		CPUUsage float32
 	}
 )
 
+//Init method is used to initialiase the global variables
 func (conf Config) Init() error {
 	f, err := os.Open("/proc/stat")
 	if err != nil {
@@ -52,7 +54,8 @@ func (conf Config) Init() error {
 	return nil
 }
 
-func (conf *Config) CPUUsage(stat *CPUStat) error {
+//CPUUsage sets the current cpu usage to the passed variable pointer
+func (conf *Config) CPUUsage(stat *Stat) error {
 	var totalUser, totalUserLow, totalSys, totalIdle, total uint64
 	var percent float32
 	stat.CPUUsage = percent

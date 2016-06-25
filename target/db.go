@@ -71,7 +71,7 @@ func loadTarget(target string) string {
 	if err != nil {
 		utils.ModuleError(logFile, fmt.Sprintf("Error while quering %s from databse",
 			target), err.Error())
-		return "" // TODO better to have fallback call to default profile
+		return ""
 	}
 	return hash
 }

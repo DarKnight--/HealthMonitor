@@ -20,7 +20,7 @@ type (
 	//Info holds the information of CPU's status and stats after the scan
 	Info struct {
 		Status Status
-		Stats  CPUStat
+		Stats  Stat
 	}
 )
 
@@ -94,6 +94,6 @@ func GetStatusJSON() []byte {
 func Init() {
 	conf = LoadConfig()
 	if conf == nil {
-		utils.CheckConf(logFile, setup.MainLogFile, "cpu", &setup.ModulesStatus.Profile, setup.SetupCPU)
+		utils.CheckConf(logFile, setup.MainLogFile, "cpu", &setup.ModulesStatus.Profile, setup.CPU)
 	}
 }

@@ -6,7 +6,8 @@ import (
 	"health_monitor/utils"
 )
 
-func SetupLive() {
+//Live saves the default config of live module to db
+func Live() {
 	Database.Exec(`CREATE TABLE IF NOT EXISTS Live(
 		profile  			CHAR(50) PRIMARY KEY NOT NULL,
 		head_url 			CHAR(50) NOT NULL,
@@ -25,7 +26,8 @@ func SetupLive() {
 	utils.ModuleLogs(DBLogFile, "Inserted default values to Live table")
 }
 
-func SetupDisk() {
+//Disk saves the default config of disk module to db
+func Disk() {
 	Database.Exec(`CREATE TABLE IF NOT EXISTS Disk(
 		profile				CHAR(50) PRIMARY KEY NOT NULL,
 		space_w_limit		INT NOT NULL,
@@ -44,7 +46,8 @@ func SetupDisk() {
 	utils.ModuleLogs(DBLogFile, "Inserted default values to Disk table")
 }
 
-func SetupRAM() {
+//RAM saves the default config of ram module to db
+func RAM() {
 	Database.Exec(`CREATE TABLE IF NOT EXISTS Ram(
 		profile				CHAR(50) PRIMARY KEY NOT NULL,
 		ram_w_limit			INT NOT NULL,
@@ -58,7 +61,8 @@ func SetupRAM() {
 	utils.ModuleLogs(DBLogFile, "Inserted default values to Ram table")
 }
 
-func SetupCPU() {
+//CPU saves the default config of cpu module to db
+func CPU() {
 	Database.Exec(`CREATE TABLE IF NOT EXISTS CPU(
 		profile				CHAR(50) PRIMARY KEY NOT NULL,
 		cpu_w_limit			INT NOT NULL,
@@ -72,7 +76,8 @@ func SetupCPU() {
 	utils.ModuleLogs(DBLogFile, "Inserted default values to CPU table")
 }
 
-func SetupTarget() {
+//Target saves the default config of target module to db
+func Target() {
 	Database.Exec(`CREATE TABLE IF NOT EXISTS Target(
 		profile				CHAR(50) PRIMARY KEY NOT NULL,
 		fuzzy_threshold		INT NOT NULL,
@@ -86,7 +91,8 @@ func SetupTarget() {
 	utils.ModuleLogs(DBLogFile, "Inserted default values to Target table")
 }
 
-func SetupTargetHash() {
+//TargetHash saves the fuzzy hash of the target response
+func TargetHash() {
 	_, err := Database.Exec(`CREATE TABLE IF NOT EXISTS TargetHash(
 		url			CHAR(50) PRIMARY KEY NOT NULL,
 		hash		CHAR(300) NOT NULL,
@@ -99,11 +105,11 @@ func SetupTargetHash() {
 }
 
 func setupDB() {
-	SetupLive()
-	SetupTarget()
-	SetupDisk()
-	SetupRAM()
-	SetupCPU()
-	SetupTargetHash()
+	Live()
+	Target()
+	Disk()
+	RAM()
+	CPU()
+	TargetHash()
 	return
 }

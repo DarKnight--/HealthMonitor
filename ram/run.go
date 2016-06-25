@@ -94,6 +94,6 @@ func GetStatusJSON() []byte {
 func Init() {
 	conf = LoadConfig()
 	if conf == nil {
-		utils.CheckConf(logFile, setup.MainLogFile, "ram", &setup.ModulesStatus.Profile, setup.SetupRAM)
+		utils.CheckConf(logFile, setup.MainLogFile, "ram", &setup.ModulesStatus.Profile, setup.RAM)
 	}
 }

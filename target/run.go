@@ -17,7 +17,8 @@ import (
 )
 
 type (
-	TargetStatus struct {
+	// Status holds the status of the owtf target after the scan
+	Status struct {
 		Scanned bool
 		Normal  bool
 	}
@@ -25,11 +26,12 @@ type (
 
 var (
 	targetHash map[string]string
-	targetInfo map[string]TargetStatus
+	targetInfo map[string]Status
 	logFile    *os.File
 	conf       *Config
 )
 
+// Target is the driver function of the module
 func Target(status <-chan bool, wg *sync.WaitGroup) {
 	defer wg.Done()
 	var logFileName = path.Join(setup.ConfigVars.HomeDir, "target.log")
@@ -43,7 +45,7 @@ func Target(status <-chan bool, wg *sync.WaitGroup) {
 		setup.ModulesStatus.Target = false
 		return
 	}
-	targetInfo = make(map[string]TargetStatus)
+	targetInfo = make(map[string]Status)
 	targetHash = make(map[string]string)
 
 	utils.ModuleLogs(logFile, "Running with "+conf.Profile+" profile")
@@ -88,13 +90,19 @@ func checkTarget() {
 				// Save this hash to database
 				continue
 			}
-			result := compareTargetHash(target.TargetURL, hash)
-			if result {
-				targetInfo[target.TargetURL] = TargetStatus{Scanned: true, Normal: true}
-			} else {
-				targetInfo[target.TargetURL] = TargetStatus{Scanned: true, Normal: false}
+			result, err := conf.CheckStatus(target.TargetURL, hash)
+			if err != nil {
+				utils.ModuleError(logFile, "Error occured during matching hash score",
+					err.Error())
 			}
+			if result {
+				targetInfo[target.TargetURL] = Status{Scanned: true, Normal: true}
+			} else {
+				targetInfo[target.TargetURL] = Status{Scanned: true, Normal: false}
+			}
+			continue
 		}
+		targetInfo[target.TargetURL] = Status{Scanned: false, Normal: true}
 	}
 }
 
@@ -114,28 +122,9 @@ func generateHash(target string) (string, error) {
 	return hash, nil
 }
 
-func compareTargetHash(target string, hash string) bool {
-	newHash, err := generateHash(target)
-	if err != nil {
-		utils.ModuleError(logFile, "Unable to generate hash for target "+target, err.Error())
-		return false
-	}
-	result := CompareHash(hash, newHash)
-	if result == -1 {
-		utils.ModuleError(logFile, "Unable to compare hashes", "Please check the target")
-		return false
-	} else if result < conf.FuzzyThreshold {
-		utils.ModuleError(logFile, "Target "+target+" is possible down or blocking OWTF", "Check the logs of OWTF and target")
-		//TODO action for target
-		return false
-	}
-	utils.ModuleLogs(logFile, "Target "+target+" is up")
-	return true
-}
-
 // GetStatus function is getter funtion for the targetInfo to send status
 // of target monitor
-func GetStatus() map[string]TargetStatus {
+func GetStatus() map[string]Status {
 	return targetInfo
 }
 
@@ -161,6 +150,6 @@ func GetStatusJSON() []byte {
 func Init() {
 	conf = LoadConfig()
 	if conf == nil {
-		utils.CheckConf(logFile, setup.MainLogFile, "target", &setup.ModulesStatus.Profile, setup.SetupTarget)
+		utils.CheckConf(logFile, setup.MainLogFile, "target", &setup.ModulesStatus.Profile, setup.Target)
 	}
 }
