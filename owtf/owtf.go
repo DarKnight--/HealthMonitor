@@ -3,6 +3,7 @@ package owtf
 import (
 	"encoding/json"
 	"errors"
+	"strconv"
 	"time"
 
 	"health_monitor/setup"
@@ -87,7 +88,7 @@ func CheckOWTF() error {
 
 //PauseWorker will pause the worker with specified worker value
 func PauseWorker(worker int) error {
-	return getRequest(workerPath + string(worker) + "/pause")
+	return getRequest(workerPath + strconv.Itoa(worker) + "/pause")
 }
 
 //PauseAllWorker will pause all the workers running by OWTF
@@ -97,7 +98,7 @@ func PauseAllWorker() error {
 
 //ResumeWorker will resume the worker with specified worker value
 func ResumeWorker(worker int) error {
-	return getRequest(workerPath + string(worker) + "/resume")
+	return getRequest(workerPath + strconv.Itoa(worker) + "/resume")
 }
 
 //ResumeAllWorker will resume all the workers running by OWTF
@@ -168,7 +169,7 @@ func monitorOwtf() {
 }
 
 func pauseModules() {
-	utils.SendModuleStatus("target", false) //turn of target module
+	utils.SendModuleStatus("target", false) //turn off target module
 }
 
 func startModules() {

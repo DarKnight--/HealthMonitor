@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"runtime"
+	"strconv"
 	"sync"
 	"time"
 
@@ -92,8 +93,8 @@ func checkTarget() {
 			}
 			result, err := conf.CheckStatus(target.TargetURL, hash)
 			if err != nil {
-				utils.ModuleError(logFile, "Error occured during matching hash score",
-					err.Error())
+				utils.ModuleError(logFile, "Error occured during matching hash score for target "+
+					target.TargetURL, err.Error())
 			}
 			if result {
 				targetInfo[target.TargetURL] = Status{Scanned: true, Normal: true}
@@ -113,7 +114,7 @@ func generateHash(target string) (string, error) {
 		return "", err
 	}
 	if status/100 != 2 {
-		return "", errors.New("Status code returned by target is " + string(status))
+		return "", errors.New("Status code returned by target is " + strconv.Itoa(status))
 	}
 	hash, err := HashString(response)
 	if err != nil {
