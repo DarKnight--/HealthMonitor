@@ -3,6 +3,7 @@ package target
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"path"
 	"runtime"
@@ -86,10 +87,9 @@ func checkTarget() {
 						continue
 					}
 					saveTarget(target.TargetURL, hash)
+					continue
 				}
 				targetHash[target.TargetURL] = hash
-				// Save this hash to database
-				continue
 			}
 			result, err := conf.CheckStatus(target.TargetURL, hash)
 			if err != nil {
@@ -99,8 +99,12 @@ func checkTarget() {
 			if result {
 				targetInfo[target.TargetURL] = Status{Scanned: true, Normal: true}
 				owtf.ResumeWorkerByTarget(target.ID)
+				utils.ModuleLogs(logFile, fmt.Sprintf("Target %s is up",
+					target.TargetURL))
 			} else {
 				targetInfo[target.TargetURL] = Status{Scanned: true, Normal: false}
+				utils.ModuleLogs(logFile, fmt.Sprintf("Target %s is down",
+					target.TargetURL))
 				owtf.PauseWorkerByTarget(target.ID)
 			}
 			continue

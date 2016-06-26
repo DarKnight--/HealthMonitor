@@ -73,5 +73,6 @@ func loadTarget(target string) string {
 			target), err.Error())
 		return ""
 	}
+	fmt.Println("loaded from db : " + target + " hash : " + hash)
 	return hash
 }

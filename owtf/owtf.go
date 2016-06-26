@@ -3,6 +3,7 @@ package owtf
 import (
 	"encoding/json"
 	"errors"
+
 	"strconv"
 	"time"
 
@@ -92,9 +93,12 @@ func PauseWorker(worker int) error {
 }
 
 func PauseWorkerByTarget(id int) error {
-	workerId := getWorkerByTarget(id)
+	workerId, paused := getWorkerByTarget(id)
 	if workerId == -1 {
 		return errors.New("Unable to get the worker with target id = " + strconv.Itoa(id))
+	}
+	if paused {
+		return nil
 	}
 	return PauseWorker(workerId)
 }
@@ -115,18 +119,22 @@ func ResumeAllWorker() error {
 }
 
 func ResumeWorkerByTarget(id int) error {
-	workerId := getWorkerByTarget(id)
+	workerId, paused := getWorkerByTarget(id)
 	if workerId == -1 {
 		return errors.New("Unable to get the worker with target id = " + strconv.Itoa(id))
 	}
-	return ResumeWorker(workerId)
+	if paused {
+		return ResumeWorker(workerId)
+	}
+	return nil
 }
 
-func getWorkerByTarget(id int) int {
+func getWorkerByTarget(id int) (int, bool) {
 	var (
 		workers []struct {
-			Id   int `json:"id"`
-			Work []struct {
+			Id     int  `json:"id"`
+			Paused bool `json:"paused`
+			Work   []struct {
 				Id int `json:"id"`
 			} `json:"work"`
 		}
@@ -134,20 +142,19 @@ func getWorkerByTarget(id int) int {
 
 	status, response, err := fasthttp.Get(nil, workerPath)
 	if !(err == nil && status/100 == 2) {
-		return -1
+		return -1, false
 	}
 
 	err = json.Unmarshal(response, &workers)
 	if err != nil {
-		return -1
+		return -1, false
 	}
-
 	for _, worker := range workers {
-		if worker.Work[0].Id == id {
-			return worker.Work[0].Id
+		if len(worker.Work) != 0 && worker.Work[0].Id == id {
+			return worker.Id, worker.Paused
 		}
 	}
-	return -1
+	return -1, false
 }
 
 func getRequest(path string) error {
