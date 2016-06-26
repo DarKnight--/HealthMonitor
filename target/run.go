@@ -98,14 +98,14 @@ func checkTarget() {
 			}
 			if result {
 				targetInfo[target.TargetURL] = Status{Scanned: true, Normal: true}
-				owtf.ResumeWorkerByTarget(target.ID)
 				utils.ModuleLogs(logFile, fmt.Sprintf("Target %s is up",
 					target.TargetURL))
+				upAction(target.ID)
 			} else {
 				targetInfo[target.TargetURL] = Status{Scanned: true, Normal: false}
 				utils.ModuleLogs(logFile, fmt.Sprintf("Target %s is down",
 					target.TargetURL))
-				owtf.PauseWorkerByTarget(target.ID)
+				downAction(target.ID)
 			}
 			continue
 		}
