@@ -98,8 +98,10 @@ func checkTarget() {
 			}
 			if result {
 				targetInfo[target.TargetURL] = Status{Scanned: true, Normal: true}
+				owtf.ResumeWorkerByTarget(target.ID)
 			} else {
 				targetInfo[target.TargetURL] = Status{Scanned: true, Normal: false}
+				owtf.PauseWorkerByTarget(target.ID)
 			}
 			continue
 		}

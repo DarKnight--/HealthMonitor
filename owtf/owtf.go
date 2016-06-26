@@ -91,6 +91,14 @@ func PauseWorker(worker int) error {
 	return getRequest(workerPath + strconv.Itoa(worker) + "/pause")
 }
 
+func PauseWorkerByTarget(id int) error {
+	workerId := getWorkerByTarget(id)
+	if workerId == -1 {
+		return errors.New("Unable to get the worker with target id = " + strconv.Itoa(id))
+	}
+	return PauseWorker(workerId)
+}
+
 //PauseAllWorker will pause all the workers running by OWTF
 func PauseAllWorker() error {
 	return PauseWorker(0)
@@ -104,6 +112,42 @@ func ResumeWorker(worker int) error {
 //ResumeAllWorker will resume all the workers running by OWTF
 func ResumeAllWorker() error {
 	return ResumeWorker(0)
+}
+
+func ResumeWorkerByTarget(id int) error {
+	workerId := getWorkerByTarget(id)
+	if workerId == -1 {
+		return errors.New("Unable to get the worker with target id = " + strconv.Itoa(id))
+	}
+	return ResumeWorker(workerId)
+}
+
+func getWorkerByTarget(id int) int {
+	var (
+		workers []struct {
+			Id   int `json:"id"`
+			Work []struct {
+				Id int `json:"id"`
+			} `json:"work"`
+		}
+	)
+
+	status, response, err := fasthttp.Get(nil, workerPath)
+	if !(err == nil && status/100 == 2) {
+		return -1
+	}
+
+	err = json.Unmarshal(response, &workers)
+	if err != nil {
+		return -1
+	}
+
+	for _, worker := range workers {
+		if worker.Work[0].Id == id {
+			return worker.Work[0].Id
+		}
+	}
+	return -1
 }
 
 func getRequest(path string) error {
