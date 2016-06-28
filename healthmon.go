@@ -24,9 +24,13 @@ type Flags struct {
 	NoWebUI *bool
 	NoCLI   *bool
 	Quite   *bool
+	Install *bool
 }
 
 func main() {
+	defer func() {
+		fmt.Println("In case the program exited due to dependency failure try running '-install' option")
+	}()
 	var (
 		wg    sync.WaitGroup
 		flags Flags
@@ -43,11 +47,16 @@ func main() {
 	flags.NoWebUI = flag.Bool("nowebui", false, "Disables the web ui")
 	flags.NoCLI = flag.Bool("nocli", false, "Disables cli")
 	flags.Quite = flag.Bool("quite", false, "Disables all notifications except email")
+	flags.Install = flag.Bool("install", false, "Installs necessary dependencies")
 
 	flag.Parse()
 
-	go webui.RunServer(setup.ConfigVars.Port)
+	if *flags.Install {
+		install()
+	}
+
 	if (*flags.NoCLI == true) || (*flags.NoWebUI == false) {
+		go webui.RunServer(setup.ConfigVars.Port)
 		fmt.Printf("[*] Server is up and running at http://127.0.0.1:%s\n", setup.ConfigVars.Port)
 	}
 
