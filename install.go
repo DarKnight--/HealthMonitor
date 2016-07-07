@@ -9,7 +9,9 @@ import (
 )
 
 const (
-	tempPath = "/tmp/monitor"
+	tempPath      = "/tmp/monitor"
+	ssdeepInstall = `wget http://downloads.sourceforge.net/project/ssdeep/ssdeep-2.13/ssdeep-2.13.tar.gz;
+		tar zxvf ssdeep-2.13.tar.gz; cd ssdeep-2.13; ./configure; make; make install`
 )
 
 func install() {
@@ -20,12 +22,12 @@ func install() {
 
 	complete := true
 	fmt.Println("[-]Installing ssdeep package...")
-	command := exec.Command("/bin/sh", "-c", `wget http://downloads.sourceforge.net/project/ssdeep/ssdeep-2.13/ssdeep-2.13.tar.gz; \
-		tar zxvf ssdeep-2.13.tar.gz; cd ssdeep-2.13; ./configure; make; make install `)
+	command := exec.Command("/bin/sh", "-c", ssdeepInstall)
 	command.Stdout = os.Stdout
 	command.Dir = tempPath
 	if err := command.Run(); err != nil {
 		utils.Perror("Unable to install ssdeep")
+		utils.Perror(ssdeepInstall)
 		complete = false
 	}
 	printFinalMsg(complete)
