@@ -68,8 +68,8 @@ func compressFolder(basePath string, outFName string) error {
 			return nil
 		}
 
-		new_path := path[len(basePath)+1:]
-		if len(new_path) == 0 {
+		newPath := path[len(basePath)+1:]
+		if len(newPath) == 0 {
 			return nil
 		}
 		fr, err := os.Open(path)
@@ -78,10 +78,10 @@ func compressFolder(basePath string, outFName string) error {
 		}
 		defer fr.Close()
 
-		if h, err := tar.FileInfoHeader(info, new_path); err != nil {
+		if h, err := tar.FileInfoHeader(info, newPath); err != nil {
 			log.Fatalln(err)
 		} else {
-			h.Name = new_path
+			h.Name = newPath
 			if err = tarWriter.WriteHeader(h); err != nil {
 				utils.ModuleError(logFile, "Unable to add file headers", err.Error())
 			}

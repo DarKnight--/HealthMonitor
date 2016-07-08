@@ -14,6 +14,7 @@ import (
 	"health_monitor/live"
 	"health_monitor/ram"
 	"health_monitor/setup"
+	"health_monitor/target"
 	"health_monitor/utils"
 	"health_monitor/webui"
 )
@@ -23,9 +24,13 @@ type Flags struct {
 	NoWebUI *bool
 	NoCLI   *bool
 	Quite   *bool
+	Install *bool
 }
 
 func main() {
+	defer func() {
+		fmt.Println("In case the program exited due to dependency failure try running '-install' option")
+	}()
 	var (
 		wg    sync.WaitGroup
 		flags Flags
@@ -36,14 +41,22 @@ func main() {
 		chans[i] = make(chan bool)
 	}
 
+	utils.LiveEmergency = make(chan bool)
+	defer close(utils.LiveEmergency)
+
 	flags.NoWebUI = flag.Bool("nowebui", false, "Disables the web ui")
 	flags.NoCLI = flag.Bool("nocli", false, "Disables cli")
 	flags.Quite = flag.Bool("quite", false, "Disables all notifications except email")
+	flags.Install = flag.Bool("install", false, "Installs necessary dependencies")
 
 	flag.Parse()
 
-	go webui.RunServer(setup.ConfigVars.Port)
+	if *flags.Install {
+		install()
+	}
+
 	if (*flags.NoCLI == true) || (*flags.NoWebUI == false) {
+		go webui.RunServer(setup.ConfigVars.Port)
 		fmt.Printf("[*] Server is up and running at http://127.0.0.1:%s\n", setup.ConfigVars.Port)
 	}
 
@@ -64,9 +77,12 @@ func controlModule(chans [5]chan bool, wg *sync.WaitGroup) {
 		data := <-utils.ControlChan
 		switch data.Module {
 		case "live":
+			controlModuleHelper(data.Run, &setup.ModulesStatus.Live, data.Module,
+				live.Live, chans[0], wg)
 			break
 		case "target":
-			break
+			controlModuleHelper(data.Run, &setup.ModulesStatus.Target, data.Module,
+				target.Target, chans[1], wg)
 		case "disk":
 			controlModuleHelper(data.Run, &setup.ModulesStatus.Disk, data.Module,
 				disk.Disk, chans[2], wg)
@@ -101,7 +117,9 @@ func runModules(chans [5]chan bool, wg *sync.WaitGroup) {
 		go live.Live(chans[0], wg)
 	}
 	if setup.ModulesStatus.Target {
+		wg.Add(1)
 		utils.ModuleLogs(setup.MainLogFile, "Started target module")
+		go target.Target(chans[1], wg)
 	}
 	if setup.ModulesStatus.Disk {
 		wg.Add(1)
@@ -123,6 +141,7 @@ func runModules(chans [5]chan bool, wg *sync.WaitGroup) {
 //Init initialises all the modules of the monitor
 func Init() {
 	live.Init()
+	target.Init()
 	disk.Init()
 	ram.Init()
 	cpu.Init()

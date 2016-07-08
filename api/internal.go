@@ -8,6 +8,7 @@ import (
 	"health_monitor/live"
 	"health_monitor/ram"
 	"health_monitor/setup"
+	"health_monitor/target"
 	"health_monitor/utils"
 )
 
@@ -23,18 +24,21 @@ var (
 func init() {
 	StatusFunc = make(map[string]func() []byte)
 	StatusFunc["live"] = live.GetStatusJSON
+	StatusFunc["target"] = target.GetStatusJSON
 	StatusFunc["disk"] = disk.GetStatusJSON
 	StatusFunc["ram"] = ram.GetStatusJSON
 	StatusFunc["cpu"] = cpu.GetStatusJSON
 
 	ConfFunc = make(map[string]func() []byte)
 	ConfFunc["live"] = live.GetConfJSON
+	ConfFunc["target"] = target.GetConfJSON
 	ConfFunc["disk"] = disk.GetConfJSON
 	ConfFunc["ram"] = ram.GetConfJSON
 	ConfFunc["cpu"] = cpu.GetConfJSON
 
 	ConfSaveFunc = make(map[string]func([]byte, string) error)
 	ConfSaveFunc["live"] = live.SaveConfig
+	ConfSaveFunc["target"] = target.SaveConfig
 	ConfSaveFunc["disk"] = disk.SaveConfig
 	ConfSaveFunc["ram"] = ram.SaveConfig
 	ConfSaveFunc["cpu"] = cpu.SaveConfig
@@ -94,7 +98,7 @@ func ModuleStatus(module string) bool {
 	case "ram":
 		return setup.ModulesStatus.RAM
 	case "cpu":
-		return setup.ModulesStatus.RAM
+		return setup.ModulesStatus.CPU
 	default:
 		return false
 	}

@@ -13,7 +13,10 @@ var (
 	mutex sync.Mutex
 	//ControlChan is the channel to send stop or start signal to main function
 	ControlChan chan Status
-	Modules     = []string{"live", "target", "disk", "ram", "cpu"}
+	//Modules is the list of the modules currently implemented..
+	Modules = []string{"live", "target", "disk", "ram", "cpu"}
+	//LiveEmergency is the channel to call live module any time
+	LiveEmergency chan bool
 )
 
 // Status struct is used by monitor to send different modules signal to abort
@@ -70,6 +73,7 @@ func ModuleError(filename *os.File, err string, description string) {
 	mutex.Unlock()
 }
 
+//OpenLogFile is the utility function to open log file
 func OpenLogFile(logFileName string) *os.File {
 	logFile, err := os.OpenFile(logFileName, os.O_RDWR|os.O_CREATE|os.O_APPEND,
 		0666)
@@ -79,11 +83,14 @@ func OpenLogFile(logFileName string) *os.File {
 	return logFile
 }
 
+//SendModuleStatus is the utility function to change the state of module
 func SendModuleStatus(module string, status bool) {
 	signal := Status{Module: module, Run: status}
 	ControlChan <- signal
 }
 
+//CheckConf is the utility function to check the config variable loaded from the
+//database and if fails, then switch to default
 func CheckConf(moduleLogFile *os.File, masterLogFile *os.File, module string,
 	profile *string, setupFunc func()) {
 	ModuleError(moduleLogFile, "Unable to find config for profile "+
@@ -98,6 +105,7 @@ func CheckConf(moduleLogFile *os.File, masterLogFile *os.File, module string,
 	}
 }
 
+//RestartAllModules will restart all the modules.
 func RestartAllModules() {
 	var module string
 	for _, module = range Modules {

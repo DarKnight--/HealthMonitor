@@ -32,7 +32,9 @@ func loadStatus() {
 	if err != nil {
 		utils.ModuleError(MainLogFile, "The module status file is corrupt, creating one with default values", err.Error())
 		initStatus()
-		return
+	} else if ModulesStatus.Profile == "" { //TODO add check to ensure profile exists in db
+		utils.ModuleError(MainLogFile, "The module status file does not contain profile or profile does not exists", "Creating one with default values")
+		initStatus()
 	}
 }
 
