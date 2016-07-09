@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"health_monitor/api"
+	"health_monitor/cli"
 	"health_monitor/cpu"
 	"health_monitor/disk"
 	"health_monitor/live"
@@ -60,19 +61,22 @@ func main() {
 		fmt.Printf("[*] Server is up and running at http://127.0.0.1:%s\n", setup.ConfigVars.Port)
 	}
 
-	exitChan := make(chan os.Signal, 1)
-	signal.Notify(exitChan, syscall.SIGINT, syscall.SIGTERM)
+	utils.ExitChan = make(chan os.Signal, 1)
+	signal.Notify(utils.ExitChan, syscall.SIGINT, syscall.SIGTERM)
 	wg.Add(1)
-	go tearDown(exitChan, &wg)
+	go tearDown(&wg)
 	Init()
 	utils.ModuleLogs(setup.MainLogFile, "Running modules from last saved profile")
 	runModules(chans, &wg)
-	controlModule(chans, &wg)
-	setup.SaveStatus()
+	go controlModule(chans, &wg)
+	if *flags.NoCLI == false {
+		cli.Run()
+	}
+	wg.Wait()
 }
 
 func controlModule(chans [5]chan bool, wg *sync.WaitGroup) {
-	utils.ControlChan = make(chan utils.Status)
+	utils.ControlChan = make(chan utils.Status, 8)
 	for {
 		data := <-utils.ControlChan
 		switch data.Module {
@@ -147,8 +151,8 @@ func Init() {
 	cpu.Init()
 }
 
-func tearDown(exitChan chan os.Signal, wg *sync.WaitGroup) {
-	<-exitChan
+func tearDown(wg *sync.WaitGroup) {
+	<-utils.ExitChan
 	utils.ModuleLogs(setup.MainLogFile, "Shutdown signal received.")
 	setup.Database.Close()
 	setup.SaveStatus()
