@@ -7,6 +7,8 @@ import (
 	"strings"
 
 	"health_monitor/utils"
+
+	"github.com/fatih/color"
 )
 
 var (
@@ -19,18 +21,20 @@ func init() {
 	cliFunctions["disable"] = disableModule
 	cliFunctions["enable"] = enableModule
 	cliFunctions["help"] = help
+	cliFunctions["status"] = status
 }
 
 func Run() {
 	reader := bufio.NewReader(os.Stdin)
+	cyan := color.New(color.FgCyan)
 	for {
-		fmt.Print("> ")
+		cyan.Print("> ")
 		text, err := reader.ReadString('\n')
 		if err != nil {
 			utils.Perror(err.Error())
 		}
 		command := strings.Split(text[:len(text)-1], " ")
-		if len(command) == 0 {
+		if len(command[0]) == 0 {
 			continue
 		}
 		manageCommand(command)

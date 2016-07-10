@@ -6,6 +6,8 @@ import (
 	"syscall"
 
 	"health_monitor/utils"
+
+	"github.com/fatih/color"
 )
 
 const (
@@ -23,6 +25,7 @@ func disableModule(argument []string) error {
 }
 
 func exit(argument []string) error {
+	color.Blue("Shutting down monitor gacefully")
 	utils.ExitChan <- syscall.SIGINT
 	return nil
 }
@@ -39,6 +42,11 @@ func help(argument []string) error {
 	return nil
 }
 
+func status(argument []string) error {
+	color.Red("helllo")
+	return nil
+}
+
 func toggleModule(module string, state bool) error {
 	if doesModuleExists(module) {
 		utils.SendModuleStatus(module, false)
@@ -47,6 +55,7 @@ func toggleModule(module string, state bool) error {
 		return errors.New("Specified module not found, allowed modules " + fmt.Sprint(utils.Modules))
 	}
 }
+
 func doesModuleExists(module string) bool {
 	for _, workingModule := range utils.Modules {
 		if workingModule == module {
