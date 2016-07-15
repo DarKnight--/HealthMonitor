@@ -17,6 +17,8 @@ var (
 	Modules = []string{"live", "target", "disk", "ram", "cpu"}
 	//LiveEmergency is the channel to call live module any time
 	LiveEmergency chan bool
+	//ExitChan is the channel to send signal to exit monitor gracefully
+	ExitChan chan os.Signal
 )
 
 // Status struct is used by monitor to send different modules signal to abort

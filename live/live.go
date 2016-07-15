@@ -44,7 +44,7 @@ func (l Config) CheckByDNS() error {
 // Ping check the connectivity by sending ICMP packet to the target
 func (l Config) Ping() error {
 	var err error
-	command := exec.Command("/bin/sh", "-c", "sudo ping "+l.PingAddress+
+	command := exec.Command("/bin/sh", "-c", "ping "+l.PingAddress+
 		" -c 1 -W "+strconv.Itoa(l.PingThreshold/1000))
 	var waitStatus syscall.WaitStatus
 	if err = command.Run(); err != nil {
