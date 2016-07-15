@@ -19,7 +19,7 @@ help			: To view this message
 enable <moduleName>	: To enable a module
 disable <moduleName>	: To disable a module
 status			: To check status of all modules
-status <moduleName>	:To check status of particular module
+status <moduleName>	: To check status of particular module
 exit			: To turn off the monitor`
 )
 
