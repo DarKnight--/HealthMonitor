@@ -19,6 +19,7 @@ help			: To view this message
 enable <moduleName>	: To enable a module
 disable <moduleName>	: To disable a module
 status			: To check status of all modules
+status <moduleName>	:To check status of particular module
 exit			: To turn off the monitor`
 )
 
@@ -68,8 +69,14 @@ func status(argument []string) error {
 			ramDetailStatus()
 		default:
 			color.Red("Module not found")
+			color.New(color.FgCyan).Println("Allowed modules: ", utils.Modules)
 		}
-	} //TODO Print if command is wrong
+	} else {
+		color.Red("Wrong command used")
+		fmt.Println("Usage:")
+		fmt.Println("status			to show brief status of all modules")
+		fmt.Println("status <moduleName>	to show status of a particular module")
+	}
 	return nil
 }
 
