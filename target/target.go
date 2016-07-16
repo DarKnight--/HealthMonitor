@@ -2,9 +2,8 @@ package target
 
 import (
 	"errors"
-	"strconv"
-
-	"github.com/valyala/fasthttp"
+	"io/ioutil"
+	"net/http"
 )
 
 type (
@@ -18,14 +17,21 @@ type (
 
 // CheckStatus checks the status of the target
 func (conf Config) CheckStatus(target string, hash string) (bool, error) {
-	statusCode, body, err := fasthttp.Get(nil, target)
+	response, err := http.Get(target)
 
 	if err != nil {
 		return false, err
 	}
-	if statusCode/100 != 2 {
-		return false, errors.New("Status code returned was " + strconv.Itoa(statusCode))
+	defer response.Body.Close()
+	if response.StatusCode/100 != 2 {
+		return false, errors.New("Status code returned was " + response.Status)
 	}
+	var body []byte
+	body, err = ioutil.ReadAll(response.Body)
+	if err != nil {
+		return false, err
+	}
+
 	newHash, err := HashString(body)
 	if err != nil {
 		return false, err
