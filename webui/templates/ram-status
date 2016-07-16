@@ -1,0 +1,3 @@
+<div>
+	<p>RAM Usage : {{percent .Stats.FreePhysical .Consts.TotalPhysical}}% free </p>
+</div>

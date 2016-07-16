@@ -1,0 +1,3 @@
+<div>
+	<p>CPU Usage : {{.Stats.CPUUsage}}% Used </p>
+</div>

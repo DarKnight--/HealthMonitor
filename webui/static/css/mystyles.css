@@ -155,6 +155,10 @@ body{
     height: 200px;
 }
 
+.panel-body-small{
+    height: 100px;
+}
+
 .led-red {
     margin: 40%;
     width: 15px;

@@ -1,0 +1,7 @@
+<div>
+	{{if .}}
+		<p> You are connected to internet</p>
+	{{else}}
+		<p> Check your internet connection </p>
+	{{end}}
+</div>
