@@ -1,0 +1,13 @@
+<div>
+	{{range $index, $element := .}}
+		{{if .Scanned}}
+			<div class="col-md-8" style="padding-left: 0">{{$index}}</div>
+			<div class="col-md-4" style="padding-right: 0">
+			{{ if .Normal}}
+				<p style="text-align: right">Connected</p>
+			{{ else }}
+				<p style="text-align: right">Disconnected</p>
+			{{ end }}
+		{{ end }}
+	{{end}}
+</div>

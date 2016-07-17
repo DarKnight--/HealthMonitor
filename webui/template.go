@@ -97,3 +97,19 @@ func ramTemplateHandler(ctx *fasthttp.RequestCtx) {
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 	}
 }
+
+func targetTemplateHandler(ctx *fasthttp.RequestCtx) {
+	tmpl := fmt.Sprintf(templateRoot, "target-status")
+	t, err := template.New("target-status").ParseFiles(tmpl)
+	if err != nil {
+		utils.ModuleError(logFile, "template parsing error ", err.Error())
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		return
+	}
+
+	err = t.Execute(ctx, api.TargetStatus())
+	if err != nil {
+		utils.ModuleError(logFile, "template executing error: ", err.Error())
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+	}
+}

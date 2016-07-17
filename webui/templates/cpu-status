@@ -1,3 +1,4 @@
 <div>
-	<p>CPU Usage : {{.Stats.CPUUsage}}% Used </p>
+	<div class="col-md-9">CPU Usage </div>
+	<div class="col-md-3" style="padding-right: 0">{{.Stats.CPUUsage}}% Used</div>
 </div>

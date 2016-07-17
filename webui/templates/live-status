@@ -1,7 +1,7 @@
 <div>
 	{{if .}}
-		<p> You are connected to internet</p>
+		<div class="col-md-12"> You are connected to internet</div>
 	{{else}}
-		<p> Check your internet connection </p>
+		<div class="col-md-12"> Check your internet connection </div>
 	{{end}}
 </div>

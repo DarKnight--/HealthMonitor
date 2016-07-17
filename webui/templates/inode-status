@@ -1,5 +1,6 @@
 <div>
 	{{range $index, $element := .}}
-		<p>Mount on: {{$index}} -> {{percent .Stats.FreeInodes .Const.TotalInodes}}% free </p>
+		<div class="col-md-9" style="padding-left: 0">Mount on: {{$index}}</div>
+		<div class="col-md-3" style="padding-right: 0">{{percent .Stats.FreeInodes .Const.TotalInodes}}% Free </div>
 	{{end}}
 </div>

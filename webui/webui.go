@@ -145,6 +145,8 @@ func templateHandler(ctx *fasthttp.RequestCtx, tmpl string) {
 		ramTemplateHandler(ctx)
 	case "cpu":
 		cpuTemplateHandler(ctx)
+	case "target":
+		targetTemplateHandler(ctx)
 	default:
 		utils.ModuleLogs(logFile, fmt.Sprintf("[404] Unable to find the requested template: %s",
 			ctx.Path()))
