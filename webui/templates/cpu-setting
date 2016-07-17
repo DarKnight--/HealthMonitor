@@ -1,0 +1,28 @@
+ <div>
+    <form id="cpu-setting" role="form" class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-sm-4 sr-only">profile</label>
+            <div class="col-sm-8">
+                <input type="text" id="Profile" name="Profile" hidden>
+             </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">CPU Warning Limit</label>
+            <div class="col-sm-8">
+                <input type="number" id="CPUWarningLimit" name="CPUWarningLimit" placeholder="Enter the warning limit for CPU usage">
+             </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">Recheck time(ms)</label>
+             <div class="col-sm-8">
+                <input type="number" id="RecheckThreshold" name="RecheckThreshold" placeholder="Enter the time interval to recheck the CPU">
+             </div>
+        </div>
+        <br><br>
+        <div class="col-md-offset-4">
+            <button type="button" class="btn btn-default" onclick="fillForm('cpu')">Reset</button>
+            <button type="button" class="btn btn-default" onclick="saveAs('cpu')">SaveAs</button>
+            <button type="button" class="btn btn-primary" onclick="save('cpu')">Save</button>
+        </div>
+    </form>
+</div>
