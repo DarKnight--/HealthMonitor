@@ -56,7 +56,7 @@ func CPU(status <-chan bool, wg *sync.WaitGroup) {
 
 func checkCPU() {
 	conf.CPUUsage(&cpuInfo.Stats)
-	if cpuInfo.Stats.CPUUsage < float32(conf.CPUWarningLimit) {
+	if cpuInfo.Stats.CPUUsage < conf.CPUWarningLimit {
 		cpuInfo.Status.Normal = true
 		utils.ModuleLogs(logFile, "CPU usage is normal")
 	} else {
