@@ -4,18 +4,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os"
 	"path"
 	"runtime"
-	"strconv"
 	"sync"
 	"time"
 
 	"health_monitor/owtf"
 	"health_monitor/setup"
 	"health_monitor/utils"
-
-	"github.com/valyala/fasthttp"
 )
 
 type (
@@ -68,7 +67,6 @@ func checkTarget() {
 	targets, err := owtf.GetTarget()
 	if err != nil {
 		utils.ModuleError(logFile, "Unable to get list of targets", err.Error())
-		//TODO check owtf status
 	}
 
 	for _, target := range targets {
@@ -114,15 +112,22 @@ func checkTarget() {
 }
 
 func generateHash(target string) (string, error) {
-	status, response, err := fasthttp.Get(nil, target)
+	response, err := http.Get(target)
 	if err != nil {
 		utils.LiveEmergency <- true
 		return "", err
 	}
-	if status/100 != 2 {
-		return "", errors.New("Status code returned by target is " + strconv.Itoa(status))
+	defer response.Body.Close()
+	if response.StatusCode/100 != 2 {
+		return "", errors.New("Status code returned by target is " + response.Status)
 	}
-	hash, err := HashString(response)
+	var body []byte
+	body, err = ioutil.ReadAll(response.Body)
+	if err != nil {
+		return "", err
+	}
+
+	hash, err := HashString(body)
 	if err != nil {
 		return "", err
 	}

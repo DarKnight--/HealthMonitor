@@ -53,7 +53,7 @@ func Live(status <-chan bool, wg *sync.WaitGroup) {
 		utils.ModuleError(logFile, err.Error(), "Error in Ping")
 	}
 
-	Default()
+	internetCheck(Default, conf)
 	printStatusLog()
 
 	for {
@@ -94,6 +94,7 @@ func internetCheck(defaultCheck func() error, conf *Config) {
 		upAction()
 		return
 	}
+	liveStatus.Normal = false
 	utils.ModuleError(logFile, err.Error(), "")
 
 	for i := 0; i < 3; i++ {
@@ -103,7 +104,6 @@ func internetCheck(defaultCheck func() error, conf *Config) {
 			return
 		}
 		utils.ModuleError(logFile, err.Error(), "")
-
 	}
 	downAction()
 	liveStatus.Normal = false
