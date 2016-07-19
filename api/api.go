@@ -58,7 +58,7 @@ func GetConfJSON(module string) []byte {
 func SaveConfig(module string, data []byte) error {
 	profile := getProfile(data)
 	err := ConfSaveFunc[module](data, profile)
-	if profile == setup.ModulesStatus.Profile {
+	if profile == setup.UserModuleState.Profile {
 		return err
 	}
 	for _, function := range ConfSaveFunc {
@@ -67,7 +67,7 @@ func SaveConfig(module string, data []byte) error {
 			return err
 		}
 	}
-	setup.ModulesStatus.Profile = profile
+	setup.UserModuleState.Profile = profile
 	return nil
 }
 
@@ -81,6 +81,22 @@ func getProfile(data []byte) string {
 
 //ChangeModuleStatus sends the signal to main function about the changing the status of module
 func ChangeModuleStatus(module string, status bool) {
+	switch module {
+	case "live":
+		setup.UserModuleState.Live = status
+	case "target":
+		setup.UserModuleState.Target = status
+	case "disk":
+		setup.UserModuleState.Disk = status
+	case "inode":
+		setup.UserModuleState.Disk = status
+	case "ram":
+		setup.UserModuleState.RAM = status
+	case "cpu":
+		setup.UserModuleState.CPU = status
+	default:
+		return
+	}
 	utils.SendModuleStatus(module, status)
 }
 
@@ -88,17 +104,17 @@ func ChangeModuleStatus(module string, status bool) {
 func ModuleStatus(module string) bool {
 	switch module {
 	case "live":
-		return setup.ModulesStatus.Live
+		return setup.InternalModuleState.Live
 	case "target":
-		return setup.ModulesStatus.Target
+		return setup.InternalModuleState.Target
 	case "disk":
-		return setup.ModulesStatus.Disk
+		return setup.InternalModuleState.Disk
 	case "inode":
-		return setup.ModulesStatus.Disk
+		return setup.InternalModuleState.Disk
 	case "ram":
-		return setup.ModulesStatus.RAM
+		return setup.InternalModuleState.RAM
 	case "cpu":
-		return setup.ModulesStatus.CPU
+		return setup.InternalModuleState.CPU
 	default:
 		return false
 	}

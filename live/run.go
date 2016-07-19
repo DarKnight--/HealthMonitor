@@ -130,6 +130,6 @@ func GetConfJSON() []byte {
 func Init() {
 	conf = LoadConfig()
 	if conf == nil {
-		utils.CheckConf(logFile, setup.MainLogFile, "live", &setup.ModulesStatus.Profile, setup.Live)
+		utils.CheckConf(logFile, setup.MainLogFile, "live", &setup.UserModuleState.Profile, setup.Live)
 	}
 }

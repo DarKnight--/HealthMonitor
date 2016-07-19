@@ -12,7 +12,7 @@ import (
 func LoadConfig() *Config {
 	var conf = new(Config)
 	err := setup.Database.QueryRow("SELECT * FROM Target WHERE profile=?",
-		setup.ModulesStatus.Profile).Scan(&conf.Profile, &conf.FuzzyThreshold,
+		setup.UserModuleState.Profile).Scan(&conf.Profile, &conf.FuzzyThreshold,
 		&conf.RecheckThreshold)
 	if err != nil {
 		utils.ModuleError(logFile, "Error while quering from databse", err.Error())
