@@ -115,27 +115,27 @@ func controlModuleHelper(run bool, moduleStatus *bool, moduleName string,
 }
 
 func runModules(chans [5]chan bool, wg *sync.WaitGroup) {
-	if setup.InternalModuleState.Live {
+	if setup.UserModuleState.Live {
 		wg.Add(1)
 		utils.ModuleLogs(setup.MainLogFile, "Started live module")
 		go live.Live(chans[0], wg)
 	}
-	if setup.InternalModuleState.Target {
+	if setup.UserModuleState.Target {
 		wg.Add(1)
 		utils.ModuleLogs(setup.MainLogFile, "Started target module")
 		go target.Target(chans[1], wg)
 	}
-	if setup.InternalModuleState.Disk {
+	if setup.UserModuleState.Disk {
 		wg.Add(1)
 		utils.ModuleLogs(setup.MainLogFile, "Started disk module")
 		go disk.Disk(chans[2], wg)
 	}
-	if setup.InternalModuleState.RAM {
+	if setup.UserModuleState.RAM {
 		wg.Add(1)
 		utils.ModuleLogs(setup.MainLogFile, "Started ram module")
 		go ram.RAM(chans[3], wg)
 	}
-	if setup.InternalModuleState.CPU {
+	if setup.UserModuleState.CPU {
 		wg.Add(1)
 		utils.ModuleLogs(setup.MainLogFile, "Started cpu module")
 		go cpu.CPU(chans[4], wg)
