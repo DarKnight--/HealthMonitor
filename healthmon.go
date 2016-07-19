@@ -58,7 +58,7 @@ func main() {
 
 	if (*flags.NoCLI == true) || (*flags.NoWebUI == false) {
 		go webui.RunServer(setup.ConfigVars.Port)
-		fmt.Printf("[*] Server is up and running at http://127.0.0.1:%s\n", setup.ConfigVars.Port)
+		fmt.Printf("[*] Server is starting at http://127.0.0.1:%s\n", setup.ConfigVars.Port)
 	}
 
 	utils.ExitChan = make(chan os.Signal, 1)

@@ -23,7 +23,7 @@ type (
 	}
 	// Stat holds the data about the % usage of cpu
 	Stat struct {
-		CPUUsage float32
+		CPUUsage int
 	}
 )
 
@@ -58,7 +58,7 @@ func (conf Config) Init() error {
 func (conf *Config) CPUUsage(stat *Stat) error {
 	var totalUser, totalUserLow, totalSys, totalIdle, total uint64
 	var percent float32
-	stat.CPUUsage = percent
+	stat.CPUUsage = int(percent)
 
 	f, err := os.Open("/proc/stat")
 	if err != nil {
@@ -100,6 +100,6 @@ func (conf *Config) CPUUsage(stat *Stat) error {
 	lastTotalUserLow = totalUserLow
 	lastTotalSys = totalSys
 	lastTotalIdle = totalIdle
-	stat.CPUUsage = percent
+	stat.CPUUsage = int(percent)
 	return nil
 }

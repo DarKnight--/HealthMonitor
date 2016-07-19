@@ -42,46 +42,6 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12 col-sm-6 col-lg-4">
-                <div class="panel panel-default" id="module-live">
-                    <div class="panel-heading col-sm-12">
-                        <div class="col-sm-2"><div class="led-red" id="led-live"></div></div>
-                        <h4 class="col-sm-6">Network Status</h4>
-                        <div class="onoffswitch col-sm-4 pull-right">
-                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-live" checked onclick="sendModuleStatus(this, 'live')">
-                            <label class="onoffswitch-label" for="switch-live">
-                                <span class="onoffswitch-inner"></span>
-                                <span class="onoffswitch-switch"></span>
-                            </label>
-                        </div>
-                    </div>
-                    <a data-toggle="modal" href="/description/live.html" data-target="#myModal">
-                        <div class="panel-body" style="background: lightgrey" id="off-live" hidden></div>
-                        <div class="panel-body" id="on-live">
-                        </div>
-                    </a>
-                </div>
-            </div>
-            <div class="col-xs-12 col-sm-6 col-lg-4">
-                <div class="panel panel-default" id="module-target">
-                    <div class="panel-heading col-sm-12">
-                        <div class="col-sm-2"><div class="led-red" id="led-target"></div></div>
-                        <h4 class="col-sm-6">Target Status</h4>
-                        <div class="onoffswitch col-sm-4 pull-right">
-                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-target" checked onclick="sendModuleStatus(this,'target')">
-                            <label class="onoffswitch-label" for="switch-target">
-                                <span class="onoffswitch-inner"></span>
-                                <span class="onoffswitch-switch"></span>
-                            </label>
-                        </div>
-                  </div>
-                    <a data-toggle="modal" href="/description/target.html" data-target="#myModal">
-                  <div class="panel-body" style="background: lightgrey" id="off-target" hidden></div>
-                    <div class="panel-body" id="on-target">
-                    </div>
-                        </a>
-                </div>
-            </div>
-            <div class="col-xs-12 col-sm-6 col-lg-4">
                 <div class="panel panel-default" id="module-disk">
                     <div class="panel-heading col-sm-12">
                         <div class="col-sm-2"><div class="led-red" id="led-disk"></div></div>
@@ -122,6 +82,46 @@
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 col-lg-4">
+                <div class="panel panel-default" id="module-target">
+                    <div class="panel-heading col-sm-12">
+                        <div class="col-sm-2"><div class="led-red" id="led-target"></div></div>
+                        <h4 class="col-sm-6">Target Status</h4>
+                        <div class="onoffswitch col-sm-4 pull-right">
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-target" checked onclick="sendModuleStatus(this,'target')">
+                            <label class="onoffswitch-label" for="switch-target">
+                                <span class="onoffswitch-inner"></span>
+                                <span class="onoffswitch-switch"></span>
+                            </label>
+                        </div>
+                  </div>
+                    <a data-toggle="modal" href="/description/target.html" data-target="#myModal">
+                  <div class="panel-body" style="background: lightgrey" id="off-target" hidden></div>
+                    <div class="panel-body" id="on-target">
+                    </div>
+                        </a>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-lg-4">
+                <div class="panel panel-default" id="module-live">
+                    <div class="panel-heading col-sm-12">
+                        <div class="col-sm-2"><div class="led-red" id="led-live"></div></div>
+                        <h4 class="col-sm-6">Network Status</h4>
+                        <div class="onoffswitch col-sm-4 pull-right">
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-live" checked onclick="sendModuleStatus(this, 'live')">
+                            <label class="onoffswitch-label" for="switch-live">
+                                <span class="onoffswitch-inner"></span>
+                                <span class="onoffswitch-switch"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <a data-toggle="modal" href="/description/live.html" data-target="#myModal">
+                        <div class="panel-body-small" style="background: lightgrey" id="off-live" hidden></div>
+                        <div class="panel-body-small" id="on-live">
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-lg-4">
                 <div class="panel panel-default" id="module-ram">
                     <div class="panel-heading col-sm-12">
                         <div class="col-sm-2"><div class="led-red" id="led-ram"></div></div>
@@ -135,8 +135,8 @@
                         </div>
                   </div>
                     <a data-toggle="modal" href="/description/ram.html" data-target="#myModal">
-                  <div class="panel-body" style="background: lightgrey" id="off-ram" hidden></div>
-                    <div class="panel-body" id="on-ram">
+                  <div class="panel-body-small" style="background: lightgrey" id="off-ram" hidden></div>
+                    <div class="panel-body-small" id="on-ram">
                     </div>
                         </a>
                 </div>
@@ -155,28 +155,8 @@
                         </div>
                   </div>
                     <a data-toggle="modal" href="/description/cpu.html" data-target="#myModal">
-                  <div class="panel-body" style="background: lightgrey" id="off-cpu" hidden></div>
-                    <div class="panel-body" id="on-cpu">
-                    </div>
-                        </a>
-                </div>
-            </div>
-            <div class="col-xs-12 col-sm-6 col-lg-4">
-                <div class="panel panel-default" id="module-bandwidth">
-                    <div class="panel-heading col-sm-12">
-                        <div class="col-sm-2"><div class="led-red" id="led-bandwidth"></div></div>
-                        <h4 class="col-sm-6">Banwidth Usage</h4>
-                        <div class="onoffswitch col-sm-4 pull-right">
-                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-bandwidth" checked onclick="sendModuleStatus(this, 'bandwidth')">
-                            <label class="onoffswitch-label" for="switch-bandwidth">
-                                <span class="onoffswitch-inner"></span>
-                                <span class="onoffswitch-switch"></span>
-                            </label>
-                        </div>
-                  </div>
-                    <a data-toggle="modal" href="/description/bandwidth.html" data-target="#myModal">
-                <div class="panel-body" style="background: lightgrey" id="off-bandwidth" hidden></div>
-                    <div class="panel-body" id="on-bandwidth">
+                  <div class="panel-body-small" style="background: lightgrey" id="off-cpu" hidden></div>
+                    <div class="panel-body-small" id="on-cpu">
                     </div>
                         </a>
                 </div>
@@ -239,39 +219,53 @@
             });
         }
         modules["live"] = function () {
-        };
-
-        modules["target"] = function () {
-        };
-
-        modules["disk"] = function(module){
-            $.getJSON("/module/disk", function (result) {
-                var on = 1;
-                for(var key in result){
-                    on = on & result[key].partition_status.space;
-                }
-                if(on){
-                    $("#led-"+module).removeClass("led-red").addClass("led-green");
-                }
+            $.getJSON("/module/live", function (result) {
+                toggleLED("#led-live", result.normal)
             });
         };
 
-        modules["inode"] = function (module) {
+        modules["target"] = function () {
+            $.getJSON("/module/target", function (result) {
+                var on = 1;
+                for(var key in result){
+                    if(result[key].Scanned){
+                        on = on && result[key].Normal
+                    }
+                }
+                toggleLED("#led-target", on);
+            });
+        };
+
+        modules["disk"] = function(){
             $.getJSON("/module/disk", function (result) {
                 var on = 1;
                 for(var key in result){
-                    on = on & result[key].partition_status.inode;
+                    on = on && result[key].partition_status.space;
                 }
-                if(on){
-                    $("#led-"+module).removeClass("led-red").addClass("led-green");
+                toggleLED("#led-disk", on);
+            });
+        };
+
+        modules["inode"] = function () {
+            $.getJSON("/module/disk", function (result) {
+                var on = 1;
+                for(var key in result){
+                    on = on && result[key].partition_status.inode;
                 }
+                toggleLED("#led-inode", on);
             });
         };
 
         modules["ram"] = function () {
+             $.getJSON("/module/ram", function (result) {
+                toggleLED("#led-ram", result.Status.Normal);
+            });
         };
 
         modules["cpu"] = function () {
+             $.getJSON("/module/cpu", function (result) {
+                toggleLED("#led-cpu", result.Status.Normal);
+            });
         };
 
         modules["bandwidth"] = function () {
@@ -279,6 +273,14 @@
 
         modules["database"] = function () {
         };
+
+        function toggleLED(id, condition) {
+            if(condition){
+                    $(id).removeClass("led-red").addClass("led-green");
+                } else {
+                    $(id).removeClass("led-green").addClass("led-red");
+                }
+        }
 
        updatePage = function () {
            for(var key in modules){
@@ -289,7 +291,7 @@
                         var str = this.url;
                         var mkey = str.substring(str.lastIndexOf("/") + 1, str.length);
 						$("#on-"+mkey).empty().append(data);
-                        modules[mkey](mkey);
+                        modules[mkey]();
                }).fail(function (jqXHR) {
                     if (jqXHR.status === 404){
                         var str = this.url;

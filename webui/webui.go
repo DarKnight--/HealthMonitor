@@ -135,10 +135,18 @@ func configHandler(ctx *fasthttp.RequestCtx, module string) {
 
 func templateHandler(ctx *fasthttp.RequestCtx, tmpl string) {
 	switch tmpl {
+	case "live":
+		liveTemplateHandler(ctx)
 	case "disk":
-		diskTemplateHandler(ctx, tmpl)
+		diskTemplateHandler(ctx)
 	case "inode":
-		inodeTemplateHandler(ctx, tmpl)
+		inodeTemplateHandler(ctx)
+	case "ram":
+		ramTemplateHandler(ctx)
+	case "cpu":
+		cpuTemplateHandler(ctx)
+	case "target":
+		targetTemplateHandler(ctx)
 	default:
 		utils.ModuleLogs(logFile, fmt.Sprintf("[404] Unable to find the requested template: %s",
 			ctx.Path()))
