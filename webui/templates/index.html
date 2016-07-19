@@ -229,7 +229,7 @@
                 var on = 1;
                 for(var key in result){
                     if(result[key].Scanned){
-                        on = on & result[key].Normal
+                        on = on && result[key].Normal
                     }
                 }
                 toggleLED("#led-target", on);
@@ -240,7 +240,7 @@
             $.getJSON("/module/disk", function (result) {
                 var on = 1;
                 for(var key in result){
-                    on = on & result[key].partition_status.space;
+                    on = on && result[key].partition_status.space;
                 }
                 toggleLED("#led-disk", on);
             });
@@ -250,7 +250,7 @@
             $.getJSON("/module/disk", function (result) {
                 var on = 1;
                 for(var key in result){
-                    on = on & result[key].partition_status.inode;
+                    on = on && result[key].partition_status.inode;
                 }
                 toggleLED("#led-inode", on);
             });
