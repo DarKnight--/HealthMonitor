@@ -147,7 +147,7 @@ func runModules(chans [6]chan bool, wg *sync.WaitGroup) {
 	if setup.UserModuleState.CPU {
 		wg.Add(1)
 		utils.ModuleLogs(setup.MainLogFile, "Started cpu module")
-		setup.UserModuleState.CPU = true
+		setup.InternalModuleState.CPU = true
 		go cpu.CPU(chans[5], wg)
 	}
 }
