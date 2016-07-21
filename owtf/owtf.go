@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"sync"
 	"time"
 
 	"health_monitor/setup"
@@ -26,8 +27,16 @@ const (
 	workerPath      = "http://127.0.0.1:8010/api/workers/"
 )
 
-func Init() {
-	go monitorOwtf()
+func OWTF(status <-chan bool, wg *sync.WaitGroup) {
+	defer wg.Done()
+	for {
+		select {
+		case <-status:
+			return
+		case <-time.After(time.Second):
+			monitorOwtf()
+		}
+	}
 }
 
 // GetTarget function calls to the OWTF api to recieve all the targets in the
@@ -196,43 +205,41 @@ func monitorOwtf() {
 		lastStatus bool
 	)
 	lastStatus = true
-	for true {
-		response, err := http.Get(workerPath)
-		if !(err == nil && response.StatusCode/100 == 2) {
-			//OWTF is down
-			continue
-		}
-		var dataByte []byte
-		dataByte, err = ioutil.ReadAll(response.Body)
-		response.Body.Close()
-		if err != nil {
-			continue
-		}
-
-		err = json.Unmarshal(dataByte, &workers)
-		if err != nil {
-			utils.ModuleError(setup.MainLogFile, "Unable parse json obtained", err.Error())
-			continue
-		}
-		owtfStatus = false
-		//TODO check for free the workers
-		for _, worker := range workers {
-			if worker.Busy && !worker.Paused {
-				owtfStatus = true
-				break
-			}
-		}
-
-		if owtfStatus != lastStatus {
-			if owtfStatus {
-				startModules()
-			} else {
-				pauseModules()
-			}
-		}
-		lastStatus = owtfStatus
-		time.Sleep(time.Second)
+	response, err := http.Get(workerPath)
+	if !(err == nil && response.StatusCode/100 == 2) {
+		//OWTF is down
+		return
 	}
+	var dataByte []byte
+	dataByte, err = ioutil.ReadAll(response.Body)
+	response.Body.Close()
+	if err != nil {
+		return
+	}
+
+	err = json.Unmarshal(dataByte, &workers)
+	if err != nil {
+		utils.ModuleError(setup.MainLogFile, "Unable parse json obtained", err.Error())
+		return
+	}
+	owtfStatus = false
+	//TODO check for free the workers
+	for _, worker := range workers {
+		if worker.Busy && !worker.Paused {
+			owtfStatus = true
+			break
+		}
+	}
+
+	if owtfStatus != lastStatus {
+		if owtfStatus {
+			startModules()
+		} else {
+			pauseModules()
+		}
+	}
+	lastStatus = owtfStatus
+	time.Sleep(time.Second)
 }
 
 func pauseModules() {

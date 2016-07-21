@@ -20,7 +20,7 @@ type (
 	}
 	//MemoryStat holds the current stats of the memory
 	MemoryStat struct {
-		FreeVirtual  int
+		FreeSwap     int
 		FreePhysical int
 	}
 )
@@ -31,7 +31,7 @@ func (conf Config) LoadMemoryStats(stat *MemoryStat) {
 	C.sysinfo(&memInfo)
 	memUnit := int(memInfo.mem_unit)
 	stat.FreePhysical = int(memInfo.freeram) * memUnit
-	stat.FreeVirtual = int(memInfo.freeswap)*memUnit + stat.FreePhysical
+	stat.FreeSwap = int(memInfo.freeswap) * memUnit
 }
 
 //InitMemoryConst saves the memory constants in the MemoryStat struct
@@ -39,7 +39,6 @@ func (conf *Config) InitMemoryConst(consts *MemoryConst) {
 	var memInfo _Ctype_struct_sysinfo
 	C.sysinfo(&memInfo)
 	memUnit := int(memInfo.mem_unit)
-
 	consts.TotalPhysical = int(memInfo.totalram) * memUnit
-	consts.TotalVirtual = int(memInfo.totalswap)*memUnit + consts.TotalPhysical
+	consts.TotalVirtual = int(memInfo.totalswap) * memUnit
 }

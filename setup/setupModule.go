@@ -23,6 +23,7 @@ var (
 	//ModulesStatus holds the running status of all the modules of monitor
 	UserModuleState     = ModulesStatus{}
 	InternalModuleState = ModulesStatus{}
+	OWTFModuleStatus    = false
 )
 
 func loadStatus() {
@@ -39,7 +40,6 @@ func loadStatus() {
 		utils.ModuleError(MainLogFile, "The module status file does not contain profile or profile does not exists", "Creating one with default values")
 		initStatus()
 	}
-	InternalModuleState = UserModuleState
 }
 
 func initStatus() {
