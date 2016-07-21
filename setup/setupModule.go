@@ -10,16 +10,19 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
+type ModulesStatus struct {
+	Profile string
+	Live    bool
+	Target  bool
+	Disk    bool
+	RAM     bool
+	CPU     bool
+}
+
 var (
 	//ModulesStatus holds the running status of all the modules of monitor
-	ModulesStatus struct {
-		Profile string
-		Live    bool
-		Target  bool
-		Disk    bool
-		RAM     bool
-		CPU     bool
-	}
+	UserModuleState     = ModulesStatus{}
+	InternalModuleState = ModulesStatus{}
 )
 
 func loadStatus() {
@@ -28,24 +31,24 @@ func loadStatus() {
 		initStatus()
 		return
 	}
-	_, err := toml.DecodeFile(ConfigVars.ModuleInfoFilePath, &ModulesStatus) // Read the module status file
+	_, err := toml.DecodeFile(ConfigVars.ModuleInfoFilePath, &UserModuleState) // Read the module status file
 	if err != nil {
 		utils.ModuleError(MainLogFile, "The module status file is corrupt, creating one with default values", err.Error())
 		initStatus()
-	} else if ModulesStatus.Profile == "" { //TODO add check to ensure profile exists in db
+	} else if UserModuleState.Profile == "" { //TODO add check to ensure profile exists in db
 		utils.ModuleError(MainLogFile, "The module status file does not contain profile or profile does not exists", "Creating one with default values")
 		initStatus()
 	}
+	InternalModuleState = UserModuleState
 }
 
 func initStatus() {
-	ModulesStatus.Profile = "default"
-	ModulesStatus.Live = true
-	ModulesStatus.Target = true
-	ModulesStatus.Disk = true
-	ModulesStatus.RAM = true
-	ModulesStatus.CPU = true
-
+	UserModuleState.Profile = "default"
+	UserModuleState.Live = true
+	UserModuleState.Target = true
+	UserModuleState.Disk = true
+	UserModuleState.RAM = true
+	UserModuleState.CPU = true
 	SaveStatus()
 }
 
@@ -53,7 +56,7 @@ func initStatus() {
 func SaveStatus() {
 	var buffer bytes.Buffer
 	encoder := toml.NewEncoder(&buffer)
-	err := encoder.Encode(ModulesStatus)
+	err := encoder.Encode(UserModuleState)
 	log.SetOutput(MainLogFile)
 	if err != nil {
 		log.Fatal(err)

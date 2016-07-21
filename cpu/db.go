@@ -12,7 +12,7 @@ import (
 func LoadConfig() *Config {
 	var conf = new(Config)
 	err := setup.Database.QueryRow("SELECT * FROM CPU WHERE profile=?",
-		setup.ModulesStatus.Profile).Scan(&conf.Profile, &conf.CPUWarningLimit,
+		setup.UserModuleState.Profile).Scan(&conf.Profile, &conf.CPUWarningLimit,
 		&conf.RecheckThreshold)
 	if err != nil {
 		utils.ModuleError(logFile, "Error while quering from databse", err.Error())

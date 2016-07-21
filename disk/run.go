@@ -134,6 +134,6 @@ func GetConfJSON() []byte {
 func Init() {
 	conf = LoadConfig()
 	if conf == nil {
-		utils.CheckConf(logFile, setup.MainLogFile, "disk", &setup.ModulesStatus.Profile, setup.Disk)
+		utils.CheckConf(logFile, setup.MainLogFile, "disk", &setup.UserModuleState.Profile, setup.Disk)
 	}
 }

@@ -12,7 +12,7 @@ import (
 func LoadConfig() *Config {
 	var conf = new(Config)
 	err := setup.Database.QueryRow("SELECT * FROM Live WHERE profile=?",
-		setup.ModulesStatus.Profile).Scan(&conf.Profile, &conf.HeadURL,
+		setup.UserModuleState.Profile).Scan(&conf.Profile, &conf.HeadURL,
 		&conf.RecheckThreshold, &conf.PingThreshold, &conf.HeadThreshold,
 		&conf.PingAddress, &conf.PingProtocol)
 	if err != nil {

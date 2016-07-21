@@ -42,6 +42,7 @@ func RAM(status <-chan bool, wg *sync.WaitGroup) {
 
 	utils.ModuleLogs(logFile, "Running with "+conf.Profile+" profile")
 	conf.InitMemoryConst(&ramInfo.Consts)
+	ramInfo.Status.Normal = true
 	checkRAM()
 	for {
 		select {
@@ -94,6 +95,6 @@ func GetStatusJSON() []byte {
 func Init() {
 	conf = LoadConfig()
 	if conf == nil {
-		utils.CheckConf(logFile, setup.MainLogFile, "ram", &setup.ModulesStatus.Profile, setup.RAM)
+		utils.CheckConf(logFile, setup.MainLogFile, "ram", &setup.UserModuleState.Profile, setup.RAM)
 	}
 }

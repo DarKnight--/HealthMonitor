@@ -43,7 +43,7 @@ func Target(status <-chan bool, wg *sync.WaitGroup) {
 	err := owtf.CheckOWTF()
 	if err != nil {
 		utils.ModuleError(logFile, err.Error(), "Owtf is not running, Signing off")
-		setup.ModulesStatus.Target = false
+		setup.InternalModuleState.Target = false
 		return
 	}
 	targetInfo = make(map[string]Status)
@@ -93,6 +93,8 @@ func checkTarget() {
 			if err != nil {
 				utils.ModuleError(logFile, "Error occured during matching hash score for target "+
 					target.TargetURL, err.Error())
+				//TODO Alert
+				continue
 			}
 			if result {
 				targetInfo[target.TargetURL] = Status{Scanned: true, Normal: true}
@@ -114,7 +116,9 @@ func checkTarget() {
 func generateHash(target string) (string, error) {
 	response, err := http.Get(target)
 	if err != nil {
-		utils.LiveEmergency <- true
+		if setup.UserModuleState.Live {
+			utils.LiveEmergency <- true
+		}
 		return "", err
 	}
 	defer response.Body.Close()
@@ -162,6 +166,6 @@ func GetStatusJSON() []byte {
 func Init() {
 	conf = LoadConfig()
 	if conf == nil {
-		utils.CheckConf(logFile, setup.MainLogFile, "target", &setup.ModulesStatus.Profile, setup.Target)
+		utils.CheckConf(logFile, setup.MainLogFile, "target", &setup.UserModuleState.Profile, setup.Target)
 	}
 }
