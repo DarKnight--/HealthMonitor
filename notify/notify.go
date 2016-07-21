@@ -1,14 +1,17 @@
-package alert
+package notify
 
 type Config struct {
-	Profile          string
-	SendgridApiKey   string
-	ElasticMailKey   string
-	ElasticMainUName string
-	MailjetPublicKey string
-	MailjetSecretKey string
-	SendEmailTo      string
-	IconPath         string
+	Profile           string
+	SendgridApiKey    string
+	ElasticMailKey    string
+	ElasticMainUName  string
+	MailjetPublicKey  string
+	MailjetSecretKey  string
+	SendEmailTo       string
+	MailgunDomain     string
+	MailgunPrivateKey string
+	MailgunPublicKey  string
+	IconPath          string
 }
 
 var (
