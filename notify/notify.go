@@ -2,7 +2,7 @@ package notify
 
 type Config struct {
 	Profile           string
-	SendgridApiKey    string
+	SendgridAPIKey    string
 	ElasticMailKey    string
 	ElasticMainUName  string
 	MailjetPublicKey  string
@@ -15,12 +15,7 @@ type Config struct {
 }
 
 var (
-	config                Config
-	fromName              = "OWTF Health Monitor"
-	fromEmail             = "alerts_health_monitor@owasp-owtf.org"
-	DesktopNoticSupported bool
+	config    Config
+	fromName  = "OWTF Health Monitor"
+	fromEmail = "alerts_health_monitor@owasp-owtf.org"
 )
-
-func Init() {
-	DesktopNoticSupported = checkDesktopSupport()
-}

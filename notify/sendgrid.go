@@ -14,7 +14,7 @@ func sendGrid(subject string, contentString string) {
 	content := mail.NewContent("text/plain", contentString)
 	m := mail.NewV3MailInit(from, subject, to, content)
 
-	request := sendgrid.GetRequest(config.SendgridApiKey, "/v3/mail/send", "https://api.sendgrid.com")
+	request := sendgrid.GetRequest(config.SendgridAPIKey, "/v3/mail/send", "https://api.sendgrid.com")
 	request.Method = "POST"
 	request.Body = mail.GetRequestBody(m)
 	response, err := sendgrid.API(request)
