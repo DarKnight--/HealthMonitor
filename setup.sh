@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # ---------------------------------------------------------------------
 # OWASP-OWTF Health-Monitor development environment setup script
@@ -12,14 +12,7 @@ if  [[ $1 = "-h" ]]; then
   echo ""
   echo "   -g     to install golang and its environment setup also"
   echo "   -h     help (this output)"
-  echo "* Note: Run this script with root privalages for setup purposes"
   exit 0
-fi
-
-# Check whether the script is running as root
-if [[ $EUID -ne 0 ]]; then
-  echo "This script must be run as root" 1>&2
-  exit 1
 fi
 
 mkdir -p /tmp/owtfMonitor
@@ -30,10 +23,12 @@ cd /tmp/owtfMonitor
 ##
 if [[ $1 = "-g" ]]; then
   if ! hash go 2>/dev/null ; then
+    echo "Installing golang 1.6.3"
     wget -c "https://storage.googleapis.com/golang/go1.6.3.linux-amd64.tar.gz"
     sudo tar -C /usr/local -xzf go1.6.3.linux-amd64.tar.gz
-    echo "export PATH=$PATH:/usr/local/go/bin" >> /etc/profile
-    echo "export GOPATH=~/go_workspace" >> /etc/profile
+    sudo echo "export PATH=$PATH:/usr/local/go/bin" >> /etc/profile
+    sudo echo "export GOPATH=~/go_workspace" >> /etc/profile
+    sudo echo "export GOROOT=/usr/local/go" >> /etc/profile
     source /etc/profile
     mkdir -p ~/go_workspace
   else
@@ -50,6 +45,7 @@ fi
 ##
 export LD_LIBRARY_PATH=/usr/local/lib
 if ! hash ssdeep 2>/dev/null ; then
+  echo "Installing ssdeep"
   wget -c "http://downloads.sourceforge.net/project/ssdeep/ssdeep-2.13/ssdeep-2.13.tar.gz"
   tar zxvf ssdeep-2.13.tar.gz
   cd ssdeep-2.13
@@ -63,13 +59,17 @@ fi
 ##
 # Install required golang dependencies
 ##
+echo "Fetching required dependencies..."
 wget -c "https://raw.githubusercontent.com/owtf/health_monitor/master/dependencies"
-sudo -u ${USER} cat dependencies | xargs go get -u
+cat dependencies | xargs go get -u
+echo "Cloning OWTF Health-Monitor to ~/go_workspace/src/health_monitor"
 if [ ! "$(ls -A ~/go_workspace/src/health_monitor)" ]; then
-  sudo -u ${USER} git clone https://github.com/owtf/health_monitor.git ~/go_workspace/src/health_monitor
+  git clone https://github.com/owtf/health_monitor.git ~/go_workspace/src/health_monitor
   cd ~/go_workspace/src/health_monitor
 else
     echo "Health-Monitor is found, skipping cloning of the repository"
 fi
 
-sudo -u ${USER} go build -i
+echo "Building health_monitor"
+go build -i
+echo "Setup complete"
