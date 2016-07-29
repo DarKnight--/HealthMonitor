@@ -62,14 +62,14 @@ fi
 echo "Fetching required dependencies..."
 wget -c "https://raw.githubusercontent.com/owtf/health_monitor/master/dependencies"
 cat dependencies | xargs go get -u
-echo "Cloning OWTF Health-Monitor to ~/go_workspace/src/health_monitor"
-if [ ! "$(ls -A ~/go_workspace/src/health_monitor)" ]; then
-  git clone https://github.com/owtf/health_monitor.git ~/go_workspace/src/health_monitor
-  cd ~/go_workspace/src/health_monitor
+echo "Cloning OWTF Health-Monitor to $GOPATH/src/health_monitor"
+if [ ! "$(ls -A $GOPATH/src/health_monitor)" ]; then
+  git clone https://github.com/owtf/health_monitor.git $GOPATH/src/health_monitor
 else
     echo "Health-Monitor is found, skipping cloning of the repository"
 fi
 
+cd $GOPATH/src/health_monitor
 echo "Building health_monitor"
 go build -i
 echo "Setup complete"
