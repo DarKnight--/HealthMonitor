@@ -43,7 +43,6 @@ fi
 ##
 # Install ssdeep for fuzzy searching
 ##
-export LD_LIBRARY_PATH=/usr/local/lib
 if ! hash ssdeep 2>/dev/null ; then
   echo "Installing ssdeep"
   wget -c "http://downloads.sourceforge.net/project/ssdeep/ssdeep-2.13/ssdeep-2.13.tar.gz"
@@ -52,6 +51,8 @@ if ! hash ssdeep 2>/dev/null ; then
   ./configure
   make
   sudo make install
+  sudo echo "export LD_LIBRARY_PATH=/usr/local/lib" >> /etc/profile
+  export LD_LIBRARY_PATH=/usr/local/lib
 else
   echo "ssdeep is already installed. Skipping the installation"
 fi
