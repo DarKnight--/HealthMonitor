@@ -20,6 +20,7 @@ type DesktopAlert struct {
 	defaultIcon string
 }
 
+// Push is used to send notification to the desktop.
 func (n DesktopAlert) Push(title string, body string, iconPath string, urgent int) error {
 	icon := n.defaultIcon
 
@@ -68,6 +69,7 @@ func DesktopAlertBuilder(appName string, defaultIcon string) *DesktopAlert {
 	case "linux":
 		notifier = linuxDesktopAlert{}
 
+	// Windows support not added yet
 	case "windows":
 		notifier = nil
 
@@ -79,10 +81,12 @@ func DesktopAlertBuilder(appName string, defaultIcon string) *DesktopAlert {
 	return &DesktopAlert{notifier: notifier, defaultIcon: defaultIcon}
 }
 
+// see growlnotify for darwin
 func CheckDesktopAlertSupport() bool {
 	switch runtime.GOOS {
 	case "darwin", "linux":
 		return checkNotifySend()
+	// Add support for windows in future
 	case "windows":
 		return false
 	default:

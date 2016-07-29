@@ -27,9 +27,10 @@ type (
 )
 
 var (
-	ramInfo Info
-	logFile *os.File
-	conf    *Config
+	ramInfo    Info
+	logFile    *os.File
+	conf       *Config
+	lastStatus Status
 )
 
 //RAM is the driver function of this module for monitor
@@ -56,8 +57,12 @@ func RAM(status <-chan bool, wg *sync.WaitGroup) {
 }
 
 func checkRAM() {
+	lastStatus.Normal = ramInfo.Status.Normal
 	conf.LoadMemoryStats(&ramInfo.Stats)
 	if ramInfo.Stats.FreePhysical < conf.RAMWarningLimit {
+		if lastStatus.Normal {
+			//TODO take action and alert the user
+		}
 		ramInfo.Status.Normal = false
 		utils.ModuleLogs(logFile, "Ram is being used over the warning limit")
 	} else {

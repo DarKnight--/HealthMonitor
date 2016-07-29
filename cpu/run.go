@@ -25,9 +25,10 @@ type (
 )
 
 var (
-	cpuInfo Info
-	logFile *os.File
-	conf    *Config
+	cpuInfo    Info
+	logFile    *os.File
+	conf       *Config
+	lastStatus Status
 )
 
 //CPU is the driver function of this module for monitor
@@ -41,7 +42,9 @@ func CPU(status <-chan bool, wg *sync.WaitGroup) {
 	utils.ModuleLogs(logFile, "Running with "+conf.Profile+" profile")
 	conf.Init()
 	time.Sleep(time.Second)
+	cpuInfo.Status.Normal = true
 	checkCPU()
+
 	for {
 		select {
 		case <-status:
@@ -55,12 +58,15 @@ func CPU(status <-chan bool, wg *sync.WaitGroup) {
 }
 
 func checkCPU() {
+	lastStatus.Normal = cpuInfo.Status.Normal
 	conf.CPUUsage(&cpuInfo.Stats)
 	if cpuInfo.Stats.CPUUsage < conf.CPUWarningLimit {
 		cpuInfo.Status.Normal = true
 		utils.ModuleLogs(logFile, "CPU usage is normal")
 	} else {
-		// TODO add alert
+		if lastStatus.Normal {
+			// TODO add alert
+		}
 		cpuInfo.Status.Normal = false
 		utils.ModuleLogs(logFile, "CPU is being used over the warning limit")
 	}
