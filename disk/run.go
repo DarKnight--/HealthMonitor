@@ -67,9 +67,9 @@ func checkDisk(conf *Config) {
 		var tempStat PartitionStats
 		tempStatus.Inode = conf.InodesInfo(directory, &tempStat)
 		tempStatus.Space = conf.SpaceInfo(directory, &tempStat)
+		printStatusLog(directory, tempStatus.Inode, diskInfo[directory].Status.Inode, "inode")
+		printStatusLog(directory, tempStatus.Space, diskInfo[directory].Status.Space, "space")
 		diskInfo[directory] = PartitionInfo{tempStatus, tempStat, diskInfo[directory].Const}
-		printStatusLog(directory, tempStatus.Inode, "inode")
-		printStatusLog(directory, tempStatus.Space, "space")
 		utils.ModuleLogs(logFile, "Stats for mount "+directory+" :")
 		utils.ModuleLogs(logFile, fmt.Sprintf("Inodes: \t Total: %d \t Free: %d",
 			diskInfo[directory].Const.TotalInodes, tempStat.FreeInodes))
@@ -95,12 +95,12 @@ func GetStatusJSON() []byte {
 
 func loadPartitionConst() {
 	for _, directory := range partition {
-		diskInfo[directory] = PartitionInfo{PartitionStatus{}, PartitionStats{},
+		diskInfo[directory] = PartitionInfo{PartitionStatus{Inode: 1, Space: 1}, PartitionStats{},
 			SetPartitionConst(directory)}
 	}
 }
 
-func printStatusLog(directory string, status int, types string) {
+func printStatusLog(directory string, status int, lastStatus int, types string) {
 	switch status {
 	case -1:
 		utils.ModuleError(logFile, fmt.Sprintf("Unable to retrieve the informtaion about %s mount point",
@@ -117,7 +117,10 @@ func printStatusLog(directory string, status int, types string) {
 	case 3:
 		utils.ModuleLogs(logFile, fmt.Sprintf("Mount point %s %s status : Danger",
 			directory, types))
-		basicCleanup()
+		if lastStatus != 3 {
+			// TODO alert
+			basicCleanup()
+		}
 	}
 }
 

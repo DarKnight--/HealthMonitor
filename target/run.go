@@ -28,6 +28,7 @@ type (
 var (
 	targetHash map[string]string
 	targetInfo map[string]Status
+	lastStatus map[string]bool
 	logFile    *os.File
 	conf       *Config
 )
@@ -48,6 +49,7 @@ func Target(status <-chan bool, wg *sync.WaitGroup) {
 	}
 	targetInfo = make(map[string]Status)
 	targetHash = make(map[string]string)
+	lastStatus = make(map[string]bool)
 
 	utils.ModuleLogs(logFile, "Running with "+conf.Profile+" profile")
 	checkTarget()
@@ -74,6 +76,11 @@ func checkTarget() {
 		if err != nil {
 			utils.ModuleError(logFile, "Unable to check target status", err.Error())
 		} else if status {
+			if _, isPresent := lastStatus[target.TargetURL]; isPresent {
+				lastStatus[target.TargetURL] = targetInfo[target.TargetURL].Normal
+			} else {
+				lastStatus[target.TargetURL] = true
+			}
 			hash, ok := targetHash[target.TargetURL]
 			if !ok {
 				hash = loadTarget(target.TargetURL)
@@ -100,16 +107,23 @@ func checkTarget() {
 				targetInfo[target.TargetURL] = Status{Scanned: true, Normal: true}
 				utils.ModuleLogs(logFile, fmt.Sprintf("Target %s is up",
 					target.TargetURL))
-				upAction(target.ID)
+				if lastStatus[target.TargetURL] == false {
+					upAction(target.ID)
+					// TODO Alert to be added
+				}
 			} else {
 				targetInfo[target.TargetURL] = Status{Scanned: true, Normal: false}
 				utils.ModuleLogs(logFile, fmt.Sprintf("Target %s is down",
 					target.TargetURL))
-				downAction(target.ID)
+				if lastStatus[target.TargetURL] {
+					downAction(target.ID)
+					// TODO Alert to be added
+				}
 			}
 			continue
 		}
 		targetInfo[target.TargetURL] = Status{Scanned: false, Normal: true}
+		lastStatus[target.TargetURL] = true
 	}
 }
 
