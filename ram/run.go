@@ -58,7 +58,7 @@ func RAM(status <-chan bool, wg *sync.WaitGroup) {
 
 func checkRAM() {
 	conf.LoadMemoryStats(&ramInfo.Stats)
-	if ramInfo.Stats.FreePhysical < conf.RAMWarningLimit {
+	if ramInfo.Stats.FreePhysical < (100-conf.RAMWarningLimit)*ramInfo.Consts.TotalPhysical/100 {
 		ramInfo.Status.Normal = false
 		utils.ModuleLogs(logFile, "Ram is being used over the warning limit")
 	} else {
