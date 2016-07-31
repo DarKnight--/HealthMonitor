@@ -43,6 +43,7 @@ func RAM(status <-chan bool, wg *sync.WaitGroup) {
 
 	utils.ModuleLogs(logFile, "Running with "+conf.Profile+" profile")
 	conf.InitMemoryConst(&ramInfo.Consts)
+	ramInfo.Status.Normal = true
 	checkRAM()
 	for {
 		select {
@@ -59,11 +60,12 @@ func RAM(status <-chan bool, wg *sync.WaitGroup) {
 func checkRAM() {
 	lastStatus.Normal = ramInfo.Status.Normal
 	conf.LoadMemoryStats(&ramInfo.Stats)
-	if ramInfo.Stats.FreePhysical < conf.RAMWarningLimit {
+
+	if ramInfo.Stats.FreePhysical < (100-conf.RAMWarningLimit)*ramInfo.Consts.TotalPhysical/100 {
+		ramInfo.Status.Normal = false
 		if lastStatus.Normal {
 			//TODO take action and alert the user
 		}
-		ramInfo.Status.Normal = false
 		utils.ModuleLogs(logFile, "Ram is being used over the warning limit")
 	} else {
 		ramInfo.Status.Normal = true
@@ -99,6 +101,6 @@ func GetStatusJSON() []byte {
 func Init() {
 	conf = LoadConfig()
 	if conf == nil {
-		utils.CheckConf(logFile, setup.MainLogFile, "ram", &setup.ModulesStatus.Profile, setup.RAM)
+		utils.CheckConf(logFile, setup.MainLogFile, "ram", &setup.UserModuleState.Profile, setup.RAM)
 	}
 }

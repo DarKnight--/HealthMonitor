@@ -82,13 +82,13 @@ func status(argument []string) error {
 
 func liveShortStatus() {
 	fmt.Printf("%-35s", "Internet Connectivity (live)")
-	moduleWorkingStatus(setup.ModulesStatus.Live, api.LiveStatus().Normal)
+	moduleWorkingStatus(setup.InternalModuleState.Live, api.LiveStatus().Normal)
 }
 
 func liveDetailStatus() {
 	printHeading("Status of internet connectivity (live) module")
 	fmt.Printf("%-35s", "Internet Connectivity (live) :\t")
-	if setup.ModulesStatus.Live {
+	if setup.InternalModuleState.Live {
 		moduleStatus := api.LiveStatus()
 		if moduleStatus.Normal {
 			color.Green("On")
@@ -112,15 +112,15 @@ func diskShortStatus() {
 			break
 		}
 	}
-	moduleWorkingStatus(setup.ModulesStatus.Disk, normal)
+	moduleWorkingStatus(setup.InternalModuleState.Disk, normal)
 }
 
 func diskDetailStatus() {
 	printHeading("Status of disk module")
 	diskShortStatus()
-	if setup.ModulesStatus.Disk {
+	if setup.InternalModuleState.Disk {
 		printDiskTable()
-		fmt.Println("\n")
+		fmt.Println()
 		printInodeTable()
 	}
 }
@@ -130,7 +130,7 @@ func printDiskTable() {
 	printLine()
 	color.New(color.FgWhite, color.Bold, color.Underline).Printf("| %-30s | %-15s | %-15s |  %%  |\n",
 		"Filesystem", "Free Blocks", "Total Blocks")
-	if setup.ModulesStatus.Disk {
+	if setup.InternalModuleState.Disk {
 		for key, value := range api.DiskStatus() {
 			colorFunc := color.New(color.FgWhite)
 			if value.Status.Space != 1 {
@@ -149,7 +149,7 @@ func printInodeTable() {
 	printLine()
 	color.New(color.FgWhite, color.Bold, color.Underline).Printf("| %-30s | %-15s | %-15s |  %%  |\n",
 		"Filesystem", "Free Inodes", "Total Inodes")
-	if setup.ModulesStatus.Disk {
+	if setup.InternalModuleState.Disk {
 		for key, value := range api.DiskStatus() {
 			colorFunc := color.New(color.FgWhite)
 			if value.Status.Inode != 1 {
@@ -173,31 +173,31 @@ func percent(value int, total int) int {
 
 func cpuShortStatus() {
 	fmt.Printf("%-35s", "CPU (cpu)")
-	moduleWorkingStatus(setup.ModulesStatus.CPU, api.CPUStatus().Status.Normal)
+	moduleWorkingStatus(setup.InternalModuleState.CPU, api.CPUStatus().Status.Normal)
 }
 
 func cpuDetailStatus() {
 	printHeading("Status of CPU module")
 	cpuShortStatus()
-	if setup.ModulesStatus.CPU {
+	if setup.InternalModuleState.CPU {
 		moduleStatus := api.CPUStatus()
 		colorFunc := color.New(color.FgWhite)
 		if moduleStatus.Status.Normal == false {
 			colorFunc.Add(color.FgRed)
 		}
-		colorFunc.Printf("CPU usage is %f%%\n", moduleStatus.Stats.CPUUsage)
+		colorFunc.Printf("CPU usage is %d%%\n", moduleStatus.Stats.CPUUsage)
 	}
 }
 
 func ramShortStatus() {
 	fmt.Printf("%-35s", "RAM (ram)")
-	moduleWorkingStatus(setup.ModulesStatus.RAM, api.RAMStatus().Status.Normal)
+	moduleWorkingStatus(setup.InternalModuleState.RAM, api.RAMStatus().Status.Normal)
 }
 
 func ramDetailStatus() {
 	printHeading("Status of RAM module")
 	ramShortStatus()
-	if setup.ModulesStatus.RAM {
+	if setup.InternalModuleState.RAM {
 		moduleStatus := api.RAMStatus()
 		colorFunc := color.New(color.FgWhite)
 		if moduleStatus.Status.Normal == false {
@@ -206,8 +206,8 @@ func ramDetailStatus() {
 		colorFunc.Printf("RAM usage is %d%%\n", percent(moduleStatus.Stats.FreePhysical,
 			moduleStatus.Consts.TotalPhysical))
 
-		colorFunc.Printf("Virtual Memory usage is %d%%\n", percent(moduleStatus.Stats.FreeVirtual,
-			moduleStatus.Consts.TotalVirtual))
+		colorFunc.Printf("Virtual Memory usage is %d%%\n", percent(moduleStatus.Stats.FreeSwap,
+			moduleStatus.Consts.TotalSwap))
 	}
 }
 
@@ -223,13 +223,13 @@ func targetShortStatus() {
 		}
 	}
 
-	moduleWorkingStatus(setup.ModulesStatus.Target, normal)
+	moduleWorkingStatus(setup.InternalModuleState.Target, normal)
 }
 
 func targetDetailStatus() {
 	color.Cyan("Detailed status of all the OWTF's target")
 	targetShortStatus()
-	if setup.ModulesStatus.Target {
+	if setup.InternalModuleState.Target {
 		for key, value := range api.TargetStatus() {
 			fmt.Printf("%-45s :\t", key)
 			if value.Scanned {
@@ -264,11 +264,10 @@ func moduleWorkingStatus(status bool, workingStatus bool) {
 
 func toggleModule(module string, state bool) error {
 	if doesModuleExists(module) {
-		utils.SendModuleStatus(module, state)
+		api.ChangeModuleStatus(module, state)
 		return nil
-	} else {
-		return errors.New("Specified module not found, allowed modules " + color.New(color.FgCyan).SprintFunc()(utils.Modules))
 	}
+	return errors.New("Specified module not found, allowed modules " + color.New(color.FgCyan).SprintFunc()(utils.Modules))
 }
 
 func doesModuleExists(module string) bool {

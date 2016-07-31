@@ -100,6 +100,6 @@ func GetStatusJSON() []byte {
 func Init() {
 	conf = LoadConfig()
 	if conf == nil {
-		utils.CheckConf(logFile, setup.MainLogFile, "cpu", &setup.ModulesStatus.Profile, setup.CPU)
+		utils.CheckConf(logFile, setup.MainLogFile, "cpu", &setup.UserModuleState.Profile, setup.CPU)
 	}
 }
