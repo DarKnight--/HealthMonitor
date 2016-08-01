@@ -120,7 +120,7 @@ func diskDetailStatus() {
 	diskShortStatus()
 	if setup.InternalModuleState.Disk {
 		printDiskTable()
-		fmt.Println("\n")
+		fmt.Println()
 		printInodeTable()
 	}
 }
@@ -185,7 +185,7 @@ func cpuDetailStatus() {
 		if moduleStatus.Status.Normal == false {
 			colorFunc.Add(color.FgRed)
 		}
-		colorFunc.Printf("CPU usage is %f%%\n", moduleStatus.Stats.CPUUsage)
+		colorFunc.Printf("CPU usage is %d%%\n", moduleStatus.Stats.CPUUsage)
 	}
 }
 
@@ -207,7 +207,7 @@ func ramDetailStatus() {
 			moduleStatus.Consts.TotalPhysical))
 
 		colorFunc.Printf("Virtual Memory usage is %d%%\n", percent(moduleStatus.Stats.FreeSwap,
-			moduleStatus.Consts.TotalVirtual))
+			moduleStatus.Consts.TotalSwap))
 	}
 }
 
@@ -266,9 +266,8 @@ func toggleModule(module string, state bool) error {
 	if doesModuleExists(module) {
 		api.ChangeModuleStatus(module, state)
 		return nil
-	} else {
-		return errors.New("Specified module not found, allowed modules " + color.New(color.FgCyan).SprintFunc()(utils.Modules))
 	}
+	return errors.New("Specified module not found, allowed modules " + color.New(color.FgCyan).SprintFunc()(utils.Modules))
 }
 
 func doesModuleExists(module string) bool {

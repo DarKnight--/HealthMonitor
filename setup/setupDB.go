@@ -53,7 +53,7 @@ func RAM() {
 		ram_w_limit			INT NOT NULL,
 		recheck_threshold 	INT NOT NULL
 		);`)
-	_, err := Database.Exec(`INSERT OR REPLACE INTO Ram VALUES ("default", 90000, 5000);`)
+	_, err := Database.Exec(`INSERT OR REPLACE INTO Ram VALUES ("default", 95, 5000);`)
 	if err != nil {
 		utils.ModuleError(DBLogFile, "Unable to insert value to Ram table", err.Error())
 		return
