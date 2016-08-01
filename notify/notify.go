@@ -1,5 +1,13 @@
 package notify
 
+import (
+	"encoding/json"
+
+	"health_monitor/setup"
+	"health_monitor/utils"
+)
+
+// Config holds all the necessary parameters required by the module
 type Config struct {
 	Profile               string
 	SendgridAPIKey        string
@@ -18,23 +26,29 @@ type Config struct {
 }
 
 var (
-	config       Config
+	conf         *Config
 	fromName     = "OWTF Health Monitor"
 	fromEmail    = "alerts_health_monitor@owasp-owtf.org"
 	desktopAlert *DesktopAlert
 )
 
+// Init is the initialization function of the module
 func Init() {
+	conf = LoadConfig()
+	if conf == nil {
+		utils.CheckConf(setup.MainLogFile, setup.MainLogFile, "live", &setup.UserModuleState.Profile, setup.Alert)
+	}
 	desktopAlert = nil
-	config.DesktopNoticSupported = false
+	conf.DesktopNoticSupported = false
 	if CheckDesktopAlertSupport() {
-		desktopAlert = DesktopAlertBuilder("OWTF Health Monitor", config.IconPath)
-		config.DesktopNoticSupported = true
+		desktopAlert = DesktopAlertBuilder("OWTF Health Monitor", conf.IconPath)
+		conf.DesktopNoticSupported = true
 	}
 }
 
+// SendEmailAlert sends the email notification if enabled using specified client
 func SendEmailAlert(subject string, body string) {
-	switch config.MailOptionToUse {
+	switch conf.MailOptionToUse {
 	case "sendgrid":
 		sendGrid(subject, body)
 	case "mailgun":
@@ -44,11 +58,22 @@ func SendEmailAlert(subject string, body string) {
 	}
 }
 
+// SendDesktopAlert sends the desktop notification if enabled and required packages
+// are installed.
 func SendDesktopAlert(subject string, summary string, urgent int, iconPath string) {
 	if iconPath == "" {
-		iconPath = config.IconPath
+		iconPath = conf.IconPath
 	}
-	if config.SendDesktopNotific && config.DesktopNoticSupported {
+	if conf.SendDesktopNotific && conf.DesktopNoticSupported {
 		desktopAlert.Push(subject, summary, iconPath, urgent)
 	}
+}
+
+//GetConfJSON returns the json byte array of the module's config
+func GetConfJSON() []byte {
+	data, err := json.Marshal(LoadConfig())
+	if err != nil {
+		utils.ModuleError(setup.MainLogFile, err.Error(), "[!] Check the conf struct(alert module)")
+	}
+	return data
 }

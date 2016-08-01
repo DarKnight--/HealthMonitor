@@ -10,6 +10,7 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
+// ModulesStatus holds the status of module
 type ModulesStatus struct {
 	Profile string
 	Live    bool
@@ -20,8 +21,9 @@ type ModulesStatus struct {
 }
 
 var (
-	//ModulesStatus holds the running status of all the modules of monitor
-	UserModuleState     = ModulesStatus{}
+	//UserModuleState holds the status of all the modules of monitor set by user
+	UserModuleState = ModulesStatus{}
+	//InternalModuleState holds the running status of all the modules of monitor
 	InternalModuleState = ModulesStatus{}
 )
 

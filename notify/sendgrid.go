@@ -10,11 +10,11 @@ import (
 
 func sendGrid(subject string, contentString string) {
 	from := mail.NewEmail(fromName, fromEmail)
-	to := mail.NewEmail(strings.Split(config.SendEmailTo, "@")[0], config.SendEmailTo)
+	to := mail.NewEmail(strings.Split(conf.SendEmailTo, "@")[0], conf.SendEmailTo)
 	content := mail.NewContent("text/plain", contentString)
 	m := mail.NewV3MailInit(from, subject, to, content)
 
-	request := sendgrid.GetRequest(config.SendgridAPIKey, "/v3/mail/send", "https://api.sendgrid.com")
+	request := sendgrid.GetRequest(conf.SendgridAPIKey, "/v3/mail/send", "https://api.sendgrid.com")
 	request.Method = "POST"
 	request.Body = mail.GetRequestBody(m)
 	response, err := sendgrid.API(request)

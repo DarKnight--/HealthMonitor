@@ -104,6 +104,33 @@ func TargetHash() {
 	}
 }
 
+//Alert saves the default config of alert module to db
+func Alert() {
+	Database.Exec(`CREATE TABLE IF NOT EXISTS Alert(
+		profile								CHAR(50) PRIMARY KEY NOT NULL,
+		sg_api_key						CHAR(100),
+		em_api_key						CHAR(100),
+		em_api_uname					CHAR(100),
+		mj_api_pubkey					CHAR(100),
+		mj_api_prikey					CHAR(100),
+		send_mail_to					CHAR(50),
+		mg_api_domain					CHAR(100),
+		mg_api_pubkey					CHAR(100),
+		mg_api_prikey					CHAR(100),
+		send_desktop_notific	INTEGER,
+		mail_to_use						CHAR(100),
+		icon_path							CHAR(100)
+		);`)
+	// TODO set iconPath
+	_, err := Database.Exec(`INSERT OR REPLACE INTO Alert (profile, send_desktop_notific,
+		mail_to_use, icon_path) VALUES ("default", 1, "", "");`)
+	if err != nil {
+		utils.ModuleError(DBLogFile, "Unable to insert value to Alert table", err.Error())
+		return
+	}
+	utils.ModuleLogs(DBLogFile, "Inserted default values to Alert table")
+}
+
 func setupDB() {
 	Live()
 	Target()
@@ -111,5 +138,6 @@ func setupDB() {
 	RAM()
 	CPU()
 	TargetHash()
+	Alert()
 	return
 }
