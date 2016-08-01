@@ -85,6 +85,11 @@ func ChangeModuleStatus(module string, status bool) {
 	case "live":
 		setup.UserModuleState.Live = status
 	case "target":
+		if status {
+			utils.AddOWTFModuleDependence()
+		} else {
+			utils.RemoveOWTFModuleDependence()
+		}
 		setup.UserModuleState.Target = status
 	case "disk":
 		setup.UserModuleState.Disk = status

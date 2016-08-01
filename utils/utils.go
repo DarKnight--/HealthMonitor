@@ -10,15 +10,23 @@ import (
 )
 
 var (
-	mutex sync.Mutex
+	mutex, owtfMutex sync.Mutex
+
 	//ControlChan is the channel to send stop or start signal to main function
 	ControlChan chan Status
+
 	//Modules is the list of the modules currently implemented..
 	Modules = []string{"live", "target", "disk", "ram", "cpu"}
+
 	//LiveEmergency is the channel to call live module any time
 	LiveEmergency chan bool
+
 	//ExitChan is the channel to send signal to exit monitor gracefully
 	ExitChan chan os.Signal
+
+	// This variable will work like semaphore. If any module is dependent on owtf is turned on it will
+	// increase the count. So owtf module will only get shutdown signal if this variable is 0
+	owtfModuleDependence = 0
 )
 
 // Status struct is used by monitor to send different modules signal to abort
@@ -114,4 +122,22 @@ func RestartAllModules() {
 		SendModuleStatus(module, false)
 		SendModuleStatus(module, true)
 	}
+}
+
+func AddOWTFModuleDependence() {
+	owtfMutex.Lock()
+	if owtfModuleDependence == 0 {
+		SendModuleStatus("owtf", true)
+	}
+	owtfModuleDependence++
+	owtfMutex.Unlock()
+}
+
+func RemoveOWTFModuleDependence() {
+	owtfMutex.Lock()
+	owtfModuleDependence--
+	if owtfModuleDependence == 0 {
+		SendModuleStatus("owtf", false)
+	}
+	owtfMutex.Unlock()
 }
