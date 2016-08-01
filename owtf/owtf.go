@@ -27,14 +27,19 @@ const (
 	workerPath      = "http://127.0.0.1:8010/api/workers/"
 )
 
+// OWTF is the driver function of the owtf module.
+// It continuosly monitors the status of the OWTF whether it is scanning any target or not
 func OWTF(status <-chan bool, wg *sync.WaitGroup) {
 	defer wg.Done()
+	var lastStatus *bool
+	*lastStatus = true
+
 	for {
 		select {
 		case <-status:
 			return
 		case <-time.After(time.Second):
-			monitorOwtf()
+			monitorOwtf(lastStatus)
 		}
 	}
 }
@@ -111,15 +116,17 @@ func PauseWorker(worker int) error {
 	return getRequest(workerPath + strconv.Itoa(worker) + "/pause")
 }
 
+// PauseWorkerByTarget send the signal to owtf to pause the worker working on the
+// target with specified id
 func PauseWorkerByTarget(id int) error {
-	workerId, paused := getWorkerByTarget(id)
-	if workerId == -1 {
+	workerID, paused := getWorkerByTarget(id)
+	if workerID == -1 {
 		return errors.New("Unable to get the worker with target id = " + strconv.Itoa(id))
 	}
 	if paused {
 		return nil
 	}
-	return PauseWorker(workerId)
+	return PauseWorker(workerID)
 }
 
 //PauseAllWorker will pause all the workers running by OWTF
@@ -137,13 +144,15 @@ func ResumeAllWorker() error {
 	return ResumeWorker(0)
 }
 
+// ResumeWorkerByTarget send the signal to owtf to resume the worker working on the
+// target with specified id
 func ResumeWorkerByTarget(id int) error {
-	workerId, paused := getWorkerByTarget(id)
-	if workerId == -1 {
+	workerID, paused := getWorkerByTarget(id)
+	if workerID == -1 {
 		return errors.New("Unable to get the worker with target id = " + strconv.Itoa(id))
 	}
 	if paused {
-		return ResumeWorker(workerId)
+		return ResumeWorker(workerID)
 	}
 	return nil
 }
@@ -151,10 +160,10 @@ func ResumeWorkerByTarget(id int) error {
 func getWorkerByTarget(id int) (int, bool) {
 	var (
 		workers []struct {
-			Id     int  `json:"id"`
-			Paused bool `json:"paused`
+			ID     int  `json:"id"`
+			Paused bool `json:"paused"`
 			Work   []struct {
-				Id int `json:"id"`
+				ID int `json:"id"`
 			} `json:"work"`
 		}
 	)
@@ -175,8 +184,8 @@ func getWorkerByTarget(id int) (int, bool) {
 		return -1, false
 	}
 	for _, worker := range workers {
-		if len(worker.Work) != 0 && worker.Work[0].Id == id {
-			return worker.Id, worker.Paused
+		if len(worker.Work) != 0 && worker.Work[0].ID == id {
+			return worker.ID, worker.Paused
 		}
 	}
 	return -1, false
@@ -195,16 +204,14 @@ func getRequest(path string) error {
 	return err
 }
 
-func monitorOwtf() {
+func monitorOwtf(lastStatus *bool) {
 	var (
 		workers []struct {
 			Busy   bool `json:"busy"`
 			Paused bool `json:"paused"`
 		}
 		owtfStatus bool
-		lastStatus bool
 	)
-	lastStatus = true
 	response, err := http.Get(workerPath)
 	if !(err == nil && response.StatusCode/100 == 2) {
 		//OWTF is down
@@ -231,14 +238,14 @@ func monitorOwtf() {
 		}
 	}
 
-	if owtfStatus != lastStatus {
+	if owtfStatus != *lastStatus {
 		if owtfStatus {
 			startModules()
 		} else {
 			pauseModules()
 		}
 	}
-	lastStatus = owtfStatus
+	*lastStatus = owtfStatus
 	time.Sleep(time.Second)
 }
 

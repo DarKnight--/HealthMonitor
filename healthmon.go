@@ -129,7 +129,7 @@ func runModules(chans [6]chan bool, wg *sync.WaitGroup) {
 		wg.Add(1)
 		utils.ModuleLogs(setup.MainLogFile, "Started target module")
 		setup.InternalModuleState.Target = true
-		utils.IncreaseOWTFDependenceCount()
+		utils.AddOWTFModuleDependence()
 		go target.Target(chans[2], wg)
 	}
 	if setup.UserModuleState.Disk {

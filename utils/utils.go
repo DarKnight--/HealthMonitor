@@ -124,7 +124,7 @@ func RestartAllModules() {
 	}
 }
 
-func IncreaseOWTFDependenceCount() {
+func AddOWTFModuleDependence() {
 	owtfMutex.Lock()
 	if owtfModuleDependence == 0 {
 		SendModuleStatus("owtf", true)
@@ -133,7 +133,7 @@ func IncreaseOWTFDependenceCount() {
 	owtfMutex.Unlock()
 }
 
-func DecreaseOWTFDependenceCount() {
+func RemoveOWTFModuleDependence() {
 	owtfMutex.Lock()
 	owtfModuleDependence--
 	if owtfModuleDependence == 0 {
