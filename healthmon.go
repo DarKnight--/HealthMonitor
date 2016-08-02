@@ -39,7 +39,7 @@ func main() {
 	)
 
 	for i := range chans {
-		chans[i] = make(chan bool)
+		chans[i] = make(chan bool, 1)
 	}
 
 	utils.LiveEmergency = make(chan bool)

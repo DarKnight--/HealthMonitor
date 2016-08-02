@@ -98,7 +98,7 @@ func internetCheck(defaultCheck func() error, conf *Config) {
 	utils.ModuleError(logFile, err.Error(), "")
 
 	for i := 0; i < 3; i++ {
-		time.Sleep(time.Duration(conf.RecheckThreshold) * time.Millisecond / 5)
+		time.Sleep(time.Second)
 		if err = conf.CheckByHEAD(); err == nil {
 			liveStatus.Normal = true
 			return
