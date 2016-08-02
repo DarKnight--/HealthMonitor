@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"health_monitor/notify"
 	"health_monitor/setup"
 	"health_monitor/utils"
 )
@@ -105,7 +106,10 @@ func printStatusLog(directory string, status int, lastStatus int, types string) 
 	case -1:
 		utils.ModuleError(logFile, fmt.Sprintf("Unable to retrieve the informtaion about %s mount point",
 			directory), "Check the mount point provided")
-
+		if lastStatus != -1 {
+			notify.SendDesktopAlert("OWTF - Health Monitor", fmt.Sprintf("Disk %s for %s mount point can't be scanned due to error.",
+				types, directory), notify.NORMAL, "")
+		}
 	case 1:
 		utils.ModuleLogs(logFile, fmt.Sprintf("Mount point %s %s status : OK",
 			directory, types))
@@ -113,12 +117,16 @@ func printStatusLog(directory string, status int, lastStatus int, types string) 
 	case 2:
 		utils.ModuleLogs(logFile, fmt.Sprintf("Mount point %s %s status : WARN",
 			directory, types))
-
+		if lastStatus < 2 {
+			notify.SendDesktopAlert("OWTF - Health Monitor", fmt.Sprintf("Disk %s for %s mount point status is above warning limit.",
+				types, directory), notify.NORMAL, "")
+		}
 	case 3:
 		utils.ModuleLogs(logFile, fmt.Sprintf("Mount point %s %s status : Danger",
 			directory, types))
 		if lastStatus != 3 {
-			// TODO alert
+			notify.SendDesktopAlert("OWTF - Health Monitor", fmt.Sprintf("Disk %s for %s mount point status is critical",
+				types, directory), notify.CRITICAL, "")
 			basicCleanup()
 		}
 	}

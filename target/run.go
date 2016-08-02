@@ -12,6 +12,7 @@ import (
 	"sync"
 	"time"
 
+	"health_monitor/notify"
 	"health_monitor/owtf"
 	"health_monitor/setup"
 	"health_monitor/utils"
@@ -100,7 +101,6 @@ func checkTarget() {
 			if err != nil {
 				utils.ModuleError(logFile, "Error occured during matching hash score for target "+
 					target.TargetURL, err.Error())
-				//TODO Alert
 				continue
 			}
 			if result {
@@ -109,7 +109,6 @@ func checkTarget() {
 					target.TargetURL))
 				if lastStatus[target.TargetURL] == false {
 					upAction(target.ID)
-					// TODO Alert to be added
 				}
 			} else {
 				targetInfo[target.TargetURL] = Status{Scanned: true, Normal: false}
@@ -117,7 +116,7 @@ func checkTarget() {
 					target.TargetURL))
 				if lastStatus[target.TargetURL] {
 					downAction(target.ID)
-					// TODO Alert to be added
+					notify.SendDesktopAlert("OWTF - Health Monitor", fmt.Sprintf("Target %s seems to be down. Recheck the target.", target.TargetURL), notify.CRITICAL, "")
 				}
 			}
 			continue

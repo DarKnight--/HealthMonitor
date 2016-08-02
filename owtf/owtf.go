@@ -112,7 +112,10 @@ func CheckOWTF() error {
 
 //PauseWorker will pause the worker with specified worker value
 func PauseWorker(worker int) error {
-	return getRequest(workerPath + strconv.Itoa(worker) + "/pause")
+	if err := CheckOWTF(); err == nil {
+		return getRequest(workerPath + strconv.Itoa(worker) + "/pause")
+	}
+	return nil
 }
 
 // PauseWorkerByTarget send the signal to owtf to pause the worker working on the

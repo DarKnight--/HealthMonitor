@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"health_monitor/notify"
 	"health_monitor/setup"
 	"health_monitor/utils"
 )
@@ -109,7 +110,7 @@ func internetCheck(defaultCheck func() error, conf *Config) {
 	}
 	if lastStatus.Normal {
 		downAction()
-		// TODO send alert
+		notify.SendDesktopAlert("OWTF - Health Monitor", "Your internet connection is down", notify.CRITICAL, "")
 	}
 	liveStatus.Normal = false
 }

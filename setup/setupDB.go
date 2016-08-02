@@ -122,8 +122,8 @@ func Alert() {
 		icon_path							CHAR(100)
 		);`)
 	// TODO set iconPath
-	_, err := Database.Exec(`INSERT OR REPLACE INTO Alert (profile, send_desktop_notific,
-		mail_to_use, icon_path) VALUES ("default", 1, "", "");`)
+	_, err := Database.Exec(`INSERT OR REPLACE INTO Alert VALUES ("default", "",
+		 "", "", "", "", "", "", "", "", 1, "", "");`)
 	if err != nil {
 		utils.ModuleError(DBLogFile, "Unable to insert value to Alert table", err.Error())
 		return

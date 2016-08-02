@@ -134,6 +134,7 @@ func CheckInstalledPackage(commandName string) bool {
 	}
 	return true
 }
+
 func AddOWTFModuleDependence() {
 	owtfMutex.Lock()
 	if owtfModuleDependence == 0 {

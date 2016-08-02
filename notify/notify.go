@@ -36,7 +36,7 @@ var (
 func Init() {
 	conf = LoadConfig()
 	if conf == nil {
-		utils.CheckConf(setup.MainLogFile, setup.MainLogFile, "live", &setup.UserModuleState.Profile, setup.Alert)
+		utils.CheckConf(setup.MainLogFile, setup.MainLogFile, "alert", &setup.UserModuleState.Profile, setup.Alert)
 	}
 	desktopAlert = nil
 	conf.DesktopNoticSupported = false

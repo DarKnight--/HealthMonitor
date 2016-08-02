@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"health_monitor/notify"
 	"health_monitor/setup"
 	"health_monitor/utils"
 )
@@ -64,7 +65,7 @@ func checkRAM() {
 	if ramInfo.Stats.FreePhysical < (100-conf.RAMWarningLimit)*ramInfo.Consts.TotalPhysical/100 {
 		ramInfo.Status.Normal = false
 		if lastStatus.Normal {
-			//TODO take action and alert the user
+			notify.SendDesktopAlert("OWTF - Health Monitor", "RAM usage is above warn limit.", notify.CRITICAL, "")
 		}
 		utils.ModuleLogs(logFile, "Ram is being used over the warning limit")
 	} else {
