@@ -8,11 +8,12 @@ import (
 	"sync"
 	"syscall"
 
-	"health_monitor/api"
+	_ "health_monitor/api"
 	"health_monitor/cli"
 	"health_monitor/cpu"
 	"health_monitor/disk"
 	"health_monitor/live"
+	"health_monitor/owtf"
 	"health_monitor/ram"
 	"health_monitor/setup"
 	"health_monitor/target"
@@ -25,7 +26,6 @@ type Flags struct {
 	NoWebUI *bool
 	NoCLI   *bool
 	Quite   *bool
-	Install *bool
 }
 
 func main() {
@@ -35,7 +35,7 @@ func main() {
 	var (
 		wg    sync.WaitGroup
 		flags Flags
-		chans [5]chan bool //Number of modules
+		chans [6]chan bool //Number of modules
 	)
 
 	for i := range chans {
@@ -48,13 +48,8 @@ func main() {
 	flags.NoWebUI = flag.Bool("nowebui", false, "Disables the web ui")
 	flags.NoCLI = flag.Bool("nocli", false, "Disables cli")
 	flags.Quite = flag.Bool("quite", false, "Disables all notifications except email")
-	flags.Install = flag.Bool("install", false, "Installs necessary dependencies")
 
 	flag.Parse()
-
-	if *flags.Install {
-		install()
-	}
 
 	if (*flags.NoCLI == true) || (*flags.NoWebUI == false) {
 		go webui.RunServer(setup.ConfigVars.Port)
@@ -63,6 +58,8 @@ func main() {
 
 	utils.ExitChan = make(chan os.Signal, 1)
 	signal.Notify(utils.ExitChan, syscall.SIGINT, syscall.SIGTERM)
+	// The buffer size should atleast be double the number of modules implemented
+	utils.ControlChan = make(chan utils.Status, 12)
 	wg.Add(1)
 	go tearDown(&wg)
 	Init()
@@ -75,27 +72,28 @@ func main() {
 	wg.Wait()
 }
 
-func controlModule(chans [5]chan bool, wg *sync.WaitGroup) {
-	utils.ControlChan = make(chan utils.Status, 8)
+func controlModule(chans [6]chan bool, wg *sync.WaitGroup) {
 	for {
 		data := <-utils.ControlChan
 		switch data.Module {
+		case "owtf":
+			controlModuleHelper(data.Run, &setup.OWTFModuleStatus, data.Module,
+				owtf.OWTF, chans[0], wg)
 		case "live":
 			controlModuleHelper(data.Run, &setup.InternalModuleState.Live, data.Module,
-				live.Live, chans[0], wg)
-			break
+				live.Live, chans[1], wg)
 		case "target":
 			controlModuleHelper(data.Run, &setup.InternalModuleState.Target, data.Module,
-				target.Target, chans[1], wg)
+				target.Target, chans[2], wg)
 		case "disk":
 			controlModuleHelper(data.Run, &setup.InternalModuleState.Disk, data.Module,
-				disk.Disk, chans[2], wg)
+				disk.Disk, chans[3], wg)
 		case "ram":
 			controlModuleHelper(data.Run, &setup.InternalModuleState.RAM, data.Module,
-				ram.RAM, chans[3], wg)
+				ram.RAM, chans[4], wg)
 		case "cpu":
 			controlModuleHelper(data.Run, &setup.InternalModuleState.CPU, data.Module,
-				cpu.CPU, chans[4], wg)
+				cpu.CPU, chans[5], wg)
 		}
 	}
 }
@@ -114,31 +112,37 @@ func controlModuleHelper(run bool, moduleStatus *bool, moduleName string,
 	}
 }
 
-func runModules(chans [5]chan bool, wg *sync.WaitGroup) {
+func runModules(chans [6]chan bool, wg *sync.WaitGroup) {
 	if setup.UserModuleState.Live {
 		wg.Add(1)
 		utils.ModuleLogs(setup.MainLogFile, "Started live module")
-		go live.Live(chans[0], wg)
+		setup.InternalModuleState.Live = true
+		go live.Live(chans[1], wg)
 	}
 	if setup.UserModuleState.Target {
 		wg.Add(1)
 		utils.ModuleLogs(setup.MainLogFile, "Started target module")
-		go target.Target(chans[1], wg)
+		setup.InternalModuleState.Target = true
+		utils.AddOWTFModuleDependence()
+		go target.Target(chans[2], wg)
 	}
 	if setup.UserModuleState.Disk {
 		wg.Add(1)
 		utils.ModuleLogs(setup.MainLogFile, "Started disk module")
-		go disk.Disk(chans[2], wg)
+		setup.InternalModuleState.Disk = true
+		go disk.Disk(chans[3], wg)
 	}
 	if setup.UserModuleState.RAM {
 		wg.Add(1)
 		utils.ModuleLogs(setup.MainLogFile, "Started ram module")
-		go ram.RAM(chans[3], wg)
+		setup.InternalModuleState.RAM = true
+		go ram.RAM(chans[4], wg)
 	}
 	if setup.UserModuleState.CPU {
 		wg.Add(1)
 		utils.ModuleLogs(setup.MainLogFile, "Started cpu module")
-		go cpu.CPU(chans[4], wg)
+		setup.InternalModuleState.CPU = true
+		go cpu.CPU(chans[5], wg)
 	}
 }
 
@@ -160,9 +164,10 @@ func tearDown(wg *sync.WaitGroup) {
 
 	var module string
 	for _, module = range utils.Modules {
-		api.ChangeModuleStatus(module, false)
+		utils.SendModuleStatus(module, false)
 	}
 
+	utils.SendModuleStatus("owtf", false)
 	setup.MainLogFile.Close()
 	setup.DBLogFile.Close()
 	wg.Done()

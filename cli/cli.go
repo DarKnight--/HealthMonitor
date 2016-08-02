@@ -23,6 +23,7 @@ func init() {
 	cliFunctions["status"] = status
 }
 
+// Run will start the command line interface for the health_monitor
 func Run() {
 	reader := bufio.NewReader(os.Stdin)
 	cyan := color.New(color.FgCyan)
