@@ -26,7 +26,6 @@ type Flags struct {
 	NoWebUI *bool
 	NoCLI   *bool
 	Quite   *bool
-	Install *bool
 }
 
 func main() {
@@ -49,13 +48,8 @@ func main() {
 	flags.NoWebUI = flag.Bool("nowebui", false, "Disables the web ui")
 	flags.NoCLI = flag.Bool("nocli", false, "Disables cli")
 	flags.Quite = flag.Bool("quite", false, "Disables all notifications except email")
-	flags.Install = flag.Bool("install", false, "Installs necessary dependencies")
 
 	flag.Parse()
-
-	if *flags.Install {
-		install()
-	}
 
 	if (*flags.NoCLI == true) || (*flags.NoWebUI == false) {
 		go webui.RunServer(setup.ConfigVars.Port)

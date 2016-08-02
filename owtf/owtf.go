@@ -31,15 +31,14 @@ const (
 // It continuosly monitors the status of the OWTF whether it is scanning any target or not
 func OWTF(status <-chan bool, wg *sync.WaitGroup) {
 	defer wg.Done()
-	var lastStatus *bool
-	*lastStatus = true
+	var lastStatus = true
 
 	for {
 		select {
 		case <-status:
 			return
 		case <-time.After(time.Second):
-			monitorOwtf(lastStatus)
+			monitorOwtf(&lastStatus)
 		}
 	}
 }
