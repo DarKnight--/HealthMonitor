@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"path"
 	"strings"
 	"sync"
@@ -122,6 +123,16 @@ func RestartAllModules() {
 		SendModuleStatus(module, false)
 		SendModuleStatus(module, true)
 	}
+}
+
+// CheckInstalledPackage will return true if a package with specified commandName
+// is installed.
+func CheckInstalledPackage(commandName string) bool {
+	command := exec.Command(commandName, "--help")
+	if command.Run() != nil {
+		return false
+	}
+	return true
 }
 
 func AddOWTFModuleDependence() {

@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"health_monitor/notify"
 	"health_monitor/setup"
 	"health_monitor/utils"
 )
@@ -19,6 +20,7 @@ type Status struct {
 
 var (
 	liveStatus Status
+	lastStatus Status
 	logFile    *os.File
 	conf       *Config
 )
@@ -89,6 +91,7 @@ func GetStatusJSON() []byte {
 
 func internetCheck(defaultCheck func() error, conf *Config) {
 	var err error
+	lastStatus.Normal = liveStatus.Normal
 	if err = defaultCheck(); err == nil {
 		liveStatus.Normal = true
 		upAction()
@@ -105,7 +108,10 @@ func internetCheck(defaultCheck func() error, conf *Config) {
 		}
 		utils.ModuleError(logFile, err.Error(), "")
 	}
-	downAction()
+	if lastStatus.Normal {
+		downAction()
+		notify.SendDesktopAlert("OWTF - Health Monitor", "Your internet connection is down", notify.CRITICAL, "")
+	}
 	liveStatus.Normal = false
 }
 

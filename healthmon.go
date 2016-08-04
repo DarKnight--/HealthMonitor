@@ -13,6 +13,7 @@ import (
 	"health_monitor/cpu"
 	"health_monitor/disk"
 	"health_monitor/live"
+	"health_monitor/notify"
 	"health_monitor/owtf"
 	"health_monitor/ram"
 	"health_monitor/setup"
@@ -148,6 +149,7 @@ func runModules(chans [6]chan bool, wg *sync.WaitGroup) {
 
 //Init initialises all the modules of the monitor
 func Init() {
+	notify.Init()
 	live.Init()
 	target.Init()
 	disk.Init()

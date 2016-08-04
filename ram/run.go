@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"health_monitor/notify"
 	"health_monitor/setup"
 	"health_monitor/utils"
 )
@@ -27,9 +28,10 @@ type (
 )
 
 var (
-	ramInfo Info
-	logFile *os.File
-	conf    *Config
+	ramInfo    Info
+	logFile    *os.File
+	conf       *Config
+	lastStatus Status
 )
 
 //RAM is the driver function of this module for monitor
@@ -57,9 +59,14 @@ func RAM(status <-chan bool, wg *sync.WaitGroup) {
 }
 
 func checkRAM() {
+	lastStatus.Normal = ramInfo.Status.Normal
 	conf.LoadMemoryStats(&ramInfo.Stats)
+
 	if ramInfo.Stats.FreePhysical < (100-conf.RAMWarningLimit)*ramInfo.Consts.TotalPhysical/100 {
 		ramInfo.Status.Normal = false
+		if lastStatus.Normal {
+			notify.SendDesktopAlert("OWTF - Health Monitor", "RAM usage is above warn limit.", notify.CRITICAL, "")
+		}
 		utils.ModuleLogs(logFile, "Ram is being used over the warning limit")
 	} else {
 		ramInfo.Status.Normal = true
