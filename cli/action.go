@@ -168,6 +168,9 @@ func printLine() {
 }
 
 func percent(value int, total int) int {
+	if total == 0 {
+		return 0
+	}
 	return (value * 100) / total
 }
 
@@ -203,10 +206,10 @@ func ramDetailStatus() {
 		if moduleStatus.Status.Normal == false {
 			colorFunc.Add(color.FgRed)
 		}
-		colorFunc.Printf("RAM usage is %d%%\n", percent(moduleStatus.Stats.FreePhysical,
+		colorFunc.Printf("RAM is %d%% free\n", percent(moduleStatus.Stats.FreePhysical,
 			moduleStatus.Consts.TotalPhysical))
 
-		colorFunc.Printf("Virtual Memory usage is %d%%\n", percent(moduleStatus.Stats.FreeSwap,
+		colorFunc.Printf("Swap area is %d%% free\n", percent(moduleStatus.Stats.FreeSwap,
 			moduleStatus.Consts.TotalSwap))
 	}
 }

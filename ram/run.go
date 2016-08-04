@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"health_monitor/notify"
+	"health_monitor/owtf"
 	"health_monitor/setup"
 	"health_monitor/utils"
 )
@@ -66,6 +67,7 @@ func checkRAM() {
 		ramInfo.Status.Normal = false
 		if lastStatus.Normal {
 			notify.SendDesktopAlert("OWTF - Health Monitor", "RAM usage is above warn limit.", notify.CRITICAL, "")
+			owtf.PauseOWTF(logFile)
 		}
 		utils.ModuleLogs(logFile, "Ram is being used over the warning limit")
 	} else {
