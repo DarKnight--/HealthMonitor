@@ -49,6 +49,37 @@ func removeAptCache() {
 	}
 }
 
+func emptyTrash() {
+	os.RemoveAll(utils.GetPath(".local/share/Trash/"))
+}
+
+func dirSizeMB(path string) int {
+	sizes := make(chan int64)
+	readSize := func(path string, file os.FileInfo, err error) error {
+		if err != nil || file == nil {
+			return nil // Ignore errors
+		}
+		if !file.IsDir() {
+			sizes <- file.Size()
+		}
+		return nil
+	}
+
+	go func() {
+		filepath.Walk(path, readSize)
+		close(sizes)
+	}()
+
+	size := int64(0)
+	for s := range sizes {
+		size += s
+	}
+
+	sizeMB := int(float64(size) / 1024.0 / 1024.0)
+
+	return sizeMB
+}
+
 func compressFolder(basePath string, outFName string) error {
 	outFile, err := os.Create(outFName)
 	if err != nil {
