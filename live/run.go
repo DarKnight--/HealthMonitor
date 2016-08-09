@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"health_monitor/notify"
+	"health_monitor/owtf"
 	"health_monitor/setup"
 	"health_monitor/utils"
 )
@@ -94,7 +95,7 @@ func internetCheck(defaultCheck func() error, conf *Config) {
 	lastStatus.Normal = liveStatus.Normal
 	if err = defaultCheck(); err == nil {
 		liveStatus.Normal = true
-		upAction()
+		owtf.ResumeOWTF(logFile)
 		return
 	}
 	liveStatus.Normal = false
@@ -109,7 +110,7 @@ func internetCheck(defaultCheck func() error, conf *Config) {
 		utils.ModuleError(logFile, err.Error(), "")
 	}
 	if lastStatus.Normal {
-		downAction()
+		owtf.PauseOWTF(logFile)
 		notify.SendDesktopAlert("OWTF - Health Monitor", "Your internet connection is down", notify.CRITICAL, "")
 	}
 	liveStatus.Normal = false

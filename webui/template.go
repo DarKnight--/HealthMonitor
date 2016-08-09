@@ -11,6 +11,9 @@ import (
 )
 
 func percent(a int, b int) int {
+	if b == 0 {
+		return 0
+	}
 	return (a * 100) / b
 }
 
