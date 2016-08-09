@@ -23,7 +23,7 @@ var (
 	// HealthMonitorLog holds the path to main log file
 	HealthMonitorLog string
 	//OSVarient holds the os name of the current system
-	OSVarient []byte
+	OSVarient string
 	//MainLogFile is the file pointer of the monitor.log file
 	MainLogFile *os.File
 )
@@ -56,11 +56,12 @@ func init() {
 	ConfigVars.DBFile = utils.GetPath(ConfigVars.DBFile)
 	ConfigVars.ModuleInfoFilePath = utils.GetPath(ConfigVars.ModuleInfoFilePath)
 
-	OSVarient, err = exec.Command("lsb_release", "-is").Output()
+	temp, err := exec.Command("lsb_release", "-is").Output()
 	if err != nil {
 		log.Println("Unable to get os info")
 		log.Println(err)
 	}
+	OSVarient = string(temp)
 	dbInit()
 	loadStatus()
 }

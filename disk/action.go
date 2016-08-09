@@ -6,46 +6,29 @@ import (
 	"io"
 	"log"
 	"os"
-	"os/exec"
 	"path/filepath"
-	"reflect"
 	"time"
 
-	"health_monitor/setup"
 	"health_monitor/utils"
 )
 
-const (
-	//DebianAPTPath is the path where downloaded apt packages are found
-	DebianAPTPath = "/var/cache/apt/archives"
-)
-
-var (
-	kali = []byte{75, 97, 108, 105, 10}
-)
-
-func basicCleanup() {
+func basicCleanup(basicCleaner BasicCleaner) {
 	//TODO pause owtf
-	utils.ModuleLogs(logFile, "Performing basic cleanup")
-	utils.ModuleLogs(logFile, "Performing apt cache clean up")
-	removeAptCache()
+	utils.ModuleLogs(logFile, "Performing basic cleanup.")
 	utils.ModuleLogs(logFile, "Compressing owtf proxy-cache: /tmp/owtf/proxy-cache")
 	compressFolder("/tmp/owtf/proxy-cache", "/tmp/owtf/proxy-cache"+time.Now().Format(time.Stamp)+".tar.gz")
 	os.RemoveAll(utils.GetPath(".w3af/tmp/"))
-}
 
-func removeAptCache() {
-	cmd := exec.Command("sudo", "apt-get", "clean")
-	err := cmd.Run()
+	utils.ModuleLogs(logFile, "Performing package manager cache clean up.")
+	err := basicCleaner.cleaner.RemovePackageManagerCache()
 	if err != nil {
-		utils.ModuleError(logFile, "Unable to clean apt-get", err.Error())
+		utils.ModuleError(logFile, "unable to clean package manager cache.", err.Error())
 	}
-	if reflect.DeepEqual(setup.OSVarient, kali) {
-		err := os.RemoveAll(DebianAPTPath)
-		if err != nil {
-			utils.ModuleError(logFile, "Unable to free apt cache", err.Error())
-		}
-		utils.ModuleLogs(logFile, "Deleted apt cache successfully.")
+
+	utils.ModuleLogs(logFile, "Performing trash folder clean up.")
+	err = basicCleaner.cleaner.EmptyTrash()
+	if err != nil {
+		utils.ModuleError(logFile, "Unable to clean trash folder.", err.Error())
 	}
 }
 
@@ -95,4 +78,31 @@ func compressFolder(basePath string, outFName string) error {
 		return err
 	}
 	return nil
+}
+
+func dirSizeMB(path string) int {
+	sizes := make(chan int64)
+	readSize := func(path string, file os.FileInfo, err error) error {
+		if err != nil || file == nil {
+			return nil // Ignore errors
+		}
+		if !file.IsDir() {
+			sizes <- file.Size()
+		}
+		return nil
+	}
+
+	go func() {
+		filepath.Walk(path, readSize)
+		close(sizes)
+	}()
+
+	size := int64(0)
+	for s := range sizes {
+		size += s
+	}
+
+	sizeMB := int(float64(size) / 1024.0 / 1024.0)
+
+	return sizeMB
 }

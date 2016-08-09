@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"runtime"
+	"strings"
 	"sync"
 	"time"
 
@@ -30,10 +31,11 @@ type (
 )
 
 var (
-	diskInfo  map[string]PartitionInfo
-	partition []string
-	logFile   *os.File
-	conf      *Config
+	diskInfo   map[string]PartitionInfo
+	partition  []string
+	logFile    *os.File
+	conf       *Config
+	diskAction *BasicCleaner
 )
 
 // Disk is driver funcion for the health_monitor to monitor disk
@@ -45,6 +47,11 @@ func Disk(status <-chan bool, wg *sync.WaitGroup) {
 	defer logFile.Close()
 
 	utils.ModuleLogs(logFile, "Running with "+conf.Profile+" profile")
+	diskAction = CleanerBuilder(setup.OSVarient)
+	if diskAction == nil {
+		utils.ModuleError(logFile, "disk cleaner not implemented for this OS",
+			"Please raise a issue on github")
+	}
 	partition = conf.GetDisk()
 	diskInfo = make(map[string]PartitionInfo)
 	loadPartitionConst()
@@ -127,7 +134,9 @@ func printStatusLog(directory string, status int, lastStatus int, types string) 
 		if lastStatus != 3 {
 			notify.SendDesktopAlert("OWTF - Health Monitor", fmt.Sprintf("Disk %s for %s mount point status is critical",
 				types, directory), notify.CRITICAL, "")
-			basicCleanup()
+			if directory == "/" || strings.Contains(directory, os.Getenv("HOME")) {
+				basicCleanup(*diskAction)
+			}
 		}
 	}
 }
