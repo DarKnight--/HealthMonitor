@@ -21,6 +21,7 @@ func init() {
 	cliFunctions["enable"] = enableModule
 	cliFunctions["help"] = help
 	cliFunctions["status"] = status
+	cliFunctions["load"] = loadProfile
 }
 
 // Run will start the command line interface for the health_monitor

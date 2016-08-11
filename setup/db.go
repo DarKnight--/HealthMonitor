@@ -41,3 +41,28 @@ func dbInit() {
 		setupDB()
 	}
 }
+
+// GetAllProfiles returns name of all the profiles stored in the database
+func GetAllProfiles() []string {
+	var (
+		profiles []string
+		temp     string
+	)
+
+	rows, err := Database.Query("SELECT profile FROM Ram")
+	if err != nil {
+		utils.ModuleError(DBLogFile, "Error occured during retrieving profiles", err.Error())
+		return nil
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.Scan(&temp)
+		if err != nil {
+			utils.ModuleError(DBLogFile, "Error occured during scanning profiles", err.Error())
+			continue
+		}
+		profiles = append(profiles, temp)
+	}
+	return profiles
+}
