@@ -17,13 +17,12 @@ type Config struct {
 	HeadThreshold    int // time in milliseconds
 	PingAddress      string
 	PingProtocol     string
+	HTTPClient       *http.Client
 }
-
-var connection http.Client
 
 // CheckByHEAD will check the internet connectivity by sending a head request
 func (l Config) CheckByHEAD() error {
-	resp, err := connection.Head(l.HeadURL)
+	resp, err := l.HTTPClient.Head(l.HeadURL)
 	if err != nil {
 		return err
 	}

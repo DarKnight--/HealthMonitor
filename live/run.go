@@ -2,6 +2,7 @@ package live
 
 import (
 	"encoding/json"
+	"net/http"
 	"os"
 	"path"
 	"runtime"
@@ -29,33 +30,14 @@ var (
 // Live is the driver function of this module for monitor
 func Live(status <-chan bool, wg *sync.WaitGroup) {
 	defer wg.Done()
-	var (
-		logFileName = path.Join(setup.ConfigVars.HomeDir, "live.log")
-		err         error
-	)
+	var logFileName = path.Join(setup.ConfigVars.HomeDir, "live.log")
 
 	logFile = utils.OpenLogFile(logFileName)
 	defer logFile.Close()
 
 	utils.ModuleLogs(logFile, "Running with "+conf.Profile+" profile")
 	liveStatus.Normal = true
-	Default := conf.CheckByHEAD
-
-	utils.ModuleLogs(logFile, "Default scan mode set to checkByHead")
-	if err = conf.CheckByDNS(); err == nil {
-		utils.ModuleLogs(logFile, "checkByDNS successful, setting it to default.")
-		Default = conf.CheckByDNS
-	} else {
-		utils.ModuleError(logFile, err.Error(), "Error in checkByDNS")
-	}
-
-	if err = conf.Ping(); err == nil {
-		utils.ModuleLogs(logFile, "Ping scan successful, setting it to default.")
-		Default = conf.Ping
-	} else {
-		utils.ModuleError(logFile, err.Error(), "Error in Ping")
-	}
-
+	Default := setupDefault()
 	internetCheck(Default, conf)
 	printStatusLog()
 
@@ -102,7 +84,6 @@ func internetCheck(defaultCheck func() error, conf *Config) {
 	utils.ModuleError(logFile, err.Error(), "")
 
 	for i := 0; i < 3; i++ {
-		time.Sleep(time.Millisecond * 500)
 		if err = conf.CheckByHEAD(); err == nil {
 			liveStatus.Normal = true
 			return
@@ -114,6 +95,31 @@ func internetCheck(defaultCheck func() error, conf *Config) {
 		notify.SendDesktopAlert("OWTF - Health Monitor", "Your internet connection is down", notify.CRITICAL, "")
 	}
 	liveStatus.Normal = false
+}
+
+func setupDefault() func() error {
+	Default := conf.CheckByHEAD
+
+	if os.Getenv("http_proxy") != "" || os.Getenv("https_proxy") != "" {
+		utils.ModuleLogs(logFile, "Proxy is set, skipping dns and ping method")
+		return Default
+	}
+
+	utils.ModuleLogs(logFile, "Default scan mode set to checkByHead")
+	if err := conf.CheckByDNS(); err == nil {
+		utils.ModuleLogs(logFile, "checkByDNS successful, setting it to default.")
+		Default = conf.CheckByDNS
+	} else {
+		utils.ModuleError(logFile, err.Error(), "Error in checkByDNS")
+	}
+
+	if err := conf.Ping(); err == nil {
+		utils.ModuleLogs(logFile, "Ping scan successful, setting it to default.")
+		Default = conf.Ping
+	} else {
+		utils.ModuleError(logFile, err.Error(), "Error in Ping")
+	}
+	return Default
 }
 
 func printStatusLog() {
@@ -139,4 +145,14 @@ func Init() {
 	if conf == nil {
 		utils.CheckConf(logFile, setup.MainLogFile, "live", &setup.UserModuleState.Profile, setup.Live)
 	}
+
+	// Setting http client to setup timeout for head request
+	var myTransport http.RoundTripper = &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
+	}
+	conf.HTTPClient = &http.Client{
+		Transport: myTransport,
+		Timeout:   time.Millisecond * time.Duration(conf.HeadThreshold),
+	}
+
 }
