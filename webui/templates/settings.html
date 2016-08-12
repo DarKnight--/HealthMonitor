@@ -118,7 +118,7 @@
                 type: 'GET',
                 url: '/description/'+key
             }).done(function (data) {
-                $("#page-data").empty().append(data);
+                insertSettings(data);
                 fillForm(key);
             }).fail(function (jqXHR) {
                 insertError("Module is not ready")
@@ -152,16 +152,13 @@
         };
 
         function setupHome() {
-             var section = $("#page-data");
-             section.empty();
             $.ajax({
                 type: 'GET',
                 url: '/profile/all'
             }).done(function (data) {
-               section.append(data);
-
+                insertSettings(data);
             }).fail(function (jqXHR) {
-                section.append("<p> OWTF Health Monitor did not sent expected response</p>")
+                insertError("OWTF Health Monitor did not sent expected response");
             });
         }
         function changeProfile(profile) {
@@ -171,7 +168,7 @@
                 insertSuccess("Sucessfully loaded '" + profile + "' profile");
                 $("#current-profile").text(profile);
             }).fail(function () {
-                insertError("Sucessfully loaded '" + profile + "' profile")
+                insertError("Sucessfully loaded '" + profile + "' profile");
             });
         }
         function insertError(errorMsg) {
@@ -183,6 +180,9 @@
             var errorSection = $("#page-notific");
             errorSection.empty();
             errorSection.append('<div class="alert alert-success"><a href="#" class="close" data-dismiss="alert">×</a><strong>Done!</strong>'+successMsg+'</div>');
+        }
+        function insertSettings(data) {
+            $("#page-data").empty().append(data);
         }
     </script>
 
