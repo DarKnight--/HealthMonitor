@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <title>CPU Statistics</title>
+        <link href="../static/css/c3.min.css" rel="stylesheet" type="text/css">
+
+<!-- Load d3.js and c3.js -->
+        <script src="../static/js/d3.min.js" charset="utf-8"></script>
+        <script src="../static/js/c3.min.js"></script>
+    </head>
+    <body>
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+             <h4 class="modal-title">CPU Statistics</h4>
+        </div>
+
+        <div id="chart"></div>
+        <div class="modal-body">
+            <p></p>
+        </div>			<!-- /modal-body -->
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>			<!-- /modal-footer -->
+    </body>
+    <script>
+        $(document).ready(function () {
+            var chart = c3.generate({
+            data: {
+                columns: [
+                    ['CPU Usage', 1]
+                ],
+                type: 'gauge'
+            },
+            gauge: {
+                },
+                color: {
+                    pattern: ['#60B044', '#F6C600', '#F97600', '#FF0000'], // the three color levels for the percentage values.
+                    threshold: {
+                        values: [30, 60, 80, 100]
+                    }
+                },
+                size: {
+                    height: 180
+                }
+            });
+        setTimeout(updateGraph,100, chart);
+        setInterval(updateGraph,5000, chart);
+        });
+        function updateGraph(chart) {
+            chart.load({
+                columns: [['CPU Usage', data.cpu.Stats.CPUUsage]]
+            });
+        }
+
+    </script>
+</html>
