@@ -21,7 +21,6 @@
         </div>			<!-- /modal-body -->
         <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
         </div>			<!-- /modal-footer -->
     </body>
     <script>
@@ -50,7 +49,7 @@
         });
         function updateGraph(chart) {
             chart.load({
-                columns: [['Free RAM', (data["ram"].Stats.FreePhysical*100)/data["ram"].Consts.TotalPhysical]]
+                columns: [['Free RAM', (data.ram.Stats.FreePhysical*100)/data.ram.Consts.TotalPhysical]]
             });
         }
 
