@@ -126,7 +126,12 @@ func settingProfileHandler(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	err = t.Execute(ctx, api.GetAllProfiles())
+	type vars struct {
+		CurrentProfile string
+		AllProfiles    []string
+	}
+
+	err = t.Execute(ctx, vars{CurrentProfile: api.GetActiveProfile(), AllProfiles: api.GetAllProfiles()})
 	if err != nil {
 		utils.ModuleError(logFile, "template executing error: ", err.Error())
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)

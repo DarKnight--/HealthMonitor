@@ -122,8 +122,10 @@ func configHandler(ctx *fasthttp.RequestCtx, module string) {
 			}
 			return
 		}
+		ctx.SetStatusCode(fasthttp.StatusNotFound)
 		utils.ModuleLogs(logFile, fmt.Sprintf("[404] Unable to find the requested module: %s",
 			module))
+		return
 	}
 	if _, ok := api.ConfFunc[module]; ok {
 		ctx.SetContentType("application/json")
@@ -174,7 +176,13 @@ func moduleStatusHandler(ctx *fasthttp.RequestCtx, module string) {
 
 func profileHandler(ctx *fasthttp.RequestCtx) {
 	if ctx.IsPost() {
-		api.LoadNewProfile(string(ctx.PostBody()))
+		err := api.LoadNewProfile(string(ctx.PostBody()))
+		if err != nil {
+			ctx.SetStatusCode(fasthttp.StatusBadRequest)
+			utils.ModuleError(logFile, fmt.Sprintf("[404] Unable to load profile: %s",
+				ctx.PostBody()), err.Error())
+		}
+		ctx.SetStatusCode(fasthttp.StatusOK)
 		return
 	}
 	settingProfileHandler(ctx)

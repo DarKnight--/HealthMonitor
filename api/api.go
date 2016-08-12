@@ -146,3 +146,8 @@ func LoadNewProfile(profile string) error {
 func GetAllProfiles() []string {
 	return setup.GetAllProfiles()
 }
+
+// GetActiveProfile returns current active profile
+func GetActiveProfile() string {
+	return setup.UserModuleState.Profile
+}
