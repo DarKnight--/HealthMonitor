@@ -3,13 +3,7 @@
 <head>
     <meta charset="UTF-8">
 
-    <title>Title</title>
-    <link href="../static/css/c3.min.css" rel="stylesheet" type="text/css">
-
-<!-- Load d3.js and c3.js -->
-    <script src="../static/js/d3.min.js" charset="utf-8"></script>
-    <script src="../static/js/c3.min.js"></script>
-    <script src="../static/js/ctrl.js"></script>
+    <title>Inode Statistics</title>
 </head>
 <body>
     <div class="modal-header">
@@ -35,18 +29,18 @@
     </div>			<!-- /modal-footer -->
 </body>
 <script>
-    var chart = {
+    var charti = {
         ctx:null,
         chart_data:['% Free Inode' ,0,0,0,0,0,0,0],
         partition: "/"
     };
     $(document).ready(function () {
         setupPage();
-        chart.ctx = c3.generate({
+        charti.ctx = c3.generate({
             data: {
                 x: 'x',
                 columns: [['x', 0,5,10,15,20,25,30],
-                  chart.chart_data],
+                  charti.chart_data],
                 types: {
                   data1: 'spline'
                 }
@@ -70,18 +64,18 @@
     setTimeout(updateGraph, 100);
     setInterval(updateGraph,5000);
     function updateGraph(){
-        chart.chart_data.splice(1, 1);
-        chart.chart_data.push((data.disk[chart.partition].partition_stats.free_inodes*100)/data.disk[chart.partition].partition_consts.total_inodes);
-        chart.ctx.load({
+        charti.chart_data.splice(1, 1);
+        charti.chart_data.push((data.disk[charti.partition].partition_stats.free_inodes*100)/data.disk[charti.partition].partition_consts.total_inodes);
+        charti.ctx.load({
             columns: [
-                chart.chart_data
+                charti.chart_data
             ]
         });
     }
 
     function LoadGraph(partition){
-        chart.chart_data = ['% Free Inode' ,0,0,0,0,0,0,0];
-        chart.partition = partition;
+        charti.chart_data = ['% Free Inode' ,0,0,0,0,0,0,0];
+        charti.partition = partition;
         changeCurrentInodes(partition);
         updateGraph();
     }
@@ -89,11 +83,10 @@
     function setupPage(){
         var key;
         for(key in data.disk){
-            console.log(key);
             $("#inode-dropdown").append('<li><a href="#" onclick="LoadGraph(\''+key+'\')">'+key+'</a></li>')
         }
         changeCurrentInodes(key);
-        chart.partition = key;
+        charti.partition = key;
     }
 
     function changeCurrentInodes(partition){

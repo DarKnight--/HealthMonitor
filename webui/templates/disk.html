@@ -3,13 +3,7 @@
 <head>
     <meta charset="UTF-8">
 
-    <title>Title</title>
-    <link href="../static/css/c3.min.css" rel="stylesheet" type="text/css">
-
-<!-- Load d3.js and c3.js -->
-    <script src="../static/js/d3.min.js" charset="utf-8"></script>
-    <script src="../static/js/c3.min.js"></script>
-    <script src="../static/js/ctrl.js"></script>
+    <title>Disk Space Statistics</title>
 </head>
 <body>
     <div class="modal-header">
@@ -89,7 +83,6 @@
     function setupPage(){
         var key;
         for(key in data.disk){
-            console.log(key);
             $("#disk-dropdown").append('<li><a href="#" onclick="LoadGraph(\''+key+'\')">'+key+'</a></li>')
         }
         changeCurrentDisk(key);
