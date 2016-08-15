@@ -25,7 +25,8 @@ var (
 	UserModuleState = ModulesStatus{}
 	//InternalModuleState holds the running status of all the modules of monitor
 	InternalModuleState = ModulesStatus{}
-	OWTFModuleStatus    = false
+	// OWTFModuleStatus holds the running status of owtf module
+	OWTFModuleStatus = false
 )
 
 func loadStatus() {
