@@ -2,6 +2,8 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 
 	"health_monitor/cpu"
 	"health_monitor/disk"
@@ -126,4 +128,26 @@ func ModuleStatus(module string) bool {
 	default:
 		return false
 	}
+}
+
+// LoadNewProfile will laod the profile with specified name
+func LoadNewProfile(profile string) error {
+	for _, profiles := range setup.GetAllProfiles() {
+		if profiles == profile {
+			setup.UserModuleState.Profile = profile
+			utils.RestartModules <- true
+			return nil
+		}
+	}
+	return errors.New("Specified module not found, allowed modules " + fmt.Sprint(utils.Modules))
+}
+
+// GetAllProfiles send the array of all the profiles name from the database
+func GetAllProfiles() []string {
+	return setup.GetAllProfiles()
+}
+
+// GetActiveProfile returns current active profile
+func GetActiveProfile() string {
+	return setup.UserModuleState.Profile
 }

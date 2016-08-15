@@ -116,3 +116,24 @@ func targetTemplateHandler(ctx *fasthttp.RequestCtx) {
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 	}
 }
+
+func settingProfileHandler(ctx *fasthttp.RequestCtx) {
+	tmpl := fmt.Sprintf(templateRoot, "main-setting")
+	t, err := template.New("main-setting").ParseFiles(tmpl)
+	if err != nil {
+		utils.ModuleError(logFile, "template parsing error ", err.Error())
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		return
+	}
+
+	type vars struct {
+		CurrentProfile string
+		AllProfiles    []string
+	}
+
+	err = t.Execute(ctx, vars{CurrentProfile: api.GetActiveProfile(), AllProfiles: api.GetAllProfiles()})
+	if err != nil {
+		utils.ModuleError(logFile, "template executing error: ", err.Error())
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+	}
+}

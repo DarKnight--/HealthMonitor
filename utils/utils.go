@@ -16,14 +16,17 @@ var (
 	//ControlChan is the channel to send stop or start signal to main function
 	ControlChan chan Status
 
-	//Modules is the list of the modules currently implemented..
-	Modules = []string{"live", "target", "disk", "ram", "cpu"}
-
 	//LiveEmergency is the channel to call live module any time
 	LiveEmergency chan bool
 
 	//ExitChan is the channel to send signal to exit monitor gracefully
 	ExitChan chan os.Signal
+
+	// RestartModules is the channel to send signal to restart all the modules
+	RestartModules chan bool
+
+	//Modules is the list of the modules currently implemented..
+	Modules = []string{"live", "target", "disk", "ram", "cpu"}
 
 	// This variable will work like semaphore. If any module is dependent on owtf is turned on it will
 	// increase the count. So owtf module will only get shutdown signal if this variable is 0
@@ -112,16 +115,7 @@ func CheckConf(moduleLogFile *os.File, masterLogFile *os.File, module string,
 		*profile = "default"
 		ModuleError(masterLogFile, fmt.Sprintf("Unable to load profile: %s for %s module",
 			*profile, module), "Restating monitor with default value")
-		RestartAllModules()
-	}
-}
-
-//RestartAllModules will restart all the modules.
-func RestartAllModules() {
-	var module string
-	for _, module = range Modules {
-		SendModuleStatus(module, false)
-		SendModuleStatus(module, true)
+		RestartModules <- true
 	}
 }
 

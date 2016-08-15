@@ -30,9 +30,6 @@ type Flags struct {
 }
 
 func main() {
-	defer func() {
-		fmt.Println("In case the program exited due to dependency failure try running '-install' option")
-	}()
 	var (
 		wg    sync.WaitGroup
 		flags Flags
@@ -45,6 +42,9 @@ func main() {
 
 	utils.LiveEmergency = make(chan bool)
 	defer close(utils.LiveEmergency)
+
+	utils.RestartModules = make(chan bool, 1)
+	defer close(utils.RestartModules)
 
 	flags.NoWebUI = flag.Bool("nowebui", false, "Disables the web ui")
 	flags.NoCLI = flag.Bool("nocli", false, "Disables cli")
@@ -62,13 +62,14 @@ func main() {
 	// The buffer size should atleast be double the number of modules implemented
 	utils.ControlChan = make(chan utils.Status, 12)
 	wg.Add(1)
+	go restartModules()
 	go tearDown(&wg)
 	Init()
 	utils.ModuleLogs(setup.MainLogFile, "Running modules from last saved profile")
 	runModules(chans, &wg)
 	go controlModule(chans, &wg)
 	if *flags.NoCLI == false {
-		cli.Run()
+		go cli.Run()
 	}
 	wg.Wait()
 }
@@ -173,6 +174,16 @@ func tearDown(wg *sync.WaitGroup) {
 	setup.MainLogFile.Close()
 	setup.DBLogFile.Close()
 	wg.Done()
-	wg.Wait()
-	os.Exit(0)
+}
+
+func restartModules() {
+	<-utils.RestartModules
+	var module string
+	for _, module = range utils.Modules {
+		utils.SendModuleStatus(module, false)
+	}
+	Init()
+	for _, module = range utils.Modules {
+		utils.SendModuleStatus(module, true)
+	}
 }

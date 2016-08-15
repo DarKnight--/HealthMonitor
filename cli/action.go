@@ -281,3 +281,10 @@ func doesModuleExists(module string) bool {
 	}
 	return false
 }
+
+func loadProfile(argument []string) error {
+	if len(argument) == 1 {
+		return api.LoadNewProfile(argument[0])
+	}
+	return errors.New("Wrong command, use load <profileName>")
+}

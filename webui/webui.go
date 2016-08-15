@@ -47,12 +47,14 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 		staticHandler(ctx, tempPath[2])
 	case "settings": // Serves the json data of the module's config.
 		configHandler(ctx, tempPath[2])
-	case "preferences":
+	case "preferences": // Serves the settings page
 		render(ctx, "settings.html")
 	case "description": //Serves the page for serving modal
 		render(ctx, tempPath[2]+"-setting")
 	case "moduleStatus":
 		moduleStatusHandler(ctx, tempPath[2])
+	case "profile":
+		profileHandler(ctx)
 	default:
 		if api.ModuleStatus(tempPath[2]) || tempPath[2] == "main" {
 			switch tempPath[1] {
@@ -120,8 +122,10 @@ func configHandler(ctx *fasthttp.RequestCtx, module string) {
 			}
 			return
 		}
+		ctx.SetStatusCode(fasthttp.StatusNotFound)
 		utils.ModuleLogs(logFile, fmt.Sprintf("[404] Unable to find the requested module: %s",
 			module))
+		return
 	}
 	if _, ok := api.ConfFunc[module]; ok {
 		ctx.SetContentType("application/json")
@@ -168,4 +172,18 @@ func moduleStatusHandler(ctx *fasthttp.RequestCtx, module string) {
 		return
 	}
 	ctx.SetStatusCode(fasthttp.StatusAccepted)
+}
+
+func profileHandler(ctx *fasthttp.RequestCtx) {
+	if ctx.IsPost() {
+		err := api.LoadNewProfile(string(ctx.PostBody()))
+		if err != nil {
+			ctx.SetStatusCode(fasthttp.StatusBadRequest)
+			utils.ModuleError(logFile, fmt.Sprintf("[404] Unable to load profile: %s",
+				ctx.PostBody()), err.Error())
+		}
+		ctx.SetStatusCode(fasthttp.StatusOK)
+		return
+	}
+	settingProfileHandler(ctx)
 }

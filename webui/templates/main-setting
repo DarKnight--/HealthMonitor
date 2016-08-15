@@ -1,5 +1,13 @@
 <h1>Settings for  OWASP OWTF - Health Monitor</h1>
 <p>You can change all the setings ragarding the monitor and save them as different profiles.</p>
-<p>Current profile: <code>default</code></p>
-
- <!-- TODO Add settings for the main settings -->
+<p>Current profile: <code id="current-profile">{{.CurrentProfile}}</code></p>
+<br>
+<div class="dropdown">
+  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Change Profile
+  <span class="caret"></span></button>
+  <ul class="dropdown-menu">
+    {{range $index, $element := .AllProfiles}}
+    <li><a href="#" onclick='changeProfile({{$element}})'>{{$element}}</a></li>
+    {{end}}
+  </ul>
+</div>
