@@ -47,8 +47,8 @@ func Disk(status <-chan bool, wg *sync.WaitGroup) {
 	defer logFile.Close()
 
 	utils.ModuleLogs(logFile, "Running with "+conf.Profile+" profile")
-	diskAction = CleanerBuilder(setup.OSVarient)
-	if diskAction == nil {
+	diskAction = NewBasicCleaner(setup.OSVarient)
+	if diskAction.cleaner == nil {
 		utils.ModuleError(logFile, "disk cleaner not implemented for this OS",
 			"Please raise a issue on github")
 	}
@@ -77,7 +77,7 @@ func checkDisk(conf *Config) {
 		tempStatus.Space = conf.SpaceInfo(directory, &tempStat)
 		printStatusLog(directory, tempStatus.Inode, diskInfo[directory].Status.Inode, "inode")
 		printStatusLog(directory, tempStatus.Space, diskInfo[directory].Status.Space, "space")
-		diskInfo[directory] = PartitionInfo{tempStatus, tempStat, diskInfo[directory].Const}
+		diskInfo[directory] = PartitionInfo{Status: tempStatus, Stats: tempStat, Const: diskInfo[directory].Const}
 		utils.ModuleLogs(logFile, "Stats for mount "+directory+" :")
 		utils.ModuleLogs(logFile, fmt.Sprintf("Inodes: \t Total: %d \t Free: %d",
 			diskInfo[directory].Const.TotalInodes, tempStat.FreeInodes))
@@ -103,8 +103,8 @@ func GetStatusJSON() []byte {
 
 func loadPartitionConst() {
 	for _, directory := range partition {
-		diskInfo[directory] = PartitionInfo{PartitionStatus{Inode: 1, Space: 1}, PartitionStats{},
-			SetPartitionConst(directory)}
+		diskInfo[directory] = PartitionInfo{Status: PartitionStatus{Inode: 1, Space: 1}, Stats: PartitionStats{},
+			Const: SetPartitionConst(directory)}
 	}
 }
 
@@ -134,9 +134,7 @@ func printStatusLog(directory string, status int, lastStatus int, types string) 
 		if lastStatus != 3 {
 			notify.SendDesktopAlert("OWTF - Health Monitor", fmt.Sprintf("Disk %s for %s mount point status is critical",
 				types, directory), notify.CRITICAL, "")
-			if directory == "/" || strings.Contains(directory, os.Getenv("HOME")) {
-				basicCleanup(*diskAction)
-			}
+			BasicAction(directory)
 		}
 	}
 }
@@ -156,4 +154,27 @@ func Init() {
 	if conf == nil {
 		utils.CheckConf(logFile, setup.MainLogFile, "disk", &setup.UserModuleState.Profile, setup.Disk)
 	}
+}
+
+// BasicAction takes required action on directory to free space and inodes
+func BasicAction(directory string) {
+	if diskAction.cleaner == nil {
+		return
+	}
+	if directory == "/" || strings.Contains(directory, os.Getenv("HOME")) {
+		basicCleanup(*diskAction)
+	}
+}
+
+// CleanTrash cleans the trash folder
+func CleanTrash() error {
+	if diskAction.cleaner == nil {
+		return fmt.Errorf("Currently %s OS is not supported", diskAction.os)
+	}
+	return diskAction.cleaner.EmptyTrash()
+}
+
+// CleanPackageManagerCache cleans the package manager's cache directory
+func CleanPackageManagerCache() error {
+	return diskAction.cleaner.RemovePackageManagerCache()
 }

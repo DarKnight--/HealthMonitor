@@ -16,7 +16,7 @@ func basicCleanup(basicCleaner BasicCleaner) {
 	//TODO pause owtf
 	utils.ModuleLogs(logFile, "Performing basic cleanup.")
 	utils.ModuleLogs(logFile, "Compressing owtf proxy-cache: /tmp/owtf/proxy-cache")
-	compressFolder("/tmp/owtf/proxy-cache", "/tmp/owtf/proxy-cache"+time.Now().Format(time.Stamp)+".tar.gz")
+	CompressFolder("/tmp/owtf/proxy-cache", "/tmp/owtf/proxy-cache"+time.Now().Format(time.Stamp)+".tar.gz")
 	os.RemoveAll(utils.GetPath(".w3af/tmp/"))
 
 	utils.ModuleLogs(logFile, "Performing package manager cache clean up.")
@@ -32,7 +32,8 @@ func basicCleanup(basicCleaner BasicCleaner) {
 	}
 }
 
-func compressFolder(basePath string, outFName string) error {
+// CompressFolder compresses the basePath folder and stores as outFName file in .tar.gz format
+func CompressFolder(basePath string, outFName string) error {
 	outFile, err := os.Create(outFName)
 	if err != nil {
 		utils.ModuleError(logFile, "Unable to open file for compressing", err.Error())
@@ -80,7 +81,8 @@ func compressFolder(basePath string, outFName string) error {
 	return nil
 }
 
-func dirSizeMB(path string) int {
+// DirSizeMB returns the size of path folder in MB
+func DirSizeMB(path string) int {
 	sizes := make(chan int64)
 	readSize := func(path string, file os.FileInfo, err error) error {
 		if err != nil || file == nil {

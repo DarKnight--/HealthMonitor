@@ -47,8 +47,8 @@ func (u ubuntu) EmptyTrash() error {
 	return emptyDebianTrash()
 }
 
-// CleanerBuilder return the struct according to the OS to clean disk space
-func CleanerBuilder(OS string) *BasicCleaner {
+// NewBasicCleaner return the struct according to the OS to clean disk space
+func NewBasicCleaner(OS string) *BasicCleaner {
 	var basicCleaner cleaner
 
 	switch OS {

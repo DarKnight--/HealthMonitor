@@ -1,3 +1,4 @@
+// Package api exposes internal functionality for webUI and CLI
 package api
 
 import (
@@ -150,4 +151,24 @@ func GetAllProfiles() []string {
 // GetActiveProfile returns current active profile
 func GetActiveProfile() string {
 	return setup.UserModuleState.Profile
+}
+
+// BasicDiskCleanup takes basic cleanup action if the directory is "/" or "$HOME"
+func BasicDiskCleanup(directory string) {
+	disk.BasicAction(directory)
+}
+
+// CleanTrashFolder cleans the trash folder
+func CleanTrashFolder() error {
+	return disk.CleanTrash()
+}
+
+// CompressFolder compresses the folder with output file name as outFName
+func CompressFolder(inputFName string, outputFname string) error {
+	return disk.CompressFolder(inputFName, outputFname)
+}
+
+// DeletePackageManagerCache cleans the package manager's cache directory
+func DeletePackageManagerCache() error {
+	return disk.CleanPackageManagerCache()
 }
