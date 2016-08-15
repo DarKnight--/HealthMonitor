@@ -9,6 +9,7 @@
 
     <link href="../static/css/bootstrap.min.css" rel="stylesheet">
     <link href="../static/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../static/css/c3.min.css" rel="stylesheet" type="text/css">
     <link href="../static/css/mystyles.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -197,6 +198,7 @@
     <script src="../static/js/bootstrap.min.js"></script>
     <script>
         var modules = {};
+        var data = {};
         $(document).ready(function () {
             updatePage();
         }).on('hidden.bs.modal', function (e) {
@@ -220,12 +222,14 @@
         }
         modules["live"] = function () {
             $.getJSON("/module/live", function (result) {
+                data["live"] = result;
                 toggleLED("#led-live", result.normal)
             });
         };
 
         modules["target"] = function () {
             $.getJSON("/module/target", function (result) {
+                data["target"] = result;
                 var on = 1;
                 for(var key in result){
                     if(result[key].Scanned){
@@ -238,17 +242,15 @@
 
         modules["disk"] = function(){
             $.getJSON("/module/disk", function (result) {
+                data["disk"] = result;
                 var on = 1;
                 for(var key in result){
                     on = on && result[key].partition_status.space;
                 }
                 toggleLED("#led-disk", on);
-            });
-        };
 
-        modules["inode"] = function () {
-            $.getJSON("/module/disk", function (result) {
-                var on = 1;
+                // For inode
+                on = 1;
                 for(var key in result){
                     on = on && result[key].partition_status.inode;
                 }
@@ -256,19 +258,21 @@
             });
         };
 
+        modules["inode"] = function () {
+        };
+
         modules["ram"] = function () {
              $.getJSON("/module/ram", function (result) {
+                 data["ram"] = result;
                 toggleLED("#led-ram", result.Status.Normal);
             });
         };
 
         modules["cpu"] = function () {
              $.getJSON("/module/cpu", function (result) {
+                 data["cpu"] = result;
                 toggleLED("#led-cpu", result.Status.Normal);
             });
-        };
-
-        modules["bandwidth"] = function () {
         };
 
         modules["database"] = function () {
@@ -301,7 +305,7 @@
                     }
                });
            }
-           setTimeout(updatePage, 30000);
+           setTimeout(updatePage, 5000);
        };
         sendModuleStatus = function (checkbox, module) {
             var content = "0";
@@ -325,23 +329,20 @@
                      $("#switch-"+mkey).prop("checked", true);
                 }
              });
-            updatePage();
         };
     function diskModule(checkbox, invertModule) {
         sendModuleStatus(checkbox, "disk");
         if(checkbox.checked){
             $("#switch-"+invertModule).prop("checked", true);
-            toggleModuleOn(invertModule)
+            toggleModuleOn("inode")
         }else{
             $("#switch-"+invertModule).prop("checked", false);
-            toggleModuleOff(invertModule)
+            toggleModuleOff("inode")
         }
     }
 
     </script>
-    <!--<script src="../static/js/d3.min.js"></script>-->
+    <script src="../static/js/d3.min.js" charset="utf-8"></script>
     <script src="../static/js/c3.min.js"></script>
-    <script src="../static/js/graph.js"></script>
-
 </body>
 </html>

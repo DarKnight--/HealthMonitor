@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <title>RAM Statistics</title>
+    </head>
+    <body>
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+             <h4 class="modal-title">RAM Statistics</h4>
+        </div>
+
+        <div id="chart"></div>
+        <div class="modal-body">
+            <div style="text-align: center">
+                <h3>% Free RAM</h3>
+            </div>
+        </div>			<!-- /modal-body -->
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>			<!-- /modal-footer -->
+    </body>
+    <script>
+        $(document).ready(function () {
+            var chart = c3.generate({
+            data: {
+                columns: [
+                    ['Free RAM', 100]
+                ],
+                type: 'gauge'
+            },
+            gauge: {
+                },
+                color: {
+                    pattern: ['#FF0000', '#F97600', '#F6C600', '#60B044'], // the three color levels for the percentage values.
+                    threshold: {
+                        values: [10, 20, 50, 100]
+                    }
+                },
+                size: {
+                    height: 180
+                }
+            });
+        setTimeout(updateGraph,100, chart);
+        setInterval(updateGraph,5000, chart);
+        });
+        function updateGraph(chart) {
+            chart.load({
+                columns: [['Free RAM', (data.ram.Stats.FreePhysical*100)/data.ram.Consts.TotalPhysical]]
+            });
+        }
+
+    </script>
+</html>

@@ -50,7 +50,11 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 	case "preferences": // Serves the settings page
 		render(ctx, "settings.html")
 	case "description": //Serves the page for serving modal
-		render(ctx, tempPath[2]+"-setting")
+		if strings.HasSuffix(tempPath[2], "html") {
+			render(ctx, tempPath[2])
+		} else {
+			render(ctx, tempPath[2]+"-setting")
+		}
 	case "moduleStatus":
 		moduleStatusHandler(ctx, tempPath[2])
 	case "profile":

@@ -2,6 +2,7 @@ package cli
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"strings"
 
@@ -48,6 +49,7 @@ func manageCommand(command []string) {
 			color.Red(err.Error())
 		}
 	} else {
-		color.Red("Command not found. Use 'help' to know more.")
+		color.Red(fmt.Sprintf("'%s', command not found. Use 'help' to know more.",
+			command[0]))
 	}
 }
