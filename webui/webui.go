@@ -1,4 +1,3 @@
-// Package webui implements the web interface for the OWTF monitor module
 package webui
 
 import (
