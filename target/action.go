@@ -1,8 +1,8 @@
 package target
 
 import (
-	"health_monitor/owtf"
-	"health_monitor/utils"
+	"github.com/owtf/health_monitor/owtf"
+	"github.com/owtf/health_monitor/utils"
 )
 
 func downAction(targetID int) {

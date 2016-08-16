@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"health_monitor/setup"
-	"health_monitor/utils"
+	"github.com/owtf/health_monitor/setup"
+	"github.com/owtf/health_monitor/utils"
 )
 
 // OWTF is the driver function of the owtf module.

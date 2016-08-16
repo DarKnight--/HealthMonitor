@@ -7,7 +7,7 @@ import (
 
 	"github.com/mattn/go-sqlite3"
 
-	"health_monitor/utils"
+	"github.com/owtf/health_monitor/utils"
 )
 
 // Database holds the active sqlite connection
