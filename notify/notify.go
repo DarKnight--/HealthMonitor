@@ -41,7 +41,7 @@ func Init() {
 	desktopAlert = nil
 	conf.DesktopNoticSupported = false
 	if CheckDesktopAlertSupport() {
-		desktopAlert = DesktopAlertBuilder("OWTF Health Monitor", conf.IconPath)
+		desktopAlert = NewDesktopAlert(conf.IconPath)
 		conf.DesktopNoticSupported = true
 	}
 }
@@ -60,7 +60,7 @@ func SendEmailAlert(subject string, body string) {
 
 // SendDesktopAlert sends the desktop notification if enabled and required packages
 // are installed.
-func SendDesktopAlert(subject string, summary string, urgent int, iconPath string) {
+func SendDesktopAlert(subject string, summary string, urgent MessageImportance, iconPath string) {
 	if iconPath == "" {
 		iconPath = conf.IconPath
 	}

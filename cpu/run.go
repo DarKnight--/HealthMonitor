@@ -66,7 +66,7 @@ func checkCPU() {
 		utils.ModuleLogs(logFile, "CPU usage is normal")
 	} else {
 		if lastStatus.Normal {
-			notify.SendDesktopAlert("OWTF - Health Monitor", "CPU usage is above warn limit", notify.CRITICAL, "")
+			notify.SendDesktopAlert("OWTF - Health Monitor", "CPU usage is above warn limit", notify.Critical, "")
 		}
 		cpuInfo.Status.Normal = false
 		utils.ModuleLogs(logFile, "CPU is being used over the warning limit")
