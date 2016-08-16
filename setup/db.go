@@ -10,9 +10,10 @@ import (
 	"health_monitor/utils"
 )
 
-// Database holds the active sqlite connection
 var (
-	Database  *sql.DB
+	// Database holds the active sqlite connection
+	Database *sql.DB
+	// DBLogFile holds the pointer to the logfile for the database
 	DBLogFile *os.File
 )
 
