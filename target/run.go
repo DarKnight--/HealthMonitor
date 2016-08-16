@@ -151,8 +151,10 @@ func generateHash(target string) (string, error) {
 	return hash, nil
 }
 
-// GetStatus function is getter funtion for the targetInfo to send status
-// of target monitor
+/*
+GetStatus function is getter funtion for the targetInfo to send status
+of target monitor
+*/
 func GetStatus() map[string]Status {
 	return targetInfo
 }
