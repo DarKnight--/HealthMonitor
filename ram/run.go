@@ -44,9 +44,11 @@ func RAM(status <-chan bool, wg *sync.WaitGroup) {
 	defer logFile.Close()
 
 	utils.ModuleLogs(logFile, "Running with "+conf.Profile+" profile")
+	// initialization of the constants for the module
 	conf.InitMemoryConst(&ramInfo.Consts)
 	ramInfo.Status.Normal = true
 	checkRAM()
+
 	for {
 		select {
 		case <-status:
@@ -60,6 +62,7 @@ func RAM(status <-chan bool, wg *sync.WaitGroup) {
 }
 
 func checkRAM() {
+	// storing the value for detecting the change in the status
 	lastStatus.Normal = ramInfo.Status.Normal
 	conf.LoadMemoryStats(&ramInfo.Stats)
 
