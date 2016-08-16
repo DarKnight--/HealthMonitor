@@ -33,7 +33,10 @@ var (
 	owtfModuleDependence = 0
 )
 
-// Status struct is used by monitor to send different modules signal to abort
+/*
+Status struct is sent on the channel to controlModule function by different modules
+to change the status of the modules
+*/
 type Status struct {
 	Module string
 	Run    bool
@@ -55,8 +58,10 @@ func PLogError(err error) {
 	}
 }
 
-// PFileError is used to print the error when monitor do not have sufficient
-// file permission
+/*
+PFileError is used to print the error when monitor do not have sufficient
+file permission.
+*/
 func PFileError(fileName string) {
 	log.Println(fmt.Sprintf("Unable to modify or create %s", fileName))
 	log.Println("Please check the permission associated with the file")
@@ -70,15 +75,15 @@ func GetPath(paths string) string {
 	return path.Join(os.Getenv("HOME"), paths)
 }
 
-// ModuleLogs is used to write the logs of the module in the @filename file
+// ModuleLogs is used to write the logs of the module in the filename file
 func ModuleLogs(filename *os.File, status string) {
-	mutex.Lock()
+	mutex.Lock() //The lock is required to prevent mismatch of logfile during race condition
 	log.SetOutput(filename)
 	log.Println(status)
 	mutex.Unlock()
 }
 
-// ModuleError is used to log the errors of the module in the @filename file
+// ModuleError is used to log the errors of the module in the filename file
 func ModuleError(filename *os.File, err string, description string) {
 	mutex.Lock()
 	log.SetOutput(filename)
@@ -87,7 +92,7 @@ func ModuleError(filename *os.File, err string, description string) {
 	mutex.Unlock()
 }
 
-//OpenLogFile is the utility function to open log file
+// OpenLogFile is the utility function to open log file
 func OpenLogFile(logFileName string) *os.File {
 	logFile, err := os.OpenFile(logFileName, os.O_RDWR|os.O_CREATE|os.O_APPEND,
 		0666)
@@ -97,14 +102,19 @@ func OpenLogFile(logFileName string) *os.File {
 	return logFile
 }
 
-//SendModuleStatus is the utility function to change the state of module
+/*
+SendModuleStatus is the utility function to change the state of module. It will
+send the status to the main function for required changes.
+*/
 func SendModuleStatus(module string, status bool) {
 	signal := Status{Module: module, Run: status}
 	ControlChan <- signal
 }
 
-//CheckConf is the utility function to check the config variable loaded from the
-//database and if fails, then switch to default
+/*
+CheckConf is the utility function to check the config variable loaded from the
+database and if fails, then switch to default.
+*/
 func CheckConf(moduleLogFile *os.File, masterLogFile *os.File, module string,
 	profile *string, setupFunc func()) {
 	ModuleError(moduleLogFile, "Unable to find config for profile "+
@@ -119,8 +129,10 @@ func CheckConf(moduleLogFile *os.File, masterLogFile *os.File, module string,
 	}
 }
 
-// CheckInstalledPackage will return true if a package with specified commandName
-// is installed.
+/*
+CheckInstalledPackage will return true if a package with specified commandName
+is installed.
+*/
 func CheckInstalledPackage(commandName string) bool {
 	command := exec.Command(commandName, "--help")
 	if command.Run() != nil {
@@ -129,6 +141,11 @@ func CheckInstalledPackage(commandName string) bool {
 	return true
 }
 
+/*
+AddOWTFModuleDependence will increase the count of modules depending on owtf
+module. In case owtf is not running it will send signal to start owtf module,
+if the dependence count positive.
+*/
 func AddOWTFModuleDependence() {
 	owtfMutex.Lock()
 	if owtfModuleDependence == 0 {
@@ -138,6 +155,11 @@ func AddOWTFModuleDependence() {
 	owtfMutex.Unlock()
 }
 
+/*
+RemoveOWTFModuleDependence will decrease the count of modules depending on owtf
+module. In case owtf is running it will send signal to stop owtf module,
+if the dependence count non positive.
+*/
 func RemoveOWTFModuleDependence() {
 	owtfMutex.Lock()
 	owtfModuleDependence--
