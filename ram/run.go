@@ -52,7 +52,7 @@ func RAM(status <-chan bool, wg *sync.WaitGroup) {
 	for {
 		select {
 		case <-status:
-			utils.ModuleLogs(logFile, "Recieved signal to turn off. Signing off")
+			utils.ModuleLogs(logFile, "Received signal to turn off. Signing off")
 			return
 		case <-time.After(time.Millisecond * time.Duration(conf.RecheckThreshold)):
 			checkRAM()
@@ -79,7 +79,7 @@ func checkRAM() {
 	}
 }
 
-// GetStatus function is getter funtion for the ramInfo to send status
+// GetStatus function is getter function for the ramInfo to send status
 // of ram monitor
 func GetStatus() Info {
 	return ramInfo
@@ -94,7 +94,7 @@ func GetConfJSON() []byte {
 	return data
 }
 
-// GetStatusJSON function retuns the json string of the ramInfo struct
+// GetStatusJSON function returns the json string of the ramInfo struct
 func GetStatusJSON() []byte {
 	data, err := json.Marshal(ramInfo)
 	if err != nil {

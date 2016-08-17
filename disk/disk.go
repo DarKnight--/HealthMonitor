@@ -32,7 +32,7 @@ type (
 	}
 )
 
-// InodesInfo will return the status of the inodes availabe based on the
+// InodesInfo will return the status of the inodes available based on the
 // Warning and danger limit set in the config.
 // -1 will refer to error, 1 for above warning limit, 2 & 3 for warning and
 // danger limit respectively
@@ -49,7 +49,7 @@ func (conf Config) InodesInfo(directory string, pStats *PartitionStats) int {
 		conf.InodeDangerLimit)
 }
 
-// SpaceInfo will return the status of the space availabe based on the
+// SpaceInfo will return the status of the space available based on the
 // Warning and danger limit set in the config.
 // -1 will refer to error, 1 for above warning limit, 2 & 3 for warning and
 // danger limit respectively

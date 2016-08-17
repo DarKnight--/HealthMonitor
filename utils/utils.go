@@ -47,7 +47,7 @@ func Perror(out string) {
 	log.Println("[!] Error: " + out)
 }
 
-// PLogError is used to print the error when log file is inaccessable
+// PLogError is used to print the error when log file is inaccessible
 func PLogError(err error) {
 	if err != nil {
 		fmt.Println("Error in opening log file")
@@ -87,7 +87,7 @@ func ModuleLogs(filename *os.File, status string) {
 func ModuleError(filename *os.File, err string, description string) {
 	mutex.Lock()
 	log.SetOutput(filename)
-	log.Println("[!] Error occured : " + err)
+	log.Println("[!] Error occurred : " + err)
 	log.Print(description)
 	mutex.Unlock()
 }

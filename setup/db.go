@@ -52,7 +52,7 @@ func GetAllProfiles() []string {
 
 	rows, err := Database.Query("SELECT profile FROM Ram")
 	if err != nil {
-		utils.ModuleError(DBLogFile, "Error occured during retrieving profiles", err.Error())
+		utils.ModuleError(DBLogFile, "Error occurred during retrieving profiles", err.Error())
 		return nil
 	}
 	defer rows.Close()
@@ -60,7 +60,7 @@ func GetAllProfiles() []string {
 	for rows.Next() {
 		err = rows.Scan(&temp)
 		if err != nil {
-			utils.ModuleError(DBLogFile, "Error occured during scanning profiles", err.Error())
+			utils.ModuleError(DBLogFile, "Error occurred during scanning profiles", err.Error())
 			continue
 		}
 		profiles = append(profiles, temp)

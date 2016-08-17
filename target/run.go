@@ -57,7 +57,7 @@ func Target(status <-chan bool, wg *sync.WaitGroup) {
 	for {
 		select {
 		case <-status:
-			utils.ModuleLogs(logFile, "Recieved signal to turn off. Signing off")
+			utils.ModuleLogs(logFile, "Received signal to turn off. Signing off")
 			return
 		case <-time.After(time.Millisecond * time.Duration(conf.RecheckThreshold)):
 			checkTarget()
@@ -99,7 +99,7 @@ func checkTarget() {
 			}
 			result, err := conf.CheckStatus(target.TargetURL, hash)
 			if err != nil {
-				utils.ModuleError(logFile, "Error occured during matching hash score for target "+
+				utils.ModuleError(logFile, "Error occurred during matching hash score for target "+
 					target.TargetURL, err.Error())
 				continue
 			}
@@ -152,7 +152,7 @@ func generateHash(target string) (string, error) {
 }
 
 /*
-GetStatus function is getter funtion for the targetInfo to send status
+GetStatus function is getter function for the targetInfo to send status
 of target monitor
 */
 func GetStatus() map[string]Status {
@@ -168,7 +168,7 @@ func GetConfJSON() []byte {
 	return data
 }
 
-// GetStatusJSON function retuns the json string of the targetInfo struct
+// GetStatusJSON function returns the json string of the targetInfo struct
 func GetStatusJSON() []byte {
 	data, err := json.Marshal(targetInfo)
 	if err != nil {

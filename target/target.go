@@ -38,7 +38,7 @@ func (conf Config) CheckStatus(target string, hash string) (bool, error) {
 	}
 	score := CompareHash(hash, newHash)
 	if score == -1 {
-		return false, errors.New("Error occured while comparing hashes")
+		return false, errors.New("Error occurred while comparing hashes")
 	}
 
 	if score < conf.FuzzyThreshold {

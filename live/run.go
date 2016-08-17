@@ -44,7 +44,7 @@ func Live(status <-chan bool, wg *sync.WaitGroup) {
 	for {
 		select {
 		case <-status:
-			utils.ModuleLogs(logFile, "Recieved signal to turn off. Signing off")
+			utils.ModuleLogs(logFile, "Received signal to turn off. Signing off")
 			return
 		case <-time.After(time.Millisecond * time.Duration(conf.RecheckThreshold)):
 			internetCheck(Default, conf)
@@ -57,13 +57,13 @@ func Live(status <-chan bool, wg *sync.WaitGroup) {
 	}
 }
 
-// GetStatus function is getter funtion for the liveStatus to send status
+// GetStatus function is getter function for the liveStatus to send status
 // of internet connectivity monitor.
 func GetStatus() Status {
 	return liveStatus
 }
 
-// GetStatusJSON function retuns the json string of the liveStatus struct
+// GetStatusJSON function returns the json string of the liveStatus struct
 func GetStatusJSON() []byte {
 	data, err := json.Marshal(liveStatus)
 	if err != nil {

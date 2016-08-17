@@ -49,7 +49,7 @@ func CPU(status <-chan bool, wg *sync.WaitGroup) {
 	for {
 		select {
 		case <-status:
-			utils.ModuleLogs(logFile, "Recieved signal to turn off. Signing off")
+			utils.ModuleLogs(logFile, "Received signal to turn off. Signing off")
 			return
 		case <-time.After(time.Millisecond * time.Duration(conf.RecheckThreshold)):
 			checkCPU()
@@ -73,7 +73,7 @@ func checkCPU() {
 	}
 }
 
-// GetStatus function is getter funtion for the cpuInfo to send status
+// GetStatus function is getter function for the cpuInfo to send status
 // of cpu monitor
 func GetStatus() Info {
 	return cpuInfo
@@ -88,7 +88,7 @@ func GetConfJSON() []byte {
 	return data
 }
 
-// GetStatusJSON function retuns the json string of the cpuInfo struct
+// GetStatusJSON function returns the json string of the cpuInfo struct
 func GetStatusJSON() []byte {
 	data, err := json.Marshal(cpuInfo)
 	if err != nil {

@@ -13,7 +13,7 @@ import (
 )
 
 type (
-	// Target contains list of targets in the database recieved from OWTF api
+	// Target contains list of targets in the database received from OWTF api
 	Target struct {
 		ID        int    `json:"id"`
 		TargetURL string `json:"target_url"`
@@ -26,7 +26,7 @@ const (
 	workerPath      = "http://127.0.0.1:8010/api/workers/"
 )
 
-// GetTarget function calls to the OWTF api to recieve all the targets in the
+// GetTarget function calls to the OWTF api to receive all the targets in the
 // OWTF database
 func GetTarget() ([]Target, error) {
 	var (
