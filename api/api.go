@@ -5,12 +5,11 @@ import (
 	"errors"
 	"fmt"
 
-	"health_monitor/owtf"
-
 	"github.com/owtf/health_monitor/cpu"
 	"github.com/owtf/health_monitor/disk"
 	"github.com/owtf/health_monitor/live"
 	"github.com/owtf/health_monitor/notify"
+	"github.com/owtf/health_monitor/owtf"
 	"github.com/owtf/health_monitor/ram"
 	"github.com/owtf/health_monitor/setup"
 	"github.com/owtf/health_monitor/target"

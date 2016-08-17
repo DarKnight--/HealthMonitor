@@ -4,7 +4,7 @@ import (
 	"os/exec"
 	"runtime"
 
-	"health_monitor/utils"
+	"github.com/owtf/health_monitor/utils"
 )
 
 type (

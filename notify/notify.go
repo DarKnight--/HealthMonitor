@@ -3,8 +3,8 @@ package notify
 import (
 	"encoding/json"
 
-	"health_monitor/setup"
-	"health_monitor/utils"
+	"github.com/owtf/health_monitor/setup"
+	"github.com/owtf/health_monitor/utils"
 )
 
 // Config holds all the necessary parameters required by the module

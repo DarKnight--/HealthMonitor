@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"health_monitor/setup"
-	"health_monitor/utils"
+	"github.com/owtf/health_monitor/setup"
+	"github.com/owtf/health_monitor/utils"
 )
 
 //LoadConfig load the config of the module from the db
