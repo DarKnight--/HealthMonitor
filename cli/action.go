@@ -3,6 +3,7 @@ package cli
 import (
 	"errors"
 	"fmt"
+	"os"
 	"syscall"
 
 	"github.com/owtf/health_monitor/api"
@@ -20,6 +21,10 @@ enable <moduleName>	: To enable a module
 disable <moduleName>	: To disable a module
 status			: To check status of all modules
 status <moduleName>	: To check status of particular module
+profile <current/all>	: Use current to get current used profile and all to list all the profiles in database
+load <profileName	: To load a particular profile
+owtf <resume/pause>	: To send signal to OWASP-OWTF to pause or resume all the workers
+disk clean <>		: To clean trash or package manager cache use 'trash' or 'pm_cache'. To do basic cleanup use root or home directory path
 exit			: To turn off the monitor`
 )
 
@@ -67,6 +72,8 @@ func status(argument []string) error {
 			cpuDetailStatus()
 		case "ram":
 			ramDetailStatus()
+		case "target":
+			targetDetailStatus()
 		default:
 			color.Red("Module not found")
 			color.New(color.FgCyan).Println("Allowed modules: ", utils.Modules)
@@ -283,8 +290,77 @@ func doesModuleExists(module string) bool {
 }
 
 func loadProfile(argument []string) error {
+	var err error
 	if len(argument) == 1 {
-		return api.LoadNewProfile(argument[0])
+		if err = api.LoadNewProfile(argument[0]); err == nil {
+			color.Cyan("Successfully loaded '%s' profile", argument[0])
+			return nil
+		}
+		return err
 	}
 	return errors.New("Wrong command, use load <profileName>")
+}
+
+func manageOWTF(argument []string) error {
+	var err error
+	if len(argument) == 1 {
+		if argument[0] == "resume" {
+			if err = api.ResumeOWTF(); err == nil {
+				color.Cyan("Successfully sent resume signal to all the workers.")
+				return nil
+			}
+			return err
+		} else if argument[0] == "pause" {
+			if err = api.PauseOWTF(); err == nil {
+				color.Cyan("Successfully sent pause signal to all the workers.")
+				return nil
+			}
+			return err
+		}
+	}
+	return errors.New("Wrong command, use owtf <resume/pause>")
+}
+
+func manageDisk(argument []string) error {
+	var err error = nil
+	if len(argument) == 2 {
+		if argument[0] == "clean" {
+			switch argument[1] {
+			case "/":
+				api.BasicDiskCleanup(argument[1])
+			case os.Getenv("HOME"):
+				api.BasicDiskCleanup(argument[1])
+			case "trash":
+				err = api.CleanTrashFolder()
+			case "pm_cache":
+				err = api.DeletePackageManagerCache()
+			default:
+				err = fmt.Errorf("Argument '%s' is incorrect", argument[1])
+			}
+
+			if err == nil {
+				color.Cyan("Successfully cleaned %s", argument[1])
+				return nil
+			}
+			return err
+		}
+	}
+	return fmt.Errorf("Wrong command, use disk clean </, %s, trash or pm_cache", os.Getenv("HOME"))
+}
+
+func manageProfile(argument []string) error {
+	if len(argument) == 1 {
+		switch argument[0]{
+		case "current":
+			fmt.Print("Current Profile: ")
+			color.Cyan(setup.UserModuleState.Profile)
+		case "all":
+			fmt.Print("Saved profiles: ")
+			color.Cyan(fmt.Sprintln(setup.GetAllProfiles()))
+		case "default":
+			return errors.New("Argument not supported. Use <current/all>")
+		}
+		return nil
+	}
+	return errors.New("Wrong command, use profile <current/all>")
 }

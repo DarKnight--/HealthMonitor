@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"strings"
+	"syscall"
 
 	"github.com/valyala/fasthttp"
 
@@ -32,6 +33,9 @@ func RunServer(port string) {
 	defer logFile.Close()
 	if err = fasthttp.ListenAndServe(":"+port, requestHandler); err != nil {
 		utils.ModuleError(logFile, "Unable to run the server", err.Error())
+		utils.Perror("Unable to run the server. Check log file for more details")
+		utils.Perror("Shutting down the monitor")
+		utils.ExitChan <- syscall.SIGINT
 	}
 }
 

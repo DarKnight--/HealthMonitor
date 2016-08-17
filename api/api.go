@@ -9,6 +9,7 @@ import (
 	"github.com/owtf/health_monitor/disk"
 	"github.com/owtf/health_monitor/live"
 	"github.com/owtf/health_monitor/notify"
+	"github.com/owtf/health_monitor/owtf"
 	"github.com/owtf/health_monitor/ram"
 	"github.com/owtf/health_monitor/setup"
 	"github.com/owtf/health_monitor/target"
@@ -150,4 +151,34 @@ func GetAllProfiles() []string {
 // GetActiveProfile returns current active profile
 func GetActiveProfile() string {
 	return setup.UserModuleState.Profile
+}
+
+// BasicDiskCleanup takes basic cleanup action if the directory is "/" or "$HOME"
+func BasicDiskCleanup(directory string) {
+	disk.BasicAction(directory)
+}
+
+// CleanTrashFolder cleans the trash folder
+func CleanTrashFolder() error {
+	return disk.CleanTrash()
+}
+
+// CompressFolder compresses the folder with output file name as outFName
+func CompressFolder(inputFName string, outputFname string) error {
+	return disk.CompressFolder(inputFName, outputFname)
+}
+
+// DeletePackageManagerCache cleans the package manager's cache directory
+func DeletePackageManagerCache() error {
+	return disk.CleanPackageManagerCache()
+}
+
+// PauseOWTF sends request to OWTF to pauses all the workers
+func PauseOWTF() error {
+	return owtf.PauseAllWorker()
+}
+
+// ResumeOWTF sends request to OWTF to resume all the workers
+func ResumeOWTF() error {
+	return owtf.ResumeAllWorker()
 }
