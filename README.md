@@ -1,4 +1,6 @@
 # Health Monitor
+[![GoDoc](https://godoc.org/github.com/owtf/health_monitor?status.svg)](https://godoc.org/github.com/owtf/health_monitor)
+[![Go Report Card](https://goreportcard.com/badge/kubernetes/helm)](http://goreportcard.com/report/owtf/health_monitor)
 
 A standalone app to monitor and control OWTF - written in Go.
 
