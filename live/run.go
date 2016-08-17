@@ -92,7 +92,7 @@ func internetCheck(defaultCheck func() error, conf *Config) {
 	}
 	if lastStatus.Normal {
 		owtf.PauseOWTF(logFile)
-		notify.SendDesktopAlert("OWTF - Health Monitor", "Your internet connection is down", notify.CRITICAL, "")
+		notify.SendDesktopAlert("OWTF - Health Monitor", "Your internet connection is down", notify.Critical, "")
 	}
 	liveStatus.Normal = false
 }

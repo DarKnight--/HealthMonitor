@@ -115,7 +115,7 @@ func printStatusLog(directory string, status int, lastStatus int, types string) 
 			directory), "Check the mount point provided")
 		if lastStatus != -1 {
 			notify.SendDesktopAlert("OWTF - Health Monitor", fmt.Sprintf("Disk %s for %s mount point can't be scanned due to error.",
-				types, directory), notify.NORMAL, "")
+				types, directory), notify.Normal, "")
 		}
 	case 1:
 		utils.ModuleLogs(logFile, fmt.Sprintf("Mount point %s %s status : OK",
@@ -126,14 +126,14 @@ func printStatusLog(directory string, status int, lastStatus int, types string) 
 			directory, types))
 		if lastStatus < 2 {
 			notify.SendDesktopAlert("OWTF - Health Monitor", fmt.Sprintf("Disk %s for %s mount point status is above warning limit.",
-				types, directory), notify.NORMAL, "")
+				types, directory), notify.Normal, "")
 		}
 	case 3:
 		utils.ModuleLogs(logFile, fmt.Sprintf("Mount point %s %s status : Danger",
 			directory, types))
 		if lastStatus != 3 {
 			notify.SendDesktopAlert("OWTF - Health Monitor", fmt.Sprintf("Disk %s for %s mount point status is critical",
-				types, directory), notify.CRITICAL, "")
+				types, directory), notify.Critical, "")
 			if directory == "/" || strings.Contains(directory, os.Getenv("HOME")) {
 				basicCleanup(*diskAction)
 			}

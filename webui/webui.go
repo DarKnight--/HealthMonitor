@@ -1,4 +1,3 @@
-// Package webui implements the web interface for the OWTF monitor module
 package webui
 
 import (
@@ -21,7 +20,7 @@ var (
 	logFile      *os.File
 )
 
-// RunServer will serve the webui content
+// RunServer starts the server to serve the webui content
 func RunServer(port string) {
 	var err error
 	logFileName := path.Join(setup.ConfigVars.HomeDir, "webui.log")
@@ -38,6 +37,7 @@ func RunServer(port string) {
 
 func requestHandler(ctx *fasthttp.RequestCtx) {
 	tempPath := strings.SplitN(string(ctx.Path()), "/", 3)
+	// This condition covered all the ^/*/$ type addresses
 	if len(tempPath) == 2 {
 		render(ctx, "index.html")
 		return
@@ -49,17 +49,18 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 		configHandler(ctx, tempPath[2])
 	case "preferences": // Serves the settings page
 		render(ctx, "settings.html")
-	case "description": //Serves the page for serving modal
+	case "description": // Serves the page for serving modal
 		if strings.HasSuffix(tempPath[2], "html") {
-			render(ctx, tempPath[2])
+			render(ctx, tempPath[2]) // Serves the modal page of the modules
 		} else {
-			render(ctx, tempPath[2]+"-setting")
+			render(ctx, tempPath[2]+"-setting") // Serves the settings template of the modules
 		}
 	case "moduleStatus":
 		moduleStatusHandler(ctx, tempPath[2])
 	case "profile":
-		profileHandler(ctx)
+		profileHandler(ctx) // Serves the temlate of the setttings home page
 	default:
+		// This condition serves the data only if module is implemented and is up
 		if api.ModuleStatus(tempPath[2]) || tempPath[2] == "main" {
 			switch tempPath[1] {
 			case "module": // Serves the json data of the module's status.

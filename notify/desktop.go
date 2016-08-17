@@ -7,33 +7,38 @@ import (
 	"health_monitor/utils"
 )
 
-const (
-	// NORMAL : when notification will pop up and go after some time
-	NORMAL = 0
-	// CRITICAL : when notification will not terminate until user closes it
-	CRITICAL = 1
+type (
+	desktopNotifier interface {
+		push(title string, body string, iconPath string) *exec.Cmd
+		pushCritical(title string, body string, iconPath string) *exec.Cmd
+	}
+
+	// DesktopAlert hold configuration for desktop notification
+	DesktopAlert struct {
+		notifier    desktopNotifier
+		defaultIcon string
+	}
+
+	// MessageImportance is constant type for the desktop notification messages
+	MessageImportance int
 )
 
-type desktopNotifier interface {
-	push(title string, body string, iconPath string) *exec.Cmd
-	pushCritical(title string, body string, iconPath string) *exec.Cmd
-}
-
-// DesktopAlert hold configuration for desktop notification
-type DesktopAlert struct {
-	notifier    desktopNotifier
-	defaultIcon string
-}
+const (
+	// Normal : when notification will pop up and go after some time
+	Normal MessageImportance = 0
+	// Critical : when notification will not terminate until user closes it
+	Critical MessageImportance = 1
+)
 
 // Push is used to send notification to the desktop.
-func (n DesktopAlert) Push(title string, body string, iconPath string, urgent int) error {
+func (n DesktopAlert) Push(title string, body string, iconPath string, urgent MessageImportance) error {
 	icon := n.defaultIcon
 
 	if iconPath != "" {
 		icon = iconPath
 	}
 
-	if urgent == CRITICAL {
+	if urgent == Critical {
 		return n.notifier.pushCritical(title, body, icon).Run()
 	}
 
@@ -51,8 +56,8 @@ func (l linuxDesktopAlert) pushCritical(title string, body string, iconPath stri
 	return exec.Command("notify-send", "-i", iconPath, title, body, "-u", "critical")
 }
 
-// DesktopAlertBuilder return the struct according to the OS to send desktop notification
-func DesktopAlertBuilder(appName string, defaultIcon string) *DesktopAlert {
+// NewDesktopAlert constructs the struct according to the OS to send desktop notification
+func NewDesktopAlert(defaultIcon string) *DesktopAlert {
 	var notifier desktopNotifier
 
 	switch runtime.GOOS {

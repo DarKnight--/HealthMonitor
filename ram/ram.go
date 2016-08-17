@@ -19,19 +19,22 @@ type (
 		RAMWarningLimit  int
 		RecheckThreshold int
 	}
-	//MemoryConst holds the constant data of the memory
+	// MemoryConst holds the constant data of the memory
 	MemoryConst struct {
 		TotalSwap     int
 		TotalPhysical int
 	}
-	//MemoryStat holds the current stats of the memory
+	// MemoryStat holds the current stats of the memory
 	MemoryStat struct {
 		FreeSwap     int
 		FreePhysical int
 	}
 )
 
-//LoadMemoryStats saves the current memory status in the MemoryStat struct
+/*
+LoadMemoryStats saves the current memory status in the MemoryStat struct
+using the value stored in "/proc/meminfo".
+*/
 func (conf Config) LoadMemoryStats(stat *MemoryStat) error {
 	var memInfo _Ctype_struct_sysinfo
 	C.sysinfo(&memInfo)
@@ -63,7 +66,10 @@ func (conf Config) LoadMemoryStats(stat *MemoryStat) error {
 	return nil
 }
 
-//InitMemoryConst saves the memory constants in the MemoryStat struct
+/*
+InitMemoryConst saves the memory constants in the MemoryStat struct
+using the value stored in "/proc/meminfo"
+*/
 func (conf *Config) InitMemoryConst(consts *MemoryConst) error {
 	var memInfo _Ctype_struct_sysinfo
 	C.sysinfo(&memInfo)
@@ -81,7 +87,7 @@ func (conf *Config) InitMemoryConst(consts *MemoryConst) error {
 	for r.Scan() {
 		line := r.Bytes()
 		if bytes.HasPrefix(line, pfx) {
-			// len("MemTotal: == 10
+			// len("MemTotal:") == 10
 			_, err := fmt.Sscanf(string(line[10:]), "%d", &consts.TotalPhysical)
 			if err != nil {
 				return err
