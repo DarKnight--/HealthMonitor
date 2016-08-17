@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"health_monitor/owtf"
+
 	"github.com/owtf/health_monitor/cpu"
 	"github.com/owtf/health_monitor/disk"
 	"github.com/owtf/health_monitor/live"
@@ -173,10 +174,12 @@ func DeletePackageManagerCache() error {
 	return disk.CleanPackageManagerCache()
 }
 
+// PauseOWTF sends request to OWTF to pauses all the workers
 func PauseOWTF() error {
 	return owtf.PauseAllWorker()
 }
 
+// ResumeOWTF sends request to OWTF to resume all the workers
 func ResumeOWTF() error {
 	return owtf.ResumeAllWorker()
 }
