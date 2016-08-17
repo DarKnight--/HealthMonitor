@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"health_monitor/utils"
+	"github.com/owtf/health_monitor/utils"
 )
 
 func basicCleanup(basicCleaner BasicCleaner) {

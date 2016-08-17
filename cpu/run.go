@@ -8,9 +8,9 @@ import (
 	"sync"
 	"time"
 
-	"health_monitor/notify"
-	"health_monitor/setup"
-	"health_monitor/utils"
+	"github.com/owtf/health_monitor/notify"
+	"github.com/owtf/health_monitor/setup"
+	"github.com/owtf/health_monitor/utils"
 )
 
 type (
@@ -66,7 +66,7 @@ func checkCPU() {
 		utils.ModuleLogs(logFile, "CPU usage is normal")
 	} else {
 		if lastStatus.Normal {
-			notify.SendDesktopAlert("OWTF - Health Monitor", "CPU usage is above warn limit", notify.CRITICAL, "")
+			notify.SendDesktopAlert("OWTF - Health Monitor", "CPU usage is above warn limit", notify.Critical, "")
 		}
 		cpuInfo.Status.Normal = false
 		utils.ModuleLogs(logFile, "CPU is being used over the warning limit")

@@ -8,8 +8,8 @@ import (
 	"os"
 	"strconv"
 
-	"health_monitor/setup"
-	"health_monitor/utils"
+	"github.com/owtf/health_monitor/setup"
+	"github.com/owtf/health_monitor/utils"
 )
 
 type (

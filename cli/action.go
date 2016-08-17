@@ -6,9 +6,9 @@ import (
 	"os"
 	"syscall"
 
-	"health_monitor/api"
-	"health_monitor/setup"
-	"health_monitor/utils"
+	"github.com/owtf/health_monitor/api"
+	"github.com/owtf/health_monitor/setup"
+	"github.com/owtf/health_monitor/utils"
 
 	"github.com/fatih/color"
 )

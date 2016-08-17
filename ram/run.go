@@ -8,10 +8,10 @@ import (
 	"sync"
 	"time"
 
-	"health_monitor/notify"
-	"health_monitor/owtf"
-	"health_monitor/setup"
-	"health_monitor/utils"
+	"github.com/owtf/health_monitor/notify"
+	"github.com/owtf/health_monitor/owtf"
+	"github.com/owtf/health_monitor/setup"
+	"github.com/owtf/health_monitor/utils"
 )
 
 type (
@@ -44,9 +44,11 @@ func RAM(status <-chan bool, wg *sync.WaitGroup) {
 	defer logFile.Close()
 
 	utils.ModuleLogs(logFile, "Running with "+conf.Profile+" profile")
+	// initialization of the constants for the module
 	conf.InitMemoryConst(&ramInfo.Consts)
 	ramInfo.Status.Normal = true
 	checkRAM()
+
 	for {
 		select {
 		case <-status:
@@ -60,13 +62,14 @@ func RAM(status <-chan bool, wg *sync.WaitGroup) {
 }
 
 func checkRAM() {
+	// storing the value for detecting the change in the status
 	lastStatus.Normal = ramInfo.Status.Normal
 	conf.LoadMemoryStats(&ramInfo.Stats)
 
 	if ramInfo.Stats.FreePhysical < (100-conf.RAMWarningLimit)*ramInfo.Consts.TotalPhysical/100 {
 		ramInfo.Status.Normal = false
 		if lastStatus.Normal {
-			notify.SendDesktopAlert("OWTF - Health Monitor", "RAM usage is above warn limit.", notify.CRITICAL, "")
+			notify.SendDesktopAlert("OWTF - Health Monitor", "RAM usage is above warn limit.", notify.Critical, "")
 			owtf.PauseOWTF(logFile)
 		}
 		utils.ModuleLogs(logFile, "Ram is being used over the warning limit")

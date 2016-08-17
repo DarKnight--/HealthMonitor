@@ -1,11 +1,11 @@
 package api
 
 import (
-	"health_monitor/cpu"
-	"health_monitor/disk"
-	"health_monitor/live"
-	"health_monitor/ram"
-	"health_monitor/target"
+	"github.com/owtf/health_monitor/cpu"
+	"github.com/owtf/health_monitor/disk"
+	"github.com/owtf/health_monitor/live"
+	"github.com/owtf/health_monitor/ram"
+	"github.com/owtf/health_monitor/target"
 )
 
 // CPUStatus returns status and information of the CPU module.

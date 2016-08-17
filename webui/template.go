@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"html/template"
 
-	"health_monitor/api"
-	"health_monitor/utils"
+	"github.com/owtf/health_monitor/api"
+	"github.com/owtf/health_monitor/utils"
 
 	"github.com/valyala/fasthttp"
 )

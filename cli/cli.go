@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"health_monitor/utils"
+	"github.com/owtf/health_monitor/utils"
 
 	"github.com/fatih/color"
 )
