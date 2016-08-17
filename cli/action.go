@@ -322,7 +322,7 @@ func manageOWTF(argument []string) error {
 }
 
 func manageDisk(argument []string) error {
-	var err error = nil
+	var err error
 	if len(argument) == 2 {
 		if argument[0] == "clean" {
 			switch argument[1] {
@@ -350,7 +350,7 @@ func manageDisk(argument []string) error {
 
 func manageProfile(argument []string) error {
 	if len(argument) == 1 {
-		switch argument[0]{
+		switch argument[0] {
 		case "current":
 			fmt.Print("Current Profile: ")
 			color.Cyan(setup.UserModuleState.Profile)
