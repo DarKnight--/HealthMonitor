@@ -25,6 +25,7 @@ func init() {
 	cliFunctions["load"] = loadProfile
 	cliFunctions["disk"] = manageDisk
 	cliFunctions["owtf"] = manageOWTF
+	cliFunctions["profile"] = manageProfile
 }
 
 // Run will start the command line interface for the health_monitor

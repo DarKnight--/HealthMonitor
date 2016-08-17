@@ -21,6 +21,10 @@ enable <moduleName>	: To enable a module
 disable <moduleName>	: To disable a module
 status			: To check status of all modules
 status <moduleName>	: To check status of particular module
+profile <current/all>	: Use current to get current used profile and all to list all the profiles in database
+load <profileName	: To load a particular profile
+owtf <resume/pause>	: To send signal to OWASP-OWTF to pause or resume all the workers
+disk clean <>		: To clean trash or package manager cache use 'trash' or 'pm_cache'. To do basic cleanup use root or home directory path
 exit			: To turn off the monitor`
 )
 
@@ -68,6 +72,8 @@ func status(argument []string) error {
 			cpuDetailStatus()
 		case "ram":
 			ramDetailStatus()
+		case "target":
+			targetDetailStatus()
 		default:
 			color.Red("Module not found")
 			color.New(color.FgCyan).Println("Allowed modules: ", utils.Modules)
@@ -340,4 +346,21 @@ func manageDisk(argument []string) error {
 		}
 	}
 	return fmt.Errorf("Wrong command, use disk clean </, %s, trash or pm_cache", os.Getenv("HOME"))
+}
+
+func manageProfile(argument []string) error {
+	if len(argument) == 1 {
+		switch argument[0]{
+		case "current":
+			fmt.Print("Current Profile: ")
+			color.Cyan(setup.UserModuleState.Profile)
+		case "all":
+			fmt.Print("Saved profiles: ")
+			color.Cyan(fmt.Sprintln(setup.GetAllProfiles()))
+		case "default":
+			return errors.New("Argument not supported. Use <current/all>")
+		}
+		return nil
+	}
+	return errors.New("Wrong command, use profile <current/all>")
 }

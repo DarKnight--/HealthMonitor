@@ -176,5 +176,8 @@ func CleanTrash() error {
 
 // CleanPackageManagerCache cleans the package manager's cache directory
 func CleanPackageManagerCache() error {
+	if diskAction.cleaner == nil {
+		return fmt.Errorf("Currently %s OS is not supported", diskAction.os)
+	}
 	return diskAction.cleaner.RemovePackageManagerCache()
 }
