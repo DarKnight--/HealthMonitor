@@ -8,10 +8,10 @@ import (
 	"sync"
 	"time"
 
-	"health_monitor/notify"
-	"health_monitor/owtf"
-	"health_monitor/setup"
-	"health_monitor/utils"
+	"github.com/owtf/health_monitor/notify"
+	"github.com/owtf/health_monitor/owtf"
+	"github.com/owtf/health_monitor/setup"
+	"github.com/owtf/health_monitor/utils"
 )
 
 type (

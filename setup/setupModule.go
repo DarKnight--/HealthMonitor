@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"health_monitor/utils"
+	"github.com/owtf/health_monitor/utils"
 
 	"github.com/BurntSushi/toml"
 )

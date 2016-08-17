@@ -3,7 +3,7 @@ package setup
 import (
 	"os"
 
-	"health_monitor/utils"
+	"github.com/owtf/health_monitor/utils"
 )
 
 //Live saves the default config of live module to db

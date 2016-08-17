@@ -5,7 +5,7 @@ A standalone app to monitor and control OWTF - written in Go.
 
 ## Install
 
-1. Clone or download and extract the repository to a folder, `health_monitor`, in `$GOPATH/src/`. (Do not use `go get` right now.)
+1. Clone or download and extract the repository to a folder, `health_monitor`, in `$GOPATH/src/github.com/owtf`. (You can also use `go get github.com/owtf/health_monitor`.)
 2. Build a static binary by `go build -i` which creates an executable file, `health_monitor` in the project root.
 3. Run the executable by `./health_monitor <flag>`. For help, run `./health_monitor --help`.
 

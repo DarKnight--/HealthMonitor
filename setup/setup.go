@@ -8,7 +8,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 
-	"health_monitor/utils"
+	"github.com/owtf/health_monitor/utils"
 )
 
 var (

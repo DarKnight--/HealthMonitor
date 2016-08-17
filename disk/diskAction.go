@@ -3,7 +3,7 @@ package disk
 import (
 	"os"
 
-	"health_monitor/utils"
+	"github.com/owtf/health_monitor/utils"
 )
 
 const (
