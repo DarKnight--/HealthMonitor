@@ -23,6 +23,8 @@ func init() {
 	cliFunctions["help"] = help
 	cliFunctions["status"] = status
 	cliFunctions["load"] = loadProfile
+	cliFunctions["disk"] = manageDisk
+	cliFunctions["owtf"] = manageOWTF
 }
 
 // Run will start the command line interface for the health_monitor
@@ -35,7 +37,8 @@ func Run() {
 		if err != nil {
 			utils.Perror(err.Error())
 		}
-		command := strings.Split(text[:len(text)-1], " ")
+		text = strings.TrimSpace(text)
+		command := strings.Split(text, " ")
 		if len(command[0]) == 0 {
 			continue
 		}

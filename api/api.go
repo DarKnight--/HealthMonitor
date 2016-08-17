@@ -14,6 +14,7 @@ import (
 	"health_monitor/setup"
 	"health_monitor/target"
 	"health_monitor/utils"
+	"health_monitor/owtf"
 )
 
 var (
@@ -171,4 +172,12 @@ func CompressFolder(inputFName string, outputFname string) error {
 // DeletePackageManagerCache cleans the package manager's cache directory
 func DeletePackageManagerCache() error {
 	return disk.CleanPackageManagerCache()
+}
+
+func PauseOWTF() error {
+	return owtf.PauseAllWorker()
+}
+
+func ResumeOWTF() error {
+	return owtf.ResumeAllWorker()
 }

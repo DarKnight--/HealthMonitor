@@ -3,6 +3,7 @@ package cli
 import (
 	"errors"
 	"fmt"
+	"os"
 	"syscall"
 
 	"health_monitor/api"
@@ -283,8 +284,60 @@ func doesModuleExists(module string) bool {
 }
 
 func loadProfile(argument []string) error {
+	var err error
 	if len(argument) == 1 {
-		return api.LoadNewProfile(argument[0])
+		if err = api.LoadNewProfile(argument[0]); err == nil {
+			color.Cyan("Successfully loaded '%s' profile", argument[0])
+			return nil
+		}
+		return err
 	}
 	return errors.New("Wrong command, use load <profileName>")
+}
+
+func manageOWTF(argument []string) error {
+	var err error
+	if len(argument) == 1 {
+		if argument[0] == "resume" {
+			if err = api.ResumeOWTF(); err == nil {
+				color.Cyan("Successfully sent resume signal to all the workers.")
+				return nil
+			}
+			return err
+		} else if argument[0] == "pause" {
+			if err = api.PauseOWTF(); err == nil {
+				color.Cyan("Successfully sent pause signal to all the workers.")
+				return nil
+			}
+			return err
+		}
+	}
+	return errors.New("Wrong command, use owtf <resume/pause>")
+}
+
+func manageDisk(argument []string) error {
+	var err error = nil
+	if len(argument) == 2 {
+		if argument[0] == "clean" {
+			switch argument[1] {
+			case "/":
+				api.BasicDiskCleanup(argument[1])
+			case os.Getenv("HOME"):
+				api.BasicDiskCleanup(argument[1])
+			case "trash":
+				err = api.CleanTrashFolder()
+			case "pm_cache":
+				err = api.DeletePackageManagerCache()
+			default:
+				err = fmt.Errorf("Argument '%s' is incorrect", argument[1])
+			}
+
+			if err == nil {
+				color.Cyan("Successfully cleaned %s", argument[1])
+				return nil
+			}
+			return err
+		}
+	}
+	return fmt.Errorf("Wrong command, use disk clean </, %s, trash or pm_cache", os.Getenv("HOME"))
 }
