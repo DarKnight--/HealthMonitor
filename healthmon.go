@@ -43,7 +43,7 @@ func main() {
 	utils.LiveEmergency = make(chan bool)
 	defer close(utils.LiveEmergency)
 
-	utils.RestartModules = make(chan bool, 1)
+	utils.RestartModules = make(chan utils.Status, 1)
 	defer close(utils.RestartModules)
 
 	flags.NoWebUI = flag.Bool("nowebui", false, "Disables the web ui")
@@ -158,6 +158,23 @@ func Init() {
 	cpu.Init()
 }
 
+func initModule(module string){
+	switch module {
+	case "live":
+		live.Init()
+	case "target":
+		target.Init()
+	case "disk":
+		disk.Init()
+	case "ram":
+		ram.Init()
+	case "cpu":
+		cpu.Init()
+	case "notify":
+		notify.Init()
+	}
+}
+
 func tearDown(wg *sync.WaitGroup) {
 	<-utils.ExitChan
 	utils.ModuleLogs(setup.MainLogFile, "Shutdown signal received.")
@@ -177,13 +194,22 @@ func tearDown(wg *sync.WaitGroup) {
 }
 
 func restartModules() {
-	<-utils.RestartModules
-	var module string
-	for _, module = range utils.Modules {
-		utils.SendModuleStatus(module, false)
-	}
-	Init()
-	for _, module = range utils.Modules {
-		utils.SendModuleStatus(module, true)
+	data := <-utils.RestartModules
+
+	if data.Module != "all" {
+		utils.SendModuleStatus(data.Module, false)
+		if data.Run{
+			initModule(data.Module)
+		}
+		utils.SendModuleStatus(data.Module, true)
+	} else {
+		// Send all the modules to stop
+		utils.SendStatusToAllModules(false)
+		// If true is sent then all the modules are started and their config variables are also initialised.
+		if data.Run {
+			Init()
+		}
+		// Send all the modules to start
+		utils.SendStatusToAllModules(true)
 	}
 }

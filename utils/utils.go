@@ -23,7 +23,8 @@ var (
 	ExitChan chan os.Signal
 
 	// RestartModules is the channel to send signal to restart all the modules
-	RestartModules chan bool
+	// In this case Run field will direct to load config variable also
+	RestartModules chan Status
 
 	//Modules is the list of the modules currently implemented..
 	Modules = []string{"live", "target", "disk", "ram", "cpu"}
@@ -111,6 +112,13 @@ func SendModuleStatus(module string, status bool) {
 	ControlChan <- signal
 }
 
+// SendStatusToAllModules send the status to all the modules start/stop
+func SendStatusToAllModules(status bool) {
+	for _, module := range Modules {
+		SendModuleStatus(module, status)
+	}
+}
+
 /*
 CheckConf is the utility function to check the config variable loaded from the
 database and if fails, then switch to default.
@@ -125,7 +133,7 @@ func CheckConf(moduleLogFile *os.File, masterLogFile *os.File, module string,
 		*profile = "default"
 		ModuleError(masterLogFile, fmt.Sprintf("Unable to load profile: %s for %s module",
 			*profile, module), "Restating monitor with default value")
-		RestartModules <- true
+		RestartModules <- Status{Module:"all", Run:true}
 	}
 }
 
