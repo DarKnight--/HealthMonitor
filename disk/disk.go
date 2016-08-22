@@ -16,6 +16,7 @@ type (
 		InodeWarningLimit int
 		InodeDangerLimit  int
 		RecheckThreshold  int
+		CompressionOutput string
 		Disks             string
 	}
 

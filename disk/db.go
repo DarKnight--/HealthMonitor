@@ -14,7 +14,7 @@ func LoadConfig() *Config {
 	err := setup.Database.QueryRow("SELECT * FROM Disk WHERE profile=?",
 		setup.UserModuleState.Profile).Scan(&conf.Profile, &conf.SpaceWarningLimit,
 		&conf.SpaceDangerLimit, &conf.InodeWarningLimit, &conf.InodeDangerLimit,
-		&conf.RecheckThreshold, &conf.Disks)
+		&conf.RecheckThreshold, &conf.CompressionOutput, &conf.Disks)
 	if err != nil {
 		utils.ModuleError(setup.DBLogFile, "Module: disk, Error while quering from databse", err.Error())
 		return nil // TODO better to have fallback call to default profile
@@ -23,10 +23,10 @@ func LoadConfig() *Config {
 }
 
 func saveData(newConf *Config) error {
-	_, err := setup.Database.Exec(`INSERT OR REPLACE INTO Disk VALUES(?,?,?,?,?,?,?)`,
+	_, err := setup.Database.Exec(`INSERT OR REPLACE INTO Disk VALUES(?,?,?,?,?,?,?,?)`,
 		newConf.Profile, newConf.SpaceWarningLimit, newConf.SpaceDangerLimit,
 		newConf.InodeWarningLimit, newConf.InodeDangerLimit, newConf.RecheckThreshold,
-		newConf.Disks)
+		newConf.CompressionOutput, newConf.Disks)
 	if err != nil {
 		utils.ModuleError(setup.DBLogFile, "Module: disk, Unable to insert/update profile", err.Error())
 		return err

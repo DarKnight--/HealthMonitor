@@ -33,6 +33,11 @@
                 <input type="number" id="RecheckThreshold" name="RecheckThreshold" placeholder="Enter the time interval to recheck the disk">
              </div>
         </div><div class="form-group">
+            <label class="control-label col-sm-4">Compressed files output path</label>
+             <div class="col-sm-8">
+                <input type="text" id="CompressionOutput" name="CompressionOutput" placeholder="Enter the path to save compressed log files">
+             </div>
+        </div><div class="form-group">
             <label class="control-label col-sm-4">Partitions to check</label>
              <div class="col-sm-8">
                 <input type="text" id="Disks" name="Disks" placeholder="Enter the ',' seperated list of partitions">

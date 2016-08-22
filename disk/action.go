@@ -16,7 +16,7 @@ func basicCleanup(basicCleaner BasicCleaner) {
 	//TODO pause owtf
 	utils.ModuleLogs(logFile, "Performing basic cleanup.")
 	utils.ModuleLogs(logFile, "Compressing owtf proxy-cache: /tmp/owtf/proxy-cache")
-	CompressFolder("/tmp/owtf/proxy-cache", "/tmp/owtf/proxy-cache"+time.Now().Format(time.Stamp)+".tar.gz")
+	CompressFolder("/tmp/owtf/proxy-cache",  filepath.Join(conf.CompressionOutput, "proxy-cache"+time.Now().Format(time.Stamp)+".tar.gz"))
 	os.RemoveAll(utils.GetPath(".w3af/tmp/"))
 
 	utils.ModuleLogs(logFile, "Performing package manager cache clean up.")
