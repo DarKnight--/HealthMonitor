@@ -35,10 +35,11 @@ func Disk() {
 		inode_w_limit		INT NOT NULL,
 		inode_d_limit		INT NOT NULL,
 		recheck_threshold 	INT NOT NULL,
+		compression_output	CHAR(500) NOT NULL,
 		disk			CHAR(500) NOT NULL
 		);`)
 	_, err := Database.Exec(`INSERT OR REPLACE INTO Disk VALUES ("default", 2000, 1000, 2000, 1000, 5000,
-			"/,` + os.Getenv("HOME") + `");`)
+			"/tmp/owtf", "/,` + os.Getenv("HOME") + `");`)
 	if err != nil {
 		utils.ModuleError(DBLogFile, "Unable to insert value to Disk table", err.Error())
 		return
