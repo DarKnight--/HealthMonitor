@@ -9,6 +9,7 @@ import (
 	"github.com/BurntSushi/toml"
 
 	"github.com/owtf/health_monitor/utils"
+	"strings"
 )
 
 var (
@@ -61,7 +62,7 @@ func init() {
 		log.Println("Unable to get os info")
 		log.Println(err)
 	}
-	OSVarient = string(temp)
+	OSVarient = strings.TrimSpace(string(temp))
 	dbInit()
 	loadStatus()
 }

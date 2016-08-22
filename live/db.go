@@ -51,6 +51,9 @@ func SaveConfig(data []byte, profile string) error {
 		utils.ModuleError(setup.DBLogFile, "Module: live, Unable to decode obtained json.", err.Error())
 		return err
 	}
+	// Setting the variables which are not retrieved by json data
+	newConfig.HTTPClient = conf.HTTPClient
+
 	conf = newConfig
 	return saveData(newConfig)
 }

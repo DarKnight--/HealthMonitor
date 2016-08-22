@@ -102,6 +102,10 @@
                         var temp = parseInt(this.value, 10);
                         if(!isNaN(temp)){
                             this.value = temp;
+                        } else if(this.value == "true"){
+                            this.value = true;
+                        } else if(this.value == "false"){
+                            this.value = false;
                         }
                     }
                     if (o[this.name] !== undefined) {
@@ -132,7 +136,25 @@
                 url: '/settings/'+key1
             }).done(function (data) {
                for (var key in data) {
-                   $('input[name="'+key+'"]').val(data[key]);
+                   var inputField = $('input[name="'+key+'"]');
+                   switch (inputField.attr("type")){
+                       case "number":
+                       case "email":
+                       case "text":
+                           inputField.val(data[key]);
+                           break;
+                       case "radio":
+                           $("[name="+key+"][value='"+data[key]+"']").prop("checked", true);
+                           break;
+                       case "checkbox":
+                           if(data[key] == true){
+                               inputField.prop("checked", true);
+                           } else if(data[key] == false){
+                               inputField.prop("checked", false);
+                           } else {
+                               inputField.val(data[key]);
+                           }
+                   }
                }
             }).fail(function (jqXHR) {
                 insertError("Unable to retrieve data");
