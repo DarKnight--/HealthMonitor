@@ -158,7 +158,7 @@ func Init() {
 	cpu.Init()
 }
 
-func initModule(module string){
+func initModule(module string) {
 	switch module {
 	case "live":
 		live.Init()
@@ -198,7 +198,7 @@ func restartModules() {
 
 	if data.Module != "all" {
 		utils.SendModuleStatus(data.Module, false)
-		if data.Run{
+		if data.Run {
 			initModule(data.Module)
 		}
 		utils.SendModuleStatus(data.Module, true)

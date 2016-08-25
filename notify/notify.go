@@ -12,7 +12,7 @@ type Config struct {
 	Profile               string
 	SendgridAPIKey        string
 	ElasticMailKey        string
-	ElasticMainUName      string
+	ElasticMailUName      string
 	MailjetPublicKey      string
 	MailjetSecretKey      string
 	SendEmailTo           string

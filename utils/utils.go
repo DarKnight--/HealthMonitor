@@ -133,7 +133,7 @@ func CheckConf(moduleLogFile *os.File, masterLogFile *os.File, module string,
 		*profile = "default"
 		ModuleError(masterLogFile, fmt.Sprintf("Unable to load profile: %s for %s module",
 			*profile, module), "Restating monitor with default value")
-		RestartModules <- Status{Module:"all", Run:true}
+		RestartModules <- Status{Module: "all", Run: true}
 	}
 }
 

@@ -5,11 +5,11 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"strings"
 
 	"github.com/BurntSushi/toml"
 
 	"github.com/owtf/health_monitor/utils"
-	"strings"
 )
 
 var (
