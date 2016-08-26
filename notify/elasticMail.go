@@ -10,7 +10,7 @@ import (
 func elasticMail(subject string, body string) {
 	apiURL := "https://api.elasticemail.com/mailer/send"
 	form := url.Values{}
-	form.Add("username", conf.ElasticMainUName)
+	form.Add("username", conf.ElasticMailUName)
 	form.Add("api_key", conf.ElasticMailKey)
 	form.Add("from", fromEmail)
 	form.Add("from_name", fromName)

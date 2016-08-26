@@ -64,7 +64,7 @@ func GetConfJSON(module string) []byte {
 func SaveConfig(module string, data []byte) error {
 	profile := getProfile(data)
 	err := ConfSaveFunc[module](data, profile)
-	utils.RestartModules <- utils.Status{Module:module, Run:false}
+	utils.RestartModules <- utils.Status{Module: module, Run: false}
 	if profile == setup.UserModuleState.Profile {
 		return err
 	}
@@ -137,7 +137,7 @@ func LoadNewProfile(profile string) error {
 	for _, profiles := range setup.GetAllProfiles() {
 		if profiles == profile {
 			setup.UserModuleState.Profile = profile
-			utils.RestartModules <- utils.Status{Module:"all", Run:true}
+			utils.RestartModules <- utils.Status{Module: "all", Run: true}
 			return nil
 		}
 	}

@@ -1,0 +1,118 @@
+<div>
+   <form id="disk-setting" role="form" class="form-horizontal">
+       <div class="form-group">
+           <label class="control-label col-sm-4">profile</label>
+           <div class="col-sm-8">
+               <input type="text" id="Profile" name="Profile" readonly>
+           </div>
+       </div>
+       <div class="form-group">
+           <label class="control-label col-sm-4">Email service to use</label>
+           <div class="col-sm-8">
+              <label class="radio-inline" for="MailOptionToUseNO">
+                  <input type="radio" id="MailOptionToUseNO" name="MailOptionToUse" value="" onclick="hideAllMailData()">&nbsp;None
+              </label>
+              <label class="radio-inline" for="MailOptionToUseEM">
+                  <input type="radio" id="MailOptionToUseEM" name="MailOptionToUse" value="elasticmail" onclick="showMailVariables('em')">&nbsp;ElasticMail
+              </label>
+              <label class="radio-inline" for="MailOptionToUseMG">
+                  <input type="radio" id="MailOptionToUseMG" name="MailOptionToUse" value="mailgun" onclick="showMailVariables('mg')">&nbsp;Mailgun
+              </label>
+              <label class="radio-inline" for="MailOptionToUseSG">
+                  <input type="radio" id="MailOptionToUseSG" name="MailOptionToUse" value="sendgrid" onclick="showMailVariables('sg')">&nbsp;Sendgrid
+              </label>
+          </div>
+       </div>
+       <div id="email-variables" style="display:none;">
+            <div id="email-var-em">
+                <div class="form-group">
+                    <label class="control-label col-sm-4">Elasticmail username</label>
+                    <div class="col-sm-8">
+                       <input type="text" id="ElasticMainUName" name="ElasticMainUName" placeholder="Enter the Elasticmail username">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-4">Elasticmail key</label>
+                    <div class="col-sm-8">
+                       <input type="text" id="ElasticMailKey" name="ElasticMailKey" placeholder="Enter the Elasticmail key">
+                    </div>
+                </div>
+            </div>
+            <div id="email-var-mg">
+                <div class="form-group">
+                   <label class="control-label col-sm-4">Mailgun domain</label>
+                    <div class="col-sm-8">
+                       <input type="text" id="MailgunDomain" name="MailgunDomain" placeholder="Enter the Mailgun domain">
+                    </div>
+               </div>
+               <div class="form-group">
+                   <label class="control-label col-sm-4">Mailgun private key</label>
+                    <div class="col-sm-8">
+                       <input type="text" id="MailgunPrivateKey" name="MailgunPrivateKey" placeholder="Enter the Mailgun API private key">
+                    </div>
+               </div>
+               <div class="form-group">
+                   <label class="control-label col-sm-4">Mailgun public key</label>
+                    <div class="col-sm-8">
+                       <input type="text" id="MailgunPublicKey" name="MailgunPublicKey" placeholder="Enter the sendgrid API public key">
+                    </div>
+               </div>
+            </div>
+            <div id="email-var-sg">
+                <div class="form-group">
+                   <label class="control-label col-sm-4">Sendgrid API key</label>
+                    <div class="col-sm-8">
+                       <input type="text" id="SendgridAPIKey" name="SendgridAPIKey" placeholder="Enter the sendgrid API key">
+                    </div>
+                </div>
+            </div>
+       </div>
+       <div id="email-constants" style="display:none;">
+           <div class="form-group">
+                <label class="control-label col-sm-4">Send email to</label>
+                <div class="col-sm-8">
+                   <input type="text" id="SendEmailTo" name="SendEmailTo" placeholder="Enter the email address to send mail">
+                </div>
+           </div>
+       </div>
+       <div class="form-group">
+           <label class="control-label col-sm-4">DesktopNotification</label>
+            <div class="col-sm-8">
+                <label class="radio-inline">
+             	    <input type="checkbox" id="SendDesktopNotific" name="SendDesktopNotific" value="true">
+             	</label>
+            </div>
+       </div>
+       <div class="form-group">
+           <label class="control-label col-sm-4">Path of icon image</label>
+            <div class="col-sm-8">
+               <input type="text" id="IconPath" name="IconPath" placeholder="Enter the path of icon image">
+            </div>
+       </div>
+       <br><br>
+       <div class="col-md-offset-4">
+           <button type="button" class="btn btn-default" onclick="fillForm('notify')">Reset</button>
+           <button type="button" class="btn btn-default" onclick="saveAs('notify')">SaveAs</button>
+           <button type="button" class="btn btn-primary" onclick="save('notify')">Save</button>
+       </div>
+   </form>
+</div>
+<script>
+    var mail_vars = [
+        'em',
+        'mg',
+        'sg'
+    ];
+    function showMailVariables(mailOption){
+        $("#email-variables").show();
+        for(var key in mail_vars){
+            $("#email-var-"+mail_vars[key]).hide();
+        }
+        $("#email-var-"+mailOption).show();
+        $("#email-constants").show();
+    }
+    function hideAllMailData(){
+        $("#email-constants").hide();
+        $("#email-variables").hide();
+    }
+</script>

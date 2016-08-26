@@ -13,7 +13,7 @@ func LoadConfig() *Config {
 	var conf = new(Config)
 	err := setup.Database.QueryRow("SELECT * FROM Alert WHERE profile=?",
 		setup.UserModuleState.Profile).Scan(&conf.Profile, &conf.SendgridAPIKey,
-		&conf.ElasticMailKey, &conf.ElasticMainUName, &conf.MailjetPublicKey,
+		&conf.ElasticMailKey, &conf.ElasticMailUName, &conf.MailjetPublicKey,
 		&conf.MailjetSecretKey, &conf.SendEmailTo, &conf.MailgunDomain, &conf.MailgunPrivateKey,
 		&conf.MailgunPublicKey, &conf.SendDesktopNotific, &conf.MailOptionToUse, &conf.IconPath)
 	if err != nil {
@@ -26,7 +26,7 @@ func LoadConfig() *Config {
 func saveData(newConf *Config) error {
 	_, err := setup.Database.Exec(`INSERT OR REPLACE INTO Alert VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`,
 		newConf.Profile, newConf.SendgridAPIKey, newConf.ElasticMailKey,
-		newConf.ElasticMainUName, newConf.MailjetPublicKey, newConf.MailjetSecretKey,
+		newConf.ElasticMailUName, newConf.MailjetPublicKey, newConf.MailjetSecretKey,
 		newConf.SendEmailTo, newConf.MailgunDomain, newConf.MailgunPrivateKey,
 		newConf.MailgunPublicKey, newConf.SendDesktopNotific, newConf.MailOptionToUse, newConf.IconPath)
 	if err != nil {
@@ -54,6 +54,10 @@ func SaveConfig(data []byte, profile string) error {
 		utils.ModuleError(setup.DBLogFile, "Module: alert, Unable to decode obtained json.", err.Error())
 		return err
 	}
+
+	// Setting the variables which are not retrieved by json data
+	newConfig.DesktopNoticSupported = conf.DesktopNoticSupported
+
 	conf = newConfig
 	return saveData(newConfig)
 }
