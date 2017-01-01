@@ -22,6 +22,10 @@ import (
 	"github.com/owtf/health_monitor/webui"
 )
 
+const (
+	numberOfModules int = 6
+)
+
 // Flags holds the health_monitor command line arguments
 type Flags struct {
 	NoWebUI *bool
@@ -30,10 +34,11 @@ type Flags struct {
 }
 
 func main() {
+	defer safeClose()
 	var (
 		wg    sync.WaitGroup
 		flags Flags
-		chans [6]chan bool //Number of modules
+		chans [numberOfModules]chan bool // Channels to communicate with the modules.
 	)
 
 	for i := range chans {
@@ -60,7 +65,7 @@ func main() {
 	utils.ExitChan = make(chan os.Signal, 1)
 	signal.Notify(utils.ExitChan, syscall.SIGINT, syscall.SIGTERM)
 	// The buffer size should atleast be double the number of modules implemented
-	utils.ControlChan = make(chan utils.Status, 12)
+	utils.ControlChan = make(chan utils.Status, 2*numberOfModules)
 	wg.Add(1)
 	go restartModules()
 	go tearDown(&wg)
@@ -72,6 +77,7 @@ func main() {
 		go cli.Run()
 	}
 	wg.Wait()
+	print("\b\b")
 }
 
 func controlModule(chans [6]chan bool, wg *sync.WaitGroup) {
@@ -178,7 +184,6 @@ func initModule(module string) {
 func tearDown(wg *sync.WaitGroup) {
 	<-utils.ExitChan
 	utils.ModuleLogs(setup.MainLogFile, "Shutdown signal received.")
-	setup.Database.Close()
 	setup.SaveStatus()
 	utils.ModuleLogs(setup.MainLogFile, "Saved all config data. Stopping running modules")
 
@@ -188,9 +193,13 @@ func tearDown(wg *sync.WaitGroup) {
 	}
 
 	utils.SendModuleStatus("owtf", false)
+	wg.Done()
+}
+
+func safeClose() {
+	setup.Database.Close()
 	setup.MainLogFile.Close()
 	setup.DBLogFile.Close()
-	wg.Done()
 }
 
 func restartModules() {
