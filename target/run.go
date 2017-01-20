@@ -116,7 +116,9 @@ func checkTarget() {
 					target.TargetURL))
 				if lastStatus[target.TargetURL] {
 					downAction(target.ID)
-					notify.SendDesktopAlert("OWTF - Health Monitor", fmt.Sprintf("Target %s seems to be down. Recheck the target.", target.TargetURL), notify.Critical, "")
+					errorMsg := fmt.Sprintf("Target %s seems to be down. Recheck the target.", target.TargetURL)
+					notify.SendEmailAlert("[OWTF-HEALTH-MONITOR]Error in target module", errorMsg)
+					notify.SendDesktopAlert("OWTF - Health Monitor", errorMsg, notify.Critical, "")
 				}
 			}
 			continue

@@ -114,8 +114,8 @@ func printStatusLog(directory string, status int, lastStatus int, types string) 
 		utils.ModuleError(logFile, fmt.Sprintf("Unable to retrieve the informtaion about %s mount point",
 			directory), "Check the mount point provided")
 		if lastStatus != -1 {
-			notify.SendDesktopAlert("OWTF - Health Monitor", fmt.Sprintf("Disk %s for %s mount point can't be scanned due to error.",
-				types, directory), notify.Normal, "")
+			errorMsg := fmt.Sprintf("Disk %s for %s mount point can't be scanned due to error.", types, directory)
+			notify.SendDesktopAlert("OWTF - Health Monitor", errorMsg, notify.Normal, "")
 		}
 	case 1:
 		utils.ModuleLogs(logFile, fmt.Sprintf("Mount point %s %s status : OK",
@@ -125,15 +125,16 @@ func printStatusLog(directory string, status int, lastStatus int, types string) 
 		utils.ModuleLogs(logFile, fmt.Sprintf("Mount point %s %s status : WARN",
 			directory, types))
 		if lastStatus < 2 {
-			notify.SendDesktopAlert("OWTF - Health Monitor", fmt.Sprintf("Disk %s for %s mount point status is above warning limit.",
-				types, directory), notify.Normal, "")
+			errorMsg := fmt.Sprintf("Disk %s for %s mount point status is above warning limit.", types, directory)
+			notify.SendDesktopAlert("OWTF - Health Monitor", errorMsg, notify.Normal, "")
 		}
 	case 3:
 		utils.ModuleLogs(logFile, fmt.Sprintf("Mount point %s %s status : Danger",
 			directory, types))
 		if lastStatus != 3 {
-			notify.SendDesktopAlert("OWTF - Health Monitor", fmt.Sprintf("Disk %s for %s mount point status is critical",
-				types, directory), notify.Critical, "")
+			errorMsg := fmt.Sprintf("Disk %s for %s mount point status is critical", types, directory)
+			notify.SendDesktopAlert("OWTF - Health Monitor", errorMsg, notify.Critical, "")
+			notify.SendEmailAlert("[OWTF-HEALTH-MONITOR]Error in disk module", errorMsg)
 			BasicAction(directory)
 		}
 	}

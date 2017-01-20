@@ -145,7 +145,7 @@ func printDiskTable() {
 			}
 			colorFunc.Printf("| %-30s | %-15d | %-15d | %d%% |\n", key,
 				value.Stats.FreeBlocks, value.Const.TotalBlocks,
-				percent(value.Stats.FreeBlocks, value.Const.TotalBlocks))
+				utils.Percent(value.Stats.FreeBlocks, value.Const.TotalBlocks))
 		}
 	}
 	printLine()
@@ -164,7 +164,7 @@ func printInodeTable() {
 			}
 			colorFunc.Printf("| %-30s | %-15d | %-15d | %d%% |\n", key,
 				value.Stats.FreeInodes, value.Const.TotalInodes,
-				percent(value.Stats.FreeInodes, value.Const.TotalInodes))
+				utils.Percent(value.Stats.FreeInodes, value.Const.TotalInodes))
 		}
 	}
 	printLine()
@@ -172,13 +172,6 @@ func printInodeTable() {
 
 func printLine() {
 	color.New(color.FgWhite, color.Bold, color.Underline).Printf("%76s\n", " ")
-}
-
-func percent(value int, total int) int {
-	if total == 0 {
-		return 0
-	}
-	return (value * 100) / total
 }
 
 func cpuShortStatus() {
@@ -213,10 +206,10 @@ func ramDetailStatus() {
 		if moduleStatus.Status.Normal == false {
 			colorFunc.Add(color.FgRed)
 		}
-		colorFunc.Printf("RAM is %d%% free\n", percent(moduleStatus.Stats.FreePhysical,
+		colorFunc.Printf("RAM is %d%% free\n", utils.Percent(moduleStatus.Stats.FreePhysical,
 			moduleStatus.Consts.TotalPhysical))
 
-		colorFunc.Printf("Swap area is %d%% free\n", percent(moduleStatus.Stats.FreeSwap,
+		colorFunc.Printf("Swap area is %d%% free\n", utils.Percent(moduleStatus.Stats.FreeSwap,
 			moduleStatus.Consts.TotalSwap))
 	}
 }

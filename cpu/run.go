@@ -2,6 +2,7 @@ package cpu
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path"
 	"runtime"
@@ -66,7 +67,9 @@ func checkCPU() {
 		utils.ModuleLogs(logFile, "CPU usage is normal")
 	} else {
 		if lastStatus.Normal {
-			notify.SendDesktopAlert("OWTF - Health Monitor", "CPU usage is above warn limit", notify.Critical, "")
+			errorMsg := fmt.Sprintf("CPU usage is above warn limit, CPU usage = %d", cpuInfo.Stats.CPUUsage)
+			notify.SendDesktopAlert("OWTF - Health Monitor", errorMsg, notify.Critical, "")
+			notify.SendEmailAlert("[OWTF-HEALTH-MONITOR]Error in CPU module", errorMsg)
 		}
 		cpuInfo.Status.Normal = false
 		utils.ModuleLogs(logFile, "CPU is being used over the warning limit")

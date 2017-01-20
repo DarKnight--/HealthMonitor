@@ -10,16 +10,9 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-func percent(a int, b int) int {
-	if b == 0 {
-		return 0
-	}
-	return (a * 100) / b
-}
-
 func diskTemplateHandler(ctx *fasthttp.RequestCtx) {
 	tmpl := fmt.Sprintf(templateRoot, "disk-status")
-	funcMap := template.FuncMap{"percent": percent}
+	funcMap := template.FuncMap{"percent": utils.Percent}
 	t, err := template.New("disk-status").Funcs(funcMap).ParseFiles(tmpl)
 	if err != nil {
 		utils.ModuleError(logFile, "template parsing error ", err.Error())
@@ -36,7 +29,7 @@ func diskTemplateHandler(ctx *fasthttp.RequestCtx) {
 
 func inodeTemplateHandler(ctx *fasthttp.RequestCtx) {
 	tmpl := fmt.Sprintf(templateRoot, "inode-status")
-	funcMap := template.FuncMap{"percent": percent}
+	funcMap := template.FuncMap{"percent": utils.Percent}
 	t, err := template.New("inode-status").Funcs(funcMap).ParseFiles(tmpl)
 	if err != nil {
 		utils.ModuleError(logFile, "template parsing error ", err.Error())
@@ -69,7 +62,7 @@ func liveTemplateHandler(ctx *fasthttp.RequestCtx) {
 
 func cpuTemplateHandler(ctx *fasthttp.RequestCtx) {
 	tmpl := fmt.Sprintf(templateRoot, "cpu-status")
-	funcMap := template.FuncMap{"percent": percent}
+	funcMap := template.FuncMap{"percent": utils.Percent}
 	t, err := template.New("cpu-status").Funcs(funcMap).ParseFiles(tmpl)
 	if err != nil {
 		utils.ModuleError(logFile, "template parsing error ", err.Error())
@@ -86,7 +79,7 @@ func cpuTemplateHandler(ctx *fasthttp.RequestCtx) {
 
 func ramTemplateHandler(ctx *fasthttp.RequestCtx) {
 	tmpl := fmt.Sprintf(templateRoot, "ram-status")
-	funcMap := template.FuncMap{"percent": percent}
+	funcMap := template.FuncMap{"percent": utils.Percent}
 	t, err := template.New("ram-status").Funcs(funcMap).ParseFiles(tmpl)
 	if err != nil {
 		utils.ModuleError(logFile, "template parsing error ", err.Error())

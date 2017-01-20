@@ -176,3 +176,11 @@ func RemoveOWTFModuleDependence() {
 	}
 	owtfMutex.Unlock()
 }
+
+// Percent returns percentage of the two values
+func Percent(a int, b int) int {
+	if b == 0 {
+		return 0
+	}
+	return (a * 100) / b
+}
