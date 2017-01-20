@@ -1,12 +1,5 @@
 package notify
 
-import (
-	"encoding/json"
-
-	"github.com/owtf/health_monitor/setup"
-	"github.com/owtf/health_monitor/utils"
-)
-
 // Config holds all the necessary parameters required by the module
 type Config struct {
 	Profile               string
@@ -19,43 +12,23 @@ type Config struct {
 	MailgunDomain         string
 	MailgunPrivateKey     string
 	MailgunPublicKey      string
+	MaxEmailRetry         int
 	DesktopNoticSupported bool
 	SendDesktopNotific    bool
 	MailOptionToUse       string
 	IconPath              string
 }
 
-var (
-	conf         *Config
-	fromName     = "OWTF Health Monitor"
-	fromEmail    = "alerts_health_monitor@owasp-owtf.org"
-	desktopAlert *DesktopAlert
-)
-
-// Init is the initialization function of the module
-func Init() {
-	conf = LoadConfig()
-	if conf == nil {
-		utils.CheckConf(setup.MainLogFile, setup.MainLogFile, "alert", &setup.UserModuleState.Profile, setup.Alert)
-	}
-	desktopAlert = nil
-	conf.DesktopNoticSupported = false
-	if CheckDesktopAlertSupport() {
-		desktopAlert = NewDesktopAlert(conf.IconPath)
-		conf.DesktopNoticSupported = true
-	}
-}
-
-// SendEmailAlert sends the email notification if enabled using specified client
-func SendEmailAlert(subject string, body string) {
+func sendEmail(subject string, body string) error {
 	switch conf.MailOptionToUse {
 	case "sendgrid":
-		sendGrid(subject, body)
+		return sendGrid(subject, body)
 	case "mailgun":
-		mailGun(subject, body)
+		return mailGun(subject, body)
 	case "elasticemail":
-		elasticMail(subject, body)
+		return elasticMail(subject, body)
 	}
+	return nil
 }
 
 // SendDesktopAlert sends the desktop notification if enabled and required packages
@@ -67,13 +40,4 @@ func SendDesktopAlert(subject string, summary string, urgent MessageImportance, 
 	if conf.SendDesktopNotific && conf.DesktopNoticSupported {
 		desktopAlert.Push(subject, summary, iconPath, urgent)
 	}
-}
-
-//GetConfJSON returns the json byte array of the module's config
-func GetConfJSON() []byte {
-	data, err := json.Marshal(LoadConfig())
-	if err != nil {
-		utils.ModuleError(setup.MainLogFile, err.Error(), "[!] Check the conf struct(alert module)")
-	}
-	return data
 }
