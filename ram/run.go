@@ -72,7 +72,7 @@ func checkRAM() {
 	if ramInfo.Stats.FreePhysical < (100-conf.RAMWarningLimit)*ramInfo.Consts.TotalPhysical/100 {
 		ramInfo.Status.Normal = false
 		if lastStatus.Normal {
-			errorMsg := fmt.Sprintf("Ram usage is above warning limit. Ram usage = %d", utils.Percent(
+			errorMsg := fmt.Sprintf("Ram usage is above warning limit. Ram Free = %d%%", utils.Percent(
 				ramInfo.Stats.FreePhysical, ramInfo.Consts.TotalPhysical))
 			notify.SendEmailAlert("[OWTF-HEALTH-MONITOR]Error in RAM module", errorMsg)
 			notify.SendDesktopAlert("OWTF - Health Monitor", "RAM usage is above warn limit.", notify.Critical, "")

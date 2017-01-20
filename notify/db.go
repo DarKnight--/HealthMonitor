@@ -25,7 +25,7 @@ func LoadConfig() *Config {
 }
 
 func saveData(newConf *Config) error {
-	_, err := setup.Database.Exec(`INSERT OR REPLACE INTO Alert VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+	_, err := setup.Database.Exec(`INSERT OR REPLACE INTO Alert VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
 		newConf.Profile, newConf.SendgridAPIKey, newConf.ElasticMailKey,
 		newConf.ElasticMailUName, newConf.MailjetPublicKey, newConf.MailjetSecretKey,
 		newConf.SendEmailTo, newConf.MailgunDomain, newConf.MailgunPrivateKey,

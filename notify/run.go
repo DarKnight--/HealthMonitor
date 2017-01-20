@@ -18,8 +18,8 @@ var (
 )
 
 type email struct {
-	subject string
-	body    string
+	Subject string
+	Body    string
 }
 
 // Init is the initialization function of the module
@@ -47,8 +47,8 @@ func Notify() {
 				emailData := reflect.ValueOf(emailQueue.Poll())
 				i := 0
 				for ; i < conf.MaxEmailRetry; i++ {
-					err = sendEmail(emailData.FieldByName("subject").Interface().(string),
-						emailData.FieldByName("body").Interface().(string))
+					err = sendEmail(emailData.FieldByName("Subject").Interface().(string),
+						emailData.FieldByName("Body").Interface().(string))
 					if err == nil {
 						break
 					}
@@ -63,7 +63,7 @@ func Notify() {
 
 // SendEmailAlert sends the email notification if enabled using specified client
 func SendEmailAlert(subject string, body string) {
-	emailQueue.Push(email{subject: subject, body: body})
+	emailQueue.Push(email{Subject: subject, Body: body})
 }
 
 //GetConfJSON returns the json byte array of the module's config
