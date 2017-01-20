@@ -15,7 +15,8 @@ func LoadConfig() *Config {
 		setup.UserModuleState.Profile).Scan(&conf.Profile, &conf.SendgridAPIKey,
 		&conf.ElasticMailKey, &conf.ElasticMailUName, &conf.MailjetPublicKey,
 		&conf.MailjetSecretKey, &conf.SendEmailTo, &conf.MailgunDomain, &conf.MailgunPrivateKey,
-		&conf.MailgunPublicKey, &conf.SendDesktopNotific, &conf.MailOptionToUse, &conf.IconPath)
+		&conf.MailgunPublicKey, &conf.MaxEmailRetry, &conf.SendDesktopNotific,
+		&conf.MailOptionToUse, &conf.IconPath)
 	if err != nil {
 		utils.ModuleError(setup.DBLogFile, "Error while quering from databse", err.Error())
 		return nil // TODO better to have fallback call to default profile
@@ -28,7 +29,8 @@ func saveData(newConf *Config) error {
 		newConf.Profile, newConf.SendgridAPIKey, newConf.ElasticMailKey,
 		newConf.ElasticMailUName, newConf.MailjetPublicKey, newConf.MailjetSecretKey,
 		newConf.SendEmailTo, newConf.MailgunDomain, newConf.MailgunPrivateKey,
-		newConf.MailgunPublicKey, newConf.SendDesktopNotific, newConf.MailOptionToUse, newConf.IconPath)
+		newConf.MailgunPublicKey, newConf.MaxEmailRetry, newConf.SendDesktopNotific,
+		newConf.MailOptionToUse, newConf.IconPath)
 	if err != nil {
 		utils.ModuleError(setup.DBLogFile, "Module: alert, Unable to insert/update profile",
 			err.Error())

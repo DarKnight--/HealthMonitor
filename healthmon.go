@@ -62,6 +62,7 @@ func main() {
 	// The buffer size should atleast be double the number of modules implemented
 	utils.ControlChan = make(chan utils.Status, 12)
 	wg.Add(1)
+	go notify.Notify()
 	go restartModules()
 	go tearDown(&wg)
 	Init()
