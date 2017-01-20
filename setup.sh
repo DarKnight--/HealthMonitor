@@ -58,12 +58,9 @@ else
 fi
 
 ##
-# Install required golang dependencies
+# Fetching OWASP OWTF - Health Monitor
 ##
-echo "Fetching required dependencies..."
-wget -c "https://raw.githubusercontent.com/owtf/health_monitor/master/dependencies"
-cat dependencies | xargs go get -u
-echo "Cloning OWTF Health-Monitor to $GOPATH/src/github.com/owtf/health_monitor"
+echo "Cloning OWASP OWTF Health-Monitor to $GOPATH/src/github.com/owtf/health_monitor"
 if [ ! "$(ls -A $GOPATH/src/github.com/owtf/health_monitor)" ]; then
   git clone https://github.com/owtf/health_monitor.git $GOPATH/src/github.com/owtf/health_monitor
 else
