@@ -6,7 +6,7 @@ import (
 	"github.com/mailgun/mailgun-go"
 )
 
-func mailGun(subject string, body string) {
+func mailGun(subject string, body string) error {
 	mg := mailgun.NewMailgun(conf.MailgunDomain, conf.MailgunPrivateKey, conf.MailgunPublicKey)
 	m := mg.NewMessage(
 		fmt.Sprintf("%s %s", fromName, fromEmail),
@@ -14,7 +14,6 @@ func mailGun(subject string, body string) {
 		body,
 		conf.SendEmailTo,
 	)
-	_, id, err := mg.Send(m)
-	fmt.Println(id)
-	fmt.Println(err)
+	_, _, err := mg.Send(m)
+	return err
 }

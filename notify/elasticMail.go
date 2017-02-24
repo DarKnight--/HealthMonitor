@@ -1,13 +1,13 @@
 package notify
 
 import (
-	"fmt"
+	"errors"
 	"net/http"
 	"net/url"
 	"strings"
 )
 
-func elasticMail(subject string, body string) {
+func elasticMail(subject string, body string) error {
 	apiURL := "https://api.elasticemail.com/mailer/send"
 	form := url.Values{}
 	form.Add("username", conf.ElasticMailUName)
@@ -22,6 +22,13 @@ func elasticMail(subject string, body string) {
 	req, _ := http.NewRequest("POST", apiURL, strings.NewReader(form.Encode()))
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
-	resp, _ := client.Do(req)
-	fmt.Println(resp.Status)
+	resp, err := client.Do(req)
+
+	if err ==  nil {
+		if resp.StatusCode/100 == 2 {
+			return nil
+		}
+		return errors.New("Unable to send mail")
+	}
+	return err
 }
